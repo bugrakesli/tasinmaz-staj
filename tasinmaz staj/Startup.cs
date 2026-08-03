@@ -34,7 +34,7 @@ namespace tasinmaz_staj
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGeometryService, GeometryService>();
-
+            services.AddScoped<IPropertyService, PropertyService>();
 
             services.AddSwaggerGen(c =>
             {

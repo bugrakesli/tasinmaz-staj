@@ -14,10 +14,9 @@ public class GeometryService : IGeometryService
     {
         var geomResult = new GeometryResult
         {
-            UserId = userId,
-            ResultType = dto.ResultType, // "D" veya "E"
-            WktData = dto.ResultWkt,
-            CalculatedArea = dto.CalculatedArea,
+            Label = dto.ResultType, // "D" veya "E"
+            Wkt = dto.ResultWkt,
+            SurfaceArea = dto.CalculatedArea,
             CreatedAt = DateTime.UtcNow // Loglama veya takip için oluþturulma zamaný
         };
 

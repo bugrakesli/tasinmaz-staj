@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-// using Rems.API.Helpers; (PasswordHelper'ýn olduðu yeri ekle)
-
 public class UserService : IUserService
 {
     private readonly RemsDbContext _context;
@@ -29,15 +27,15 @@ public class UserService : IUserService
     public async Task<bool> CreateUserAsync(UserCreateDto dto)
     {
         // Þifre Hashleme iþlemi (Kendi yazdýðýn PasswordHelper'a göre uyarla)
-        // string salt = PasswordHelper.GenerateSalt();
-        // string hash = PasswordHelper.HashPassword(dto.Password, salt);
+        string salt = PasswordHelper.GenerateSalt();
+        string hash = PasswordHelper.HashPassword(dto.Password, salt);
 
         var user = new User
         {
             Email = dto.Email,
             Role = dto.Role,
-            // PasswordHash = hash,
-            // Salt = salt
+            PasswordHash = hash,
+            Salt = salt
         };
 
         await _context.Users.AddAsync(user);
@@ -56,8 +54,8 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(dto.Password))
         {
             // Yeni þifre girildiyse onu da hashleyip güncelle
-            // user.Salt = PasswordHelper.GenerateSalt();
-            // user.PasswordHash = PasswordHelper.HashPassword(dto.Password, user.Salt);
+            user.Salt = PasswordHelper.GenerateSalt();
+            user.PasswordHash = PasswordHelper.HashPassword(dto.Password, user.Salt);
         }
 
         _context.Users.Update(user);
