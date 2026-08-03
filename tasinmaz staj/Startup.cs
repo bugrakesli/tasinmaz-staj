@@ -31,6 +31,10 @@ namespace tasinmaz_staj
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IPropertyService, PropertyService>();
+            services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGeometryService, GeometryService>();
+
 
             services.AddSwaggerGen(c =>
             {
@@ -59,8 +63,11 @@ namespace tasinmaz_staj
 
             services.AddDbContext<RemsDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            
-            services.AddControllers();
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<tasinmaz_staj.Filters.AutoLogFilter>();
+            });
 
             services.AddSingleton<TokenService>();
 
