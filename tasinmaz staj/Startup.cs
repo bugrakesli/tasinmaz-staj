@@ -35,6 +35,7 @@ namespace tasinmaz_staj
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGeometryService, GeometryService>();
             services.AddScoped<IPropertyService, PropertyService>();
+            services.AddScoped<IPropertyImageService,PropertyImageService>();
 
             services.AddSwaggerGen(c =>
             {
@@ -105,6 +106,9 @@ namespace tasinmaz_staj
             }
 
             app.UseHttpsRedirection();
+            
+            app.UseStaticFiles();
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
