@@ -14,15 +14,18 @@ public class PropertyController : ControllerBase
     private readonly IPropertyService _propertyService;
     private readonly IPropertyExportService _propertyExportService;
     private readonly IPropertyImportService _propertyImportService;
+    private readonly IPropertyGeometryService _propertyGeometryService;
 
     public PropertyController(
         IPropertyService propertyService,
         IPropertyExportService propertyExportService,
-        IPropertyImportService propertyImportService)
+        IPropertyImportService propertyImportService,
+        IPropertyGeometryService propertyGeometryService)
     {
         _propertyService = propertyService;
         _propertyExportService = propertyExportService;
         _propertyImportService = propertyImportService;
+        _propertyGeometryService = propertyGeometryService;
     }
 
     // Token içindeki claim'lerden userId ve role'ü okuyan yardımcı metotlar
@@ -55,32 +58,26 @@ public class PropertyController : ControllerBase
 
         try
         {
-            var result = await _propertyService.CreateAsync(dto, GetUserId());
-            return Ok(new { message = "Property added successfully.", data = result });
-        }
-        catch
-        {
-            return BadRequest(new { message = "Please fill in all required fields with valid format." });
-        }
-    }
+            var result = await _propertyService.CreateAsync(
+                dto,
+                GetUserId()
+            );
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CreatePropertyDto dto)
-    {
-        if (GetRole() == "Admin")
-            return Forbid();
-
-        try
-        {
-            var result = await _propertyService.UpdateAsync(id, dto, GetUserId());
-            if (result == null)
-                return NotFound(new { message = "Property not found." });
-
-            return Ok(new { message = "Property updated successfully.", data = result });
+            return Ok(new
+            {
+                message = "Property added successfully.",
+                data = result
+            });
         }
-        catch
+        catch (Exception ex)
         {
-            return BadRequest(new { message = "Please enter valid property details." });
+            return BadRequest(new
+            {
+                message = ex.Message,
+                innerError = ex.InnerException != null
+                    ? ex.InnerException.Message
+                    : null
+            });
         }
     }
 
@@ -185,6 +182,65 @@ public class PropertyController : ControllerBase
         catch
         {
             return StatusCode(500, new { message = "Import failed. Please check the file format and data." });
+        }
+    }
+
+    [HttpPut("{id}/geometry")]
+    public async Task<IActionResult> UpdateGeometry(
+        int id,
+        [FromBody] UpdatePropertyGeometryDto dto)
+    {
+        try
+        {
+            var result = await _propertyGeometryService
+                .UpdateGeometryAsync(
+                    id,
+                    dto,
+                    GetUserId(),
+                    GetRole()
+                );
+
+            if (!result)
+            {
+                return NotFound(
+                    new
+                    {
+                        message = "Property not found."
+                    }
+                );
+            }
+
+            return Ok(
+                new
+                {
+                    message =
+                        "Property geometry updated successfully."
+                }
+            );
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(
+                new
+                {
+                    message = ex.Message
+                }
+            );
+        }
+        catch
+        {
+            return StatusCode(
+                500,
+                new
+                {
+                    message =
+                        "An error occurred while updating geometry."
+                }
+            );
         }
     }
 }
