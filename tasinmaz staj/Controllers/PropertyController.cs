@@ -23,12 +23,12 @@ public class PropertyController : ControllerBase
         User.FindFirst(ClaimTypes.Role).Value;
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] PropertyFilterDto filter)
     {
         try
         {
-            var properties = await _propertyService.GetAllAsync(GetUserId(), GetRole());
-            return Ok(properties);
+            var result = await _propertyService.GetFilteredAsync(filter, GetUserId(), GetRole());
+            return Ok(result);
         }
         catch
         {

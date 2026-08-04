@@ -23,14 +23,22 @@ public class AuthController : ControllerBase
             .FirstOrDefaultAsync(u => u.Email == request.Email);
 
         if (user == null)
+        {
+            await LogLoginAttemptAsync(0, request.Email, success: false);
             return Unauthorized(new { message = "Incorrect e-mail or password." });
+        }
 
         var hashedInput = PasswordHelper.HashPassword(request.Password, user.Salt);
 
         if (hashedInput != user.PasswordHash)
+        {
+            await LogLoginAttemptAsync(user.Id, request.Email, success: false);
             return Unauthorized(new { message = "Incorrect e-mail or password." });
+        }
 
         var token = _tokenService.GenerateToken(user);
+
+        await LogLoginAttemptAsync(user.Id, request.Email, success: true);
 
         return Ok(new LoginResponseDto
         {

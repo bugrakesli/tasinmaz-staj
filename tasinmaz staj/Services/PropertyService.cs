@@ -45,6 +45,84 @@ public PropertyService(RemsDbContext context)
             .ToListAsync();
     }
 
+    public async Task<object> GetFilteredAsync(
+    PropertyFilterDto filter,
+    int userId,
+    string role)
+    {
+        bool isAdmin = string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase);
+
+        IQueryable<Property> query = _context.Properties
+            .Include(p => p.Mahalle)
+                .ThenInclude(m => m.Ilce)
+                    .ThenInclude(i => i.Il);
+
+        // REQ-3/REQ-4: Admin tum kayitlari filtreleyebilir, normal kullanici sadece kendisininkini
+        if (!isAdmin)
+        {
+            query = query.Where(p => p.UserId == userId);
+        }
+        else if (filter.OwnerId.HasValue) // REQ-2: Admin sahibe gore de filtreleyebilir
+        {
+            query = query.Where(p => p.UserId == filter.OwnerId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.City))
+            query = query.Where(p => p.Mahalle.Ilce.Il.Ad == filter.City);
+
+        if (!string.IsNullOrWhiteSpace(filter.District))
+            query = query.Where(p => p.Mahalle.Ilce.Ad == filter.District);
+
+        if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
+            query = query.Where(p => p.Mahalle.Ad == filter.Neighborhood);
+
+        if (!string.IsNullOrWhiteSpace(filter.ParcelNumber))
+            query = query.Where(p => p.ParselNo == filter.ParcelNumber);
+
+        if (!string.IsNullOrWhiteSpace(filter.LotNumber))
+            query = query.Where(p => p.AdaNo == filter.LotNumber);
+
+        if (!string.IsNullOrWhiteSpace(filter.Address))
+            query = query.Where(p => p.Adres.Contains(filter.Address));
+
+        if (!string.IsNullOrWhiteSpace(filter.PropertyType))
+            query = query.Where(p => p.PropertyType == filter.PropertyType);
+
+        int totalRecords = await query.CountAsync();
+
+        int pageNumber = filter.PageNumber < 1 ? 1 : filter.PageNumber;
+        int pageSize = filter.PageSize < 1 ? 10 : filter.PageSize;
+
+        var data = await query
+            .OrderBy(p => p.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(p => new PropertyDto
+            {
+                Id = p.Id,
+                City = p.Mahalle.Ilce.Il.Ad,
+                District = p.Mahalle.Ilce.Ad,
+                Neighborhood = p.Mahalle.Ad,
+                ParselNo = p.ParselNo,
+                AdaNo = p.AdaNo,
+                Adres = p.Adres,
+                PropertyType = p.PropertyType,
+                Coordinate = p.Coordinate,
+                ImagePath = p.ImagePath
+            })
+            .ToListAsync();
+
+        // REQ-6: Sonuc bulunamazsa bile 200 donuyoruz; controller/frontend
+        // "No properties match the criteria." mesajini bos listeye gore gosterir.
+        return new
+        {
+            TotalCount = totalRecords,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            Data = data
+        };
+    }
+
     public async Task<PropertyDto> CreateAsync(
         CreatePropertyDto dto,
         int userId)
