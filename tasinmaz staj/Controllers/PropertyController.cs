@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -69,14 +70,11 @@ public class PropertyController : ControllerBase
                 data = result
             });
         }
-        catch (Exception ex)
+        catch
         {
             return BadRequest(new
             {
-                message = ex.Message,
-                innerError = ex.InnerException != null
-                    ? ex.InnerException.Message
-                    : null
+                message = "Please fill in all required fields with valid format."
             });
         }
     }
@@ -243,4 +241,81 @@ public class PropertyController : ControllerBase
             );
         }
     }
+
+    [HttpPost("spatial/select")]
+    public async Task<IActionResult> SelectProperties(
+    [FromBody] UpdatePropertyGeometryDto dto)
+    {
+        try
+        {
+            var properties =
+                await _propertyGeometryService
+                    .SelectPropertiesAsync(
+                        dto,
+                        GetUserId(),
+                        GetRole()
+                    );
+
+            return Ok(new
+            {
+                count = properties.Count,
+                data = properties
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+        catch
+        {
+            return StatusCode(500, new
+            {
+                message =
+                    "An error occurred while selecting properties."
+            });
+        }
+    }
+    [HttpPost("spatial/intersection")]
+    public async Task<IActionResult> AnalyzeIntersection(
+    [FromBody] IntersectionAnalysisDto dto)
+    {
+        try
+        {
+            var result =
+                await _propertyGeometryService
+                    .AnalyzeIntersectionAsync(
+                        dto,
+                        GetUserId(),
+                        GetRole()
+                    );
+
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new
+            {
+                message = ex.Message
+            });
+        }
+        catch
+        {
+            return StatusCode(500, new
+            {
+                message =
+                    "An error occurred while analyzing the intersection."
+            });
+        }
+    }
+
 }
