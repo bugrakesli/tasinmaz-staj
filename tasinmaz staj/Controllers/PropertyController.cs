@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -11,16 +13,19 @@ public class PropertyController : ControllerBase
 {
     private readonly IPropertyService _propertyService;
     private readonly IPropertyExportService _propertyExportService;
+    private readonly IPropertyImportService _propertyImportService;
 
     public PropertyController(
         IPropertyService propertyService,
-        IPropertyExportService propertyExportService)
+        IPropertyExportService propertyExportService,
+        IPropertyImportService propertyImportService)
     {
         _propertyService = propertyService;
         _propertyExportService = propertyExportService;
+        _propertyImportService = propertyImportService;
     }
 
-    // Token içindeki claim'lerden userId ve role'ü okuyan yardýmcý metotlar
+    // Token iÃ§indeki claim'lerden userId ve role'Ã¼ okuyan yardÄ±mcÄ± metotlar
     private int GetUserId() =>
         int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
@@ -37,7 +42,7 @@ public class PropertyController : ControllerBase
         }
         catch
         {
-            return StatusCode(500, new { message = "Bir hata oluþtu." });
+            return StatusCode(500, new { message = "Bir hata oluÅŸtu." });
         }
     }
 
@@ -95,7 +100,7 @@ public class PropertyController : ControllerBase
         }
         catch
         {
-            return StatusCode(500, new { message = "Bir hata oluþtu." });
+            return StatusCode(500, new { message = "Bir hata oluÅŸtu." });
         }
     }
 
@@ -131,6 +136,55 @@ public class PropertyController : ControllerBase
         catch
         {
             return StatusCode(500, new { message = "Failed to export." });
+        }
+    }
+
+    // REQ-8: Sadece kimlik dogrulamali normal kullanicilar erisebilir.
+    [HttpPost("import/excel")]
+    [RequestSizeLimit(20_000_000)]
+    public async Task<IActionResult> ImportFromExcel(IFormFile file)
+    {
+        if (GetRole() == "Admin")
+            return Forbid();
+
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { message = "Import failed. Please check the file format and data." });
+        }
+
+        // REQ-1: yalnizca .xlsx kabul edilir
+        var extension = Path.GetExtension(file.FileName);
+        if (!string.Equals(extension, ".xlsx", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { message = "Import failed. Please check the file format and data." });
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream();
+            var result = await _propertyImportService.ImportFromExcelAsync(stream, GetUserId());
+
+            if (!result.Success)
+            {
+                // REQ-4/REQ-5: dogrulama basarisizsa dosyanin tamami reddedilir
+                return BadRequest(result);
+            }
+
+            // REQ-7: basarili import sonrasi guncel listeyi de birlikte doner,
+            // boylece frontend property listesini yenileyebilir.
+            var refreshedList = await _propertyService.GetFilteredAsync(
+                new PropertyFilterDto(), GetUserId(), GetRole());
+
+            return Ok(new
+            {
+                message = "Properties imported successfully.",
+                importedCount = result.ImportedCount,
+                data = refreshedList
+            });
+        }
+        catch
+        {
+            return StatusCode(500, new { message = "Import failed. Please check the file format and data." });
         }
     }
 }

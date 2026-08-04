@@ -37,7 +37,7 @@ public class LogService : ILogService
         if (filter.EndDate.HasValue)
             query = query.Where(l => l.Timestamp <= filter.EndDate.Value);
 
-        // Varsayýlan olarak en yeni loglar en üstte gelsin
+        // VarsayÄ±lan olarak en yeni loglar en Ã¼stte gelsin
         return query.OrderByDescending(l => l.Timestamp);
     }
 

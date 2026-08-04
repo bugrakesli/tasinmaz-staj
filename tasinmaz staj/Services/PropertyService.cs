@@ -21,8 +21,8 @@ public class PropertyService : IPropertyService
                 .ThenInclude(m => m.Ilce)
                     .ThenInclude(i => i.Il);
 
-        // Admin tüm taþýnmazlarý görebilir.
-        // Diðer kullanýcýlar yalnýzca kendi taþýnmazlarýný görebilir.
+        // Admin tÃ¼m taÅŸÄ±nmazlarÄ± gÃ¶rebilir.
+        // DiÄŸer kullanÄ±cÄ±lar yalnÄ±zca kendi taÅŸÄ±nmazlarÄ±nÄ± gÃ¶rebilir.
         if (!string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
         {
             query = query.Where(p => p.UserId == userId);
@@ -172,7 +172,7 @@ public class PropertyService : IPropertyService
         if (neighborhood == null)
         {
             throw new KeyNotFoundException(
-                "Belirtilen þehir, ilçe veya mahalle bulunamadý.");
+                "Belirtilen ÅŸehir, ilÃ§e veya mahalle bulunamadÄ±.");
         }
 
         var property = new Property
@@ -219,7 +219,7 @@ public class PropertyService : IPropertyService
         if (property == null)
         {
             throw new KeyNotFoundException(
-                "Taþýnmaz bulunamadý veya bu iþlem için yetkiniz yok.");
+                "TaÅŸÄ±nmaz bulunamadÄ± veya bu iÅŸlem iÃ§in yetkiniz yok.");
         }
 
         var neighborhood = await GetNeighborhoodAsync(
@@ -230,7 +230,7 @@ public class PropertyService : IPropertyService
         if (neighborhood == null)
         {
             throw new KeyNotFoundException(
-                "Belirtilen þehir, ilçe veya mahalle bulunamadý.");
+                "Belirtilen ÅŸehir, ilÃ§e veya mahalle bulunamadÄ±.");
         }
 
         property.MahalleId = neighborhood.Id;

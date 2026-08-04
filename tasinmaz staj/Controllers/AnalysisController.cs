@@ -1,37 +1,44 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using System;
 using System.Threading.Tasks;
+using TasinmazStaj.Interfaces;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize] // REQ-1: Area Analysis sayfasýna sadece doðrulanmýþ kullanýcýlar eriþebilir[cite: 1]
-public class AnalysisController : ControllerBase
+namespace TasinmazStaj.Controllers
 {
-    private readonly IGeometryService _geometryService;
-
-    public AnalysisController(IGeometryService geometryService)
+    [Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AnalysisController : ControllerBase
     {
-        _geometryService = geometryService;
-    }
+        private readonly IGeometryService _geometryService;
 
-    private int GetUserId()
-    {
-        var claim = User.FindFirst(ClaimTypes.NameIdentifier);
-        return claim != null ? int.Parse(claim.Value) : 0;
-    }
+        public AnalysisController(IGeometryService geometryService)
+        {
+            _geometryService = geometryService;
+        }
 
-    [HttpPost("save-union")]
-    public async Task<IActionResult> SaveUnionGeometry([FromBody] SaveGeometryDto dto)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(new { message = "Lütfen geçerli geometri ve alan verisi saðlayýn." });
+        // ... (Keep existing endpoints for auto-select, manual-draw, etc.) ...
 
-        var success = await _geometryService.SaveUnionResultAsync(dto, GetUserId());
+        [HttpPost("save-union")]
+        public async Task<IActionResult> SaveUnion([FromBody] SaveGeometryDto request)
+        {
+            // The [Required] annotations in your DTO will automatically trigger 
+            // ModelState invalidation if data is missing, but it's good practice to check it explicitly.
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        if (success)
-            return Ok(new { message = "Geometri baþarýyla veritabanýna kaydedildi." });
-
-        return StatusCode(500, new { message = "Geometri kaydedilirken bir hata oluþtu." });
+            try
+            {
+                var result = await _geometryService.SaveUnionResultAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while saving the geometry.", details = ex.Message });
+            }
+        }
     }
 }

@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TasinmazStaj.Interfaces;
+using TasinmazStaj.Services;
 
 namespace tasinmaz_staj
 {
@@ -32,6 +34,7 @@ namespace tasinmaz_staj
         {
             services.AddScoped<IPropertyService, PropertyService>();
             services.AddScoped<IPropertyExportService, PropertyExportService>();
+            services.AddScoped<IPropertyImportService, PropertyImportService>();
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<ILogExportService, LogExportService>();
             services.AddScoped<IUserService, UserService>();
@@ -44,7 +47,7 @@ namespace tasinmaz_staj
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header. Örnek: Bearer {token}",
+                    Description = "JWT Authorization header. Ã–rnek: Bearer {token}",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,

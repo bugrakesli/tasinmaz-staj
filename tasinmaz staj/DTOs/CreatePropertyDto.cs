@@ -2,25 +2,25 @@ using System.ComponentModel.DataAnnotations;
 
 public class CreatePropertyDto
 {
-    [Required(ErrorMessage = "Şehir alanı zorunludur.")]
+    [Required(ErrorMessage = "Åehir alanÄ± zorunludur.")]
     public string City { get; set; }
 
-    [Required(ErrorMessage = "İlçe alanı zorunludur.")]
+    [Required(ErrorMessage = "Ä°lÃ§e alanÄ± zorunludur.")]
     public string District { get; set; }
 
-    [Required(ErrorMessage = "Mahalle alanı zorunludur.")]
+    [Required(ErrorMessage = "Mahalle alanÄ± zorunludur.")]
     public string Neighborhood { get; set; }
 
-    [Required(ErrorMessage = "Ada numarası zorunludur.")]
+    [Required(ErrorMessage = "Ada numarasÄ± zorunludur.")]
     public string LotNumber { get; set; }
 
-    [Required(ErrorMessage = "Parsel numarası zorunludur.")]
+    [Required(ErrorMessage = "Parsel numarasÄ± zorunludur.")]
     public string ParcelNumber { get; set; }
 
     [Required(ErrorMessage = "Adres zorunludur.")]
     public string Address { get; set; }
 
-    [Required(ErrorMessage = "Taşınmaz tipi zorunludur.")]
+    [Required(ErrorMessage = "TaÅŸÄ±nmaz tipi zorunludur.")]
     public string PropertyType { get; set; }
 
     [Required(ErrorMessage = "Koordinat (WKT) bilgisi zorunludur.")]

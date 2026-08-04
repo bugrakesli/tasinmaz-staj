@@ -16,12 +16,12 @@ namespace tasinmaz_staj.Filters
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            // Controller'daki metot çalýþýp response dönene kadar bekle
+            // Controller'daki metot Ã§alÄ±ÅŸÄ±p response dÃ¶nene kadar bekle
             var executedContext = await next();
 
             var user = context.HttpContext.User;
 
-            // Kullanýcý yetki doðrulamasý yapmýþsa log at
+            // KullanÄ±cÄ± yetki doÄŸrulamasÄ± yapmÄ±ÅŸsa log at
             if (user.Identity.IsAuthenticated)
             {
                 var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -29,7 +29,7 @@ namespace tasinmaz_staj.Filters
 
                 var method = context.HttpContext.Request.Method;
 
-                // Sadece veri deðiþtiren (CRUD'un C, U, D) isteklerini logluyoruz
+                // Sadece veri deÄŸiÅŸtiren (CRUD'un C, U, D) isteklerini logluyoruz
                 if (method == "POST" || method == "PUT" || method == "DELETE")
                 {
                     string operation = method switch
@@ -46,7 +46,7 @@ namespace tasinmaz_staj.Filters
                     {
                         UserId = userId,
                         OperationType = operation,
-                        Description = $"{controllerName} üzerinde {operation} iþlemi gerçekleþtirildi.",
+                        Description = $"{controllerName} Ã¼zerinde {operation} iÅŸlemi gerÃ§ekleÅŸtirildi.",
                         UserIp = context.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Bilinmiyor",
                         Timestamp = DateTime.UtcNow,
                         Status = executedContext.Exception == null ? "Success" : "Failed"

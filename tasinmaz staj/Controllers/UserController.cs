@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")] // REQ-8: Yalnýzca Admin eriþebilir[cite: 1]
+[Authorize(Roles = "Admin")] // REQ-8: YalnÄ±zca Admin eriÅŸebilir[cite: 1]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;

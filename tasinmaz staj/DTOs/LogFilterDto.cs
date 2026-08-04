@@ -8,7 +8,7 @@ public class LogFilterDto
     public string Description { get; set; }
     public string UserIp { get; set; }
 
-    // Timestamp araması için aralık belirtmek her zaman en sağlıklısıdır
+    // Timestamp aramasÄ± iÃ§in aralÄ±k belirtmek her zaman en saÄŸlÄ±klÄ±sÄ±dÄ±r
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 

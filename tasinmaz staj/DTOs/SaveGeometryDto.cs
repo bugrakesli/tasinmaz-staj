@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 public class SaveGeometryDto
 {
     [Required]
-    public string ResultType { get; set; } // SRS'e göre "D" veya "E" gelecek[cite: 1]
+    public string ResultType { get; set; } // SRS'e gÃ¶re "D" veya "E" gelecek[cite: 1]
 
     [Required]
-    public string ResultWkt { get; set; } // Frontend'in birleştirdiği yeni poligon koordinatları
+    public string ResultWkt { get; set; } // Frontend'in birleÅŸtirdiÄŸi yeni poligon koordinatlarÄ±
 
     [Required]
     public double CalculatedArea { get; set; } // Frontend'den gelecek metrekare ($m^2$) cinsinden alan[cite: 1]

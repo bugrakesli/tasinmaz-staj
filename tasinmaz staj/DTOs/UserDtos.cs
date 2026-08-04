@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class UserFilterDto
 {
-    // REQ-9: Sayfalama zorunluluğu
+    // REQ-9: Sayfalama zorunluluÄŸu
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
 }
@@ -12,10 +12,10 @@ public class UserCreateDto
     [Required]
     public string Email { get; set; }
 
-    // REQ-10: Şifre kuralları validasyonu
+    // REQ-10: Åifre kurallarÄ± validasyonu
     [Required]
     [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,12}$",
-        ErrorMessage = "Şifre 8-12 karakter arası olmalı; en az bir harf, bir rakam ve bir özel karakter içermelidir.")]
+        ErrorMessage = "Åifre 8-12 karakter arasÄ± olmalÄ±; en az bir harf, bir rakam ve bir Ã¶zel karakter iÃ§ermelidir.")]
     public string Password { get; set; }
 
     [Required]
@@ -28,8 +28,8 @@ public class UserUpdateDto
     public string Email { get; set; }
 
     [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,12}$",
-        ErrorMessage = "Şifre 8-12 karakter arası olmalı; en az bir harf, bir rakam ve bir özel karakter içermelidir.")]
-    public string Password { get; set; } // Güncellemede şifre boş geçilebilir, doluysa kurala uymak zorundadır
+        ErrorMessage = "Åifre 8-12 karakter arasÄ± olmalÄ±; en az bir harf, bir rakam ve bir Ã¶zel karakter iÃ§ermelidir.")]
+    public string Password { get; set; } // GÃ¼ncellemede ÅŸifre boÅŸ geÃ§ilebilir, doluysa kurala uymak zorundadÄ±r
 
     [Required]
     public string Role { get; set; }

@@ -9,6 +9,6 @@ public class Property
     public string AdaNo { get; set; }
     public string Adres { get; set; }
     public string PropertyType { get; set; }
-    public string Coordinate { get; set; }   // WKT formatýnda polygon
+    public string Coordinate { get; set; }   // WKT formatÄ±nda polygon
     public string ImagePath { get; set; }
 }

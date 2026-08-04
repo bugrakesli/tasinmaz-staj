@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -46,5 +47,27 @@ public class AuthController : ControllerBase
             Role = user.Role,
             Email = user.Email
         });
+    }
+
+    // AutoLogFilter yalnizca "user.Identity.IsAuthenticated == true" olan
+    // isteklerde calisir; login sirasinda henuz JWT olmadigindan bu istek
+    // filtre tarafindan yakalanmaz. SRS (2.1 Product Perspective) login
+    // denemelerinin de loglanmasini istedigi icin burada acikca logluyoruz.
+    private async Task LogLoginAttemptAsync(int userId, string email, bool success)
+    {
+        var log = new Log
+        {
+            UserId = userId,
+            OperationType = "Login",
+            Description = success
+                ? $"{email} basariyla giris yapti."
+                : $"{email} icin basarisiz giris denemesi.",
+            UserIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Bilinmiyor",
+            Timestamp = DateTime.UtcNow,
+            Status = success ? "Success" : "Failed"
+        };
+
+        await _context.Logs.AddAsync(log);
+        await _context.SaveChangesAsync();
     }
 }

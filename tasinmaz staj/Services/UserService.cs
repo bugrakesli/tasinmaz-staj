@@ -18,7 +18,7 @@ public class UserService : IUserService
         var users = await query
             .Skip((filter.PageNumber - 1) * filter.PageSize)
             .Take(filter.PageSize)
-            .Select(u => new { u.Id, u.Email, u.Role }) // Þifre hash'lerini listeye dahil etmiyoruz
+            .Select(u => new { u.Id, u.Email, u.Role }) // Åžifre hash'lerini listeye dahil etmiyoruz
             .ToListAsync();
 
         return new { TotalCount = totalRecords, Data = users };
@@ -26,7 +26,7 @@ public class UserService : IUserService
 
     public async Task<bool> CreateUserAsync(UserCreateDto dto)
     {
-        // Þifre Hashleme iþlemi (Kendi yazdýðýn PasswordHelper'a göre uyarla)
+        // Åžifre Hashleme iÅŸlemi (Kendi yazdÄ±ÄŸÄ±n PasswordHelper'a gÃ¶re uyarla)
         string salt = PasswordHelper.GenerateSalt();
         string hash = PasswordHelper.HashPassword(dto.Password, salt);
 
@@ -53,7 +53,7 @@ public class UserService : IUserService
 
         if (!string.IsNullOrEmpty(dto.Password))
         {
-            // Yeni þifre girildiyse onu da hashleyip güncelle
+            // Yeni ÅŸifre girildiyse onu da hashleyip gÃ¼ncelle
             user.Salt = PasswordHelper.GenerateSalt();
             user.PasswordHash = PasswordHelper.HashPassword(dto.Password, user.Salt);
         }
@@ -68,7 +68,7 @@ public class UserService : IUserService
         var user = await _context.Users.FindAsync(id);
         if (user == null) return false;
 
-        // REQ-5: Kullanýcý silinince ona ait taþýnmazlarýn da silinmesi (Cascade Delete)[cite: 1]
+        // REQ-5: KullanÄ±cÄ± silinince ona ait taÅŸÄ±nmazlarÄ±n da silinmesi (Cascade Delete)[cite: 1]
         var userProperties = _context.Properties.Where(p => p.UserId == id);
         _context.Properties.RemoveRange(userProperties);
 

@@ -29,13 +29,13 @@ private const long MaxFileSize = 100 * 1024 * 1024;
 		if (image == null || image.Length == 0)
 		{
 			throw new ArgumentException(
-				"Yüklenecek bir görsel seçilmelidir.");
+				"YÃ¼klenecek bir gÃ¶rsel seÃ§ilmelidir.");
 		}
 
 		if (image.Length > MaxFileSize)
 		{
 			throw new ArgumentException(
-				"Görsel boyutu 100 MB'dan büyük olamaz.");
+				"GÃ¶rsel boyutu 100 MB'dan bÃ¼yÃ¼k olamaz.");
 		}
 
 		var allowedExtensions = new[]
@@ -54,7 +54,7 @@ private const long MaxFileSize = 100 * 1024 * 1024;
 				extension) < 0)
 		{
 			throw new ArgumentException(
-				"Yalnýzca JPG, JPEG ve PNG dosyalarý yüklenebilir.");
+				"YalnÄ±zca JPG, JPEG ve PNG dosyalarÄ± yÃ¼klenebilir.");
 		}
 
 		var property = await _context.Properties
@@ -65,7 +65,7 @@ private const long MaxFileSize = 100 * 1024 * 1024;
 		if (property == null)
 		{
 			throw new KeyNotFoundException(
-				"Taþýnmaz bulunamadý veya bu iþlem için yetkiniz yok.");
+				"TaÅŸÄ±nmaz bulunamadÄ± veya bu iÅŸlem iÃ§in yetkiniz yok.");
 		}
 
 		var webRootPath = _environment.WebRootPath;

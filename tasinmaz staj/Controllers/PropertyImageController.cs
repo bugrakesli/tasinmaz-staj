@@ -39,7 +39,7 @@ public PropertyImageController(
 
             return Ok(new
             {
-                Message = "Görsel başarıyla yüklendi.",
+                Message = "GÃ¶rsel baÅŸarÄ±yla yÃ¼klendi.",
                 ImagePath = imagePath
             });
         }
@@ -76,14 +76,14 @@ public PropertyImageController(
             return NotFound(new
             {
                 Message =
-                    "Görsel veya taşınmaz bulunamadı."
+                    "GÃ¶rsel veya taÅŸÄ±nmaz bulunamadÄ±."
             });
         }
 
         return Ok(new
         {
             Message =
-                "Görsel başarıyla silindi."
+                "GÃ¶rsel baÅŸarÄ±yla silindi."
         });
     }
 
@@ -98,7 +98,7 @@ public PropertyImageController(
                 out int userId))
         {
             throw new UnauthorizedAccessException(
-                "Geçerli kullanıcı bilgisi bulunamadı.");
+                "GeÃ§erli kullanÄ±cÄ± bilgisi bulunamadÄ±.");
         }
 
         return userId;
