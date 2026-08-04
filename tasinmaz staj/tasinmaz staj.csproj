@@ -24,7 +24,9 @@
     <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+	<PackageReference Include="ClosedXML" Version="0.104.2" />
+	<PackageReference Include="QuestPDF" Version="2024.10.0" />
   </ItemGroup>
 
-
+<!-- closedxml ve questpdf'e dikkat et. -->
 </Project>

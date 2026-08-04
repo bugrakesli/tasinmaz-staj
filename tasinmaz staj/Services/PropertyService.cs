@@ -9,7 +9,7 @@ public class PropertyService : IPropertyService
     private readonly RemsDbContext _context;
 
 
-public PropertyService(RemsDbContext context)
+    public PropertyService(RemsDbContext context)
     {
         _context = context;
     }
@@ -45,10 +45,10 @@ public PropertyService(RemsDbContext context)
             .ToListAsync();
     }
 
-    public async Task<object> GetFilteredAsync(
-    PropertyFilterDto filter,
-    int userId,
-    string role)
+    private IQueryable<Property> BuildFilteredQuery(
+        PropertyFilterDto filter,
+        int userId,
+        string role)
     {
         bool isAdmin = string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase);
 
@@ -88,6 +88,16 @@ public PropertyService(RemsDbContext context)
         if (!string.IsNullOrWhiteSpace(filter.PropertyType))
             query = query.Where(p => p.PropertyType == filter.PropertyType);
 
+        return query;
+    }
+
+    public async Task<object> GetFilteredAsync(
+        PropertyFilterDto filter,
+        int userId,
+        string role)
+    {
+        var query = BuildFilteredQuery(filter, userId, role);
+
         int totalRecords = await query.CountAsync();
 
         int pageNumber = filter.PageNumber < 1 ? 1 : filter.PageNumber;
@@ -121,6 +131,33 @@ public PropertyService(RemsDbContext context)
             PageSize = pageSize,
             Data = data
         };
+    }
+
+    // 3.2.4 REQ-3/REQ-8: Export, ekranda gorunen (filtrelenmis) tum kayitlari
+    // kapsamali; export islemine sayfalama uygulanmaz.
+    public async Task<List<PropertyDto>> GetForExportAsync(
+        PropertyFilterDto filter,
+        int userId,
+        string role)
+    {
+        var query = BuildFilteredQuery(filter, userId, role);
+
+        return await query
+            .OrderBy(p => p.Id)
+            .Select(p => new PropertyDto
+            {
+                Id = p.Id,
+                City = p.Mahalle.Ilce.Il.Ad,
+                District = p.Mahalle.Ilce.Ad,
+                Neighborhood = p.Mahalle.Ad,
+                ParselNo = p.ParselNo,
+                AdaNo = p.AdaNo,
+                Adres = p.Adres,
+                PropertyType = p.PropertyType,
+                Coordinate = p.Coordinate,
+                ImagePath = p.ImagePath
+            })
+            .ToListAsync();
     }
 
     public async Task<PropertyDto> CreateAsync(

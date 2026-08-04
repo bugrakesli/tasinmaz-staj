@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ public class LogService : ILogService
         _context = context;
     }
 
-    public async Task<object> GetFilteredLogsAsync(LogFilterDto filter)
+    private IQueryable<Log> BuildFilteredQuery(LogFilterDto filter)
     {
         var query = _context.Logs.AsQueryable();
 
@@ -37,7 +38,12 @@ public class LogService : ILogService
             query = query.Where(l => l.Timestamp <= filter.EndDate.Value);
 
         // Varsayýlan olarak en yeni loglar en üstte gelsin
-        query = query.OrderByDescending(l => l.Timestamp);
+        return query.OrderByDescending(l => l.Timestamp);
+    }
+
+    public async Task<object> GetFilteredLogsAsync(LogFilterDto filter)
+    {
+        var query = BuildFilteredQuery(filter);
 
         int totalRecords = await query.CountAsync();
 
@@ -53,5 +59,12 @@ public class LogService : ILogService
             PageSize = filter.PageSize,
             Data = logs
         };
+    }
+
+    // 3.2.6 REQ-3/REQ-7: export, aktif filtreleri ve sirayi yansitmali;
+    // sayfalama uygulanmaz, filtreye uyan tum kayitlar dahil edilir.
+    public async Task<List<Log>> GetForExportAsync(LogFilterDto filter)
+    {
+        return await BuildFilteredQuery(filter).ToListAsync();
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -9,10 +10,14 @@ using System.Threading.Tasks;
 public class PropertyController : ControllerBase
 {
     private readonly IPropertyService _propertyService;
+    private readonly IPropertyExportService _propertyExportService;
 
-    public PropertyController(IPropertyService propertyService)
+    public PropertyController(
+        IPropertyService propertyService,
+        IPropertyExportService propertyExportService)
     {
         _propertyService = propertyService;
+        _propertyExportService = propertyExportService;
     }
 
     // Token içindeki claim'lerden userId ve role'ü okuyan yardýmcý metotlar
@@ -91,6 +96,41 @@ public class PropertyController : ControllerBase
         catch
         {
             return StatusCode(500, new { message = "Bir hata oluþtu." });
+        }
+    }
+
+    // REQ-1/REQ-2: Admin tum kayitlari (filtreliyse filtrelenmis), normal
+    // kullanici sadece kendi kayitlarini export edebilir.
+    [HttpGet("export/excel")]
+    public async Task<IActionResult> ExportToExcel([FromQuery] PropertyFilterDto filter)
+    {
+        try
+        {
+            var fileBytes = await _propertyExportService.ExportToExcelAsync(filter, GetUserId(), GetRole());
+            var fileName = $"properties_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+            return File(
+                fileBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileName);
+        }
+        catch
+        {
+            return StatusCode(500, new { message = "Failed to export." });
+        }
+    }
+
+    [HttpGet("export/pdf")]
+    public async Task<IActionResult> ExportToPdf([FromQuery] PropertyFilterDto filter)
+    {
+        try
+        {
+            var fileBytes = await _propertyExportService.ExportToPdfAsync(filter, GetUserId(), GetRole());
+            var fileName = $"properties_{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
+            return File(fileBytes, "application/pdf", fileName);
+        }
+        catch
+        {
+            return StatusCode(500, new { message = "Failed to export." });
         }
     }
 }
