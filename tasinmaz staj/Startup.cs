@@ -67,7 +67,15 @@ namespace tasinmaz_staj
             });
 
             services.AddDbContext<RemsDbContext>(options =>
-            options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    npgsqlOptions =>
+                    {
+                        npgsqlOptions.UseNetTopologySuite();
+                    }
+                )
+            );
+
 
             services.AddControllers(options =>
             {
