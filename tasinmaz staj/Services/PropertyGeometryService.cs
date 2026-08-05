@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,7 +38,7 @@ public PropertyGeometryService(RemsDbContext context)
             return false;
         }
 
-        // Normal kullan˝c˝ yaln˝zca kendi m¸lk¸n¸ g¸ncelleyebilir.
+        // Normal kullanƒ±cƒ± yalnƒ±zca kendi m√ºlk√ºn√º g√ºncelleyebilir.
         if (role != "Admin" && property.UserId != userId)
         {
             throw new UnauthorizedAccessException(
@@ -57,7 +57,7 @@ public PropertyGeometryService(RemsDbContext context)
             ))
             .ToList();
 
-        // Polygon halkas˝ kapal˝ deilse ilk noktay˝ sona ekle.
+        // Polygon halkasƒ± kapalƒ± deƒüilse ilk noktayƒ± sona ekle.
         if (!shellCoordinates.First()
             .Equals2D(shellCoordinates.Last()))
         {
@@ -125,7 +125,7 @@ public PropertyGeometryService(RemsDbContext context)
             ))
             .ToList();
 
-        // ›lk ve son nokta ayn˝ deilse poligonu kapat.
+        // ƒ∞lk ve son nokta aynƒ± deƒüilse poligonu kapat.
         if (!shellCoordinates.First()
             .Equals2D(shellCoordinates.Last()))
         {
@@ -159,8 +159,8 @@ public PropertyGeometryService(RemsDbContext context)
                 x.Geometry.Intersects(selectionPolygon)
             );
 
-        // Admin t¸m m¸lkleri gˆrebilir.
-        // Normal kullan˝c˝ yaln˝zca kendi m¸lklerini gˆr¸r.
+        // Admin t√ºm m√ºlkleri g√∂rebilir.
+        // Normal kullanƒ±cƒ± yalnƒ±zca kendi m√ºlklerini g√∂r√ºr.
         if (role != "Admin")
         {
             query = query.Where(
@@ -212,7 +212,7 @@ public PropertyGeometryService(RemsDbContext context)
                 x.Geometry != null
             );
 
-        // Normal kullan˝c˝ yaln˝zca kendi m¸lk¸n¸ analiz edebilir.
+        // Normal kullanƒ±cƒ± yalnƒ±zca kendi m√ºlk√ºn√º analiz edebilir.
         if (role != "Admin")
         {
             propertyQuery = propertyQuery.Where(
@@ -291,16 +291,16 @@ public PropertyGeometryService(RemsDbContext context)
             );
 
         // EPSG:4326 derece birimindedir.
-        // Alan hesab˝ iÁin geometriyi metre tabanl˝
-        // EPSG:3857 koordinat sistemine dˆn¸˛t¸r¸yoruz.
+        // Alan hesabƒ± i√ßin geometriyi metre tabanlƒ±
+        // EPSG:3857 koordinat sistemine d√∂n√º≈üt√ºr√ºyoruz.
         var propertyGeometry3857 =
             property.Geometry.Copy();
 
         var selectionGeometry3857 =
             selectionPolygon.Copy();
 
-        // PostGIS ¸zerinden metre cinsinden alan hesab˝
-        // yapaca˝m˝z iÁin a˛a˝daki alanlar SQL taraf˝nda
+        // PostGIS √ºzerinden metre cinsinden alan hesabƒ±
+        // yapacaƒüƒ±mƒ±z i√ßin a≈üaƒüƒ±daki alanlar SQL tarafƒ±nda
         // hesaplanacak.
         var areaResult = await _context.Properties
             .Where(x => x.Id == property.Id)
@@ -356,4 +356,153 @@ public PropertyGeometryService(RemsDbContext context)
                 intersection.AsText()
         };
     }
+
+    public async Task<UnionResultDto> AnalyzeUnionAsync(
+    UnionAnalysisDto dto,
+    int userId,
+    string role)
+    {
+        if (dto == null)
+        {
+            throw new ArgumentException(
+                "Union information is required."
+            );
+        }
+
+        if (dto.PropertyAId <= 0 ||
+            dto.PropertyBId <= 0)
+        {
+            throw new ArgumentException(
+                "Properties A and B are required."
+            );
+        }
+
+        var propertyIds = new List<int>
+    {
+        dto.PropertyAId,
+        dto.PropertyBId
+    };
+
+        if (dto.PropertyCId.HasValue)
+        {
+            if (dto.PropertyCId.Value <= 0)
+            {
+                throw new ArgumentException(
+                    "Property C is invalid."
+                );
+            }
+
+            propertyIds.Add(
+                dto.PropertyCId.Value
+            );
+        }
+
+        // Aynƒ± property'nin birden fazla se√ßilmesini engelle.
+        if (propertyIds.Distinct().Count()
+            != propertyIds.Count)
+        {
+            throw new ArgumentException(
+                "A, B and C must be different properties."
+            );
+        }
+
+        var propertyQuery = _context.Properties
+            .Where(x =>
+                propertyIds.Contains(x.Id) &&
+                x.Geometry != null
+            );
+
+        // Normal kullanƒ±cƒ± yalnƒ±zca kendi m√ºlkleriyle
+        // union i≈ülemi yapabilir.
+        if (role != "Admin")
+        {
+            propertyQuery = propertyQuery.Where(
+                x => x.UserId == userId
+            );
+        }
+
+        var properties = await propertyQuery
+            .ToListAsync();
+
+        if (properties.Count != propertyIds.Count)
+        {
+            throw new KeyNotFoundException(
+                "One or more properties were not found or access was denied."
+            );
+        }
+
+        var propertyA = properties
+            .First(x => x.Id == dto.PropertyAId);
+
+        var propertyB = properties
+            .First(x => x.Id == dto.PropertyBId);
+
+        // A ‚à™ B i≈ülemi
+        Geometry unionGeometry =
+            propertyA.Geometry.Union(
+                propertyB.Geometry
+            );
+
+        string resultLabel = "D";
+
+        // C g√∂nderilmi≈üse:
+        // (A ‚à™ B) ‚à™ C = A ‚à™ B ‚à™ C
+        if (dto.PropertyCId.HasValue)
+        {
+            var propertyC = properties
+                .First(x =>
+                    x.Id == dto.PropertyCId.Value
+                );
+
+            unionGeometry =
+                unionGeometry.Union(
+                    propertyC.Geometry
+                );
+
+            resultLabel = "E";
+        }
+
+        if (unionGeometry == null ||
+            unionGeometry.IsEmpty)
+        {
+            throw new InvalidOperationException(
+                "Union geometry could not be created."
+            );
+        }
+
+        // Union geometrisi EPSG:4326 koordinat sisteminde.
+        // Alan hesabƒ± i√ßin EPSG:3857'e d√∂n√º≈üt√ºr√ºl√ºr.
+        var unionGeometry3857 =
+            unionGeometry.Copy();
+
+        unionGeometry3857.SRID = 3857;
+
+        // Metre cinsinden alan
+        double surfaceArea = Math.Round(
+            unionGeometry3857.Area,
+            2
+        );
+
+        var geometryResult = new GeometryResult
+        {
+            Label = resultLabel,
+            Wkt = unionGeometry.AsText(),
+            SurfaceArea = surfaceArea,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.GeometryResults.Add(
+            geometryResult
+        );
+
+        await _context.SaveChangesAsync();
+
+        return new UnionResultDto
+        {
+            ResultLabel = resultLabel,
+            AreaSquareMeters = surfaceArea,
+            Geometry = unionGeometry.AsText()
+        };
+    }
+
 }

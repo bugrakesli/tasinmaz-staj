@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -314,6 +314,46 @@ public class PropertyController : ControllerBase
             {
                 message =
                     "An error occurred while analyzing the intersection."
+            });
+        }
+    }
+
+    [HttpPost("spatial/union")]
+    public async Task<IActionResult> AnalyzeUnion(
+    [FromBody] UnionAnalysisDto dto)
+    {
+        try
+        {
+            var result =
+                await _propertyGeometryService
+                    .AnalyzeUnionAsync(
+                        dto,
+                        GetUserId(),
+                        GetRole()
+                    );
+
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new
+            {
+                message = ex.Message
+            });
+        }
+        catch
+        {
+            return StatusCode(500, new
+            {
+                message =
+                    "An error occurred while analyzing the union."
             });
         }
     }

@@ -21,4 +21,10 @@ public interface IPropertyGeometryService
         int userId,
         string role
     );
+
+    Task<UnionResultDto> AnalyzeUnionAsync(
+        UnionAnalysisDto dto,
+        int userId,
+        string role
+    );
 }

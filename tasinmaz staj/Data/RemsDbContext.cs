@@ -9,18 +9,36 @@ public class RemsDbContext : DbContext
     public DbSet<Mahalle> Mahalleler { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Property> Properties { get; set; }
-    public DbSet<Log> Logs { get; set; } 
+    public DbSet<Log> Logs { get; set; }
     public DbSet<GeometryResult> GeometryResults { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // Configure relationships and constraints if needed
+
+        // Property geometrisi
         modelBuilder.Entity<Property>(entity =>
         {
             entity.Property(x => x.Geometry)
-                .HasColumnType("geometry(Polygon,4326)") // Set the SRID to 4326 for WGS84
-                .IsRequired(false); 
-        });   
+                .HasColumnType("geometry(Polygon,4326)")
+                .IsRequired(false);
+        });
+
+        // Union sonuçlarý: D ve E
+        modelBuilder.Entity<GeometryResult>(entity =>
+        {
+            entity.Property(x => x.Label)
+                .HasMaxLength(1)
+                .IsRequired();
+
+            entity.Property(x => x.Wkt)
+                .IsRequired();
+
+            entity.Property(x => x.SurfaceArea)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .IsRequired();
+        });
     }
 }
