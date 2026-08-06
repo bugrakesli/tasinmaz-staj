@@ -1,16 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<RootNamespace>tasinmaz_staj</RootNamespace>
-	</PropertyGroup>
+	  <UserSecretsId>76434f43-1569-4064-b6c0-b01d6f63f857</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference
-    Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite"
-    Version="8.0.10" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.10" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
 			<PrivateAssets>all</PrivateAssets>
