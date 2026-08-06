@@ -1,13 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 
-public class SaveGeometryDto
+public class SaveManualGeometryDto
 {
     [Required]
-    public string ResultType { get; set; } // SRS'e göre "D" veya "E" gelecek[cite: 1]
+    [RegularExpression("^(A|B|C)$", ErrorMessage = "Label 'A', 'B' veya 'C' olmalıdır.")]
+    public string Label { get; set; }
 
     [Required]
-    public string ResultWkt { get; set; } // Frontend'in birleştirdiği yeni poligon koordinatları
-
-    [Required]
-    public double CalculatedArea { get; set; } // Frontend'den gelecek metrekare ($m^2$) cinsinden alan[cite: 1]
+    public string Wkt { get; set; } // Kullanıcının haritada çizdiği polygon (WKT)
 }
