@@ -209,7 +209,6 @@ namespace TasinmazStaj.Services
         // Ayni sorun PropertyGeometryService.AnalyzeIntersectionAsync/AnalyzeUnionAsync'te
         // de var (EF.Functions.Transform(...,3857)). Test asamasinda geodesic
         // formule (Chamberlain & Duquette) gecilecek. Simdilik bilerek erteleniyor.
-private static double CalculateAreaInSquareMeters(Geometry geometry)
         private static double CalculateAreaInSquareMeters(Geometry geometry)
         {
             var factory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 3857);

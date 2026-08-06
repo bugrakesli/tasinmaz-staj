@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { Login } from './components/login/login';
 import { PropertyList } from './components/property-list/property-list';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -10,7 +11,8 @@ export const routes: Routes = [
   },
   {
     path: 'properties',
-    component: PropertyList
+    component: PropertyList,
+    canActivate: [authGuard]
   },
   {
     path: '',
