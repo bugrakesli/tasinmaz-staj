@@ -407,3 +407,5 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
+**/.angular/
+**/node_modules/
