@@ -7,6 +7,7 @@ import { LoginRequest } from '../../models/login-request.model';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.scss'

@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-property-list',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss'
