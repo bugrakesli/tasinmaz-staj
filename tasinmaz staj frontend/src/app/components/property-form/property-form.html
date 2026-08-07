@@ -1,0 +1,114 @@
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+      {{ isEditMode ? 'Taşınmazı Düzenle' : 'Yeni Taşınmaz Ekle' }}
+    </h1>
+
+    <button class="btn btn-outline-secondary btn-sm" (click)="cancel()">
+      Listeye Dön
+    </button>
+  </div>
+
+  @if (loadError) {
+    <div class="alert alert-warning">
+      Düzenlenecek taşınmaz bilgisi bulunamadı. Lütfen listeden "Düzenle" bağlantısını kullanın.
+    </div>
+  } @else {
+
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+
+        @if (submitError()) {
+          <div class="alert alert-danger">{{ submitError() }}</div>
+        }
+
+        <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
+
+          <div class="row g-3">
+
+            <div class="col-md-4">
+              <label for="city" class="form-label">Şehir</label>
+              <input id="city" type="text" class="form-control" formControlName="city">
+              @if (propertyForm.get('city')?.touched && propertyForm.get('city')?.invalid) {
+                <div class="text-danger small mt-1">Şehir zorunludur.</div>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="district" class="form-label">İlçe</label>
+              <input id="district" type="text" class="form-control" formControlName="district">
+              @if (propertyForm.get('district')?.touched && propertyForm.get('district')?.invalid) {
+                <div class="text-danger small mt-1">İlçe zorunludur.</div>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="neighborhood" class="form-label">Mahalle</label>
+              <input id="neighborhood" type="text" class="form-control" formControlName="neighborhood">
+              @if (propertyForm.get('neighborhood')?.touched && propertyForm.get('neighborhood')?.invalid) {
+                <div class="text-danger small mt-1">Mahalle zorunludur.</div>
+              }
+            </div>
+
+            <div class="col-md-3">
+              <label for="lotNumber" class="form-label">Ada No</label>
+              <input id="lotNumber" type="text" class="form-control" formControlName="lotNumber">
+              @if (propertyForm.get('lotNumber')?.touched && propertyForm.get('lotNumber')?.invalid) {
+                <div class="text-danger small mt-1">Ada no zorunludur.</div>
+              }
+            </div>
+
+            <div class="col-md-3">
+              <label for="parcelNumber" class="form-label">Parsel No</label>
+              <input id="parcelNumber" type="text" class="form-control" formControlName="parcelNumber">
+              @if (propertyForm.get('parcelNumber')?.touched && propertyForm.get('parcelNumber')?.invalid) {
+                <div class="text-danger small mt-1">Parsel no zorunludur.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="propertyType" class="form-label">Taşınmaz Tipi</label>
+              <input id="propertyType" type="text" class="form-control" formControlName="propertyType"
+                     placeholder="Örn. Arsa, Konut, Tarla">
+              @if (propertyForm.get('propertyType')?.touched && propertyForm.get('propertyType')?.invalid) {
+                <div class="text-danger small mt-1">Taşınmaz tipi zorunludur.</div>
+              }
+            </div>
+
+            <div class="col-12">
+              <label for="address" class="form-label">Adres</label>
+              <input id="address" type="text" class="form-control" formControlName="address">
+              @if (propertyForm.get('address')?.touched && propertyForm.get('address')?.invalid) {
+                <div class="text-danger small mt-1">Adres zorunludur.</div>
+              }
+            </div>
+
+            <div class="col-12">
+              <label for="coordinate" class="form-label">Koordinat (WKT Polygon)</label>
+              <textarea id="coordinate" class="form-control" rows="3" formControlName="coordinate"
+                        placeholder="POLYGON((29.0 41.0, 29.1 41.0, 29.1 41.1, 29.0 41.1, 29.0 41.0))"></textarea>
+              @if (propertyForm.get('coordinate')?.touched && propertyForm.get('coordinate')?.invalid) {
+                <div class="text-danger small mt-1">Koordinat (WKT) zorunludur.</div>
+              }
+            </div>
+
+          </div>
+
+          <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+              {{ saving() ? 'Kaydediliyor...' : 'Kaydet' }}
+            </button>
+            <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+              Vazgeç
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+  }
+
+</div>

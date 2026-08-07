@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -13,7 +13,9 @@ import { LoginRequest } from '../../models/login-request.model';
   styleUrl: './login.scss'
 })
 export class Login {
-  loginError = '';
+  // Zoneless CD altında async subscribe callback'i içinde set edildiği için
+  // signal kullanılıyor.
+  loginError = signal('');
 
   loginForm;
 
@@ -34,7 +36,7 @@ export class Login {
       return;
     }
 
-    this.loginError = '';
+    this.loginError.set('');
 
     const loginRequest: LoginRequest = {
       email: this.loginForm.value.email ?? '',
@@ -43,7 +45,7 @@ export class Login {
 
     this.authService.login(loginRequest).subscribe({
       next: () => this.router.navigate(['/properties']),
-      error: () => (this.loginError = 'E-posta veya şifre hatalı.')
+      error: () => this.loginError.set('E-posta veya şifre hatalı.')
     });
   }
 }

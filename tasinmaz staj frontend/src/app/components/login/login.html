@@ -13,9 +13,9 @@
         </p>
       </div>
 
-      @if (loginError) {
+      @if (loginError()) {
         <div class="alert alert-danger">
-          {{ loginError }}
+          {{ loginError() }}
         </div>
       }
 

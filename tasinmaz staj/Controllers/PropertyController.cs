@@ -79,6 +79,40 @@ public class PropertyController : ControllerBase
         }
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CreatePropertyDto dto)
+    {
+        // REQ-10: Admin property güncelleyemez (Create ile aynı kural)
+        if (GetRole() == "Admin")
+            return Forbid();
+
+        try
+        {
+            var result = await _propertyService.UpdateAsync(
+                id,
+                dto,
+                GetUserId()
+            );
+
+            return Ok(new
+            {
+                message = "Property updated successfully.",
+                data = result
+            });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch
+        {
+            return BadRequest(new
+            {
+                message = "Please fill in all required fields with valid format."
+            });
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

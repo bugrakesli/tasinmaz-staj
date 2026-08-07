@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { Login } from './components/login/login';
 import { PropertyList } from './components/property-list/property-list';
+import { PropertyForm } from './components/property-form/property-form';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -12,6 +13,16 @@ export const routes: Routes = [
   {
     path: 'properties',
     component: PropertyList,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'properties/new',
+    component: PropertyForm,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'properties/:id/edit',
+    component: PropertyForm,
     canActivate: [authGuard]
   },
   {
