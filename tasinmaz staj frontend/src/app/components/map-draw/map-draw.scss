@@ -3,4 +3,43 @@
   height: 350px;
   border: 1px solid #dee2e6;
   border-radius: 0.375rem;
+  position: relative;
+}
+
+.map-toolbar {
+  .opacity-control {
+    min-width: 220px;
+
+    .form-range {
+      width: 120px;
+    }
+  }
+}
+
+.intersection-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.intersection-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background-color: rgba(220, 53, 69, 0.55);
+  border: 1px dashed #dc3545;
+}
+
+// OpenLayers ölçek çubuğunu (scale bar) sağ alta taşı.
+// Not: OL kontrolleri Angular şablonu dışında, JS ile DOM'a eklendiği için
+// bu elemente component'e özgü (scoped) stiller normal şekilde ulaşmaz;
+// bu yüzden ::ng-deep kullanılıyor.
+::ng-deep .map-draw-container .ol-scale-line {
+  left: auto;
+  right: 8px;
+  bottom: 8px;
 }

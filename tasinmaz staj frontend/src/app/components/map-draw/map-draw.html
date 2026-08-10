@@ -8,5 +8,48 @@
     }
   </div>
 
+  <!-- 4.3: Altlık harita seçimi ve katman şeffaflığı -->
+  <div class="map-toolbar d-flex flex-wrap gap-3 align-items-center mb-2">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Altlık harita">
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primary]="basemap() === 'osm'"
+        [class.btn-outline-primary]="basemap() !== 'osm'"
+        (click)="setBasemap('osm')">
+        OSM
+      </button>
+      <button
+        type="button"
+        class="btn"
+        [class.btn-primary]="basemap() === 'google'"
+        [class.btn-outline-primary]="basemap() !== 'google'"
+        (click)="setBasemap('google')">
+        Google Maps
+      </button>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 opacity-control">
+      <label for="mapOpacity" class="form-label text-muted mb-0 small">Katman Şeffaflığı</label>
+      <input
+        id="mapOpacity"
+        type="range"
+        class="form-range"
+        min="10"
+        max="100"
+        step="5"
+        [value]="opacityPercent()"
+        (input)="setOpacity($any($event.target).valueAsNumber)" />
+      <span class="text-muted small">{{ opacityPercent() }}%</span>
+    </div>
+
+    @if (hasIntersection()) {
+      <span class="badge intersection-badge">
+        <span class="intersection-swatch"></span>
+        Çakışan Alan
+      </span>
+    }
+  </div>
+
   <div #mapContainer class="map-draw-container"></div>
 </div>
