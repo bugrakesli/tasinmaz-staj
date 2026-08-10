@@ -63,6 +63,10 @@ export class PropertyList implements OnInit {
     });
   }
 
+  goToAnalysis(): void {
+    this.router.navigate(['/analysis']);
+  }
+
   addNew(): void {
     this.router.navigate(['/properties/new']);
   }

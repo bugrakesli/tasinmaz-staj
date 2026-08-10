@@ -1,0 +1,140 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Geometri Analizi (Kesişim / Birleşim)</h1>
+    <button class="btn btn-outline-secondary btn-sm" (click)="goBack()">Taşınmazlara Dön</button>
+  </div>
+
+  <div *ngIf="loadingProperties()" class="alert alert-info">Taşınmazlar yükleniyor...</div>
+  <div *ngIf="loadError()" class="alert alert-danger">{{ loadError() }}</div>
+
+  <div *ngIf="!loadingProperties() && !loadError()" class="row g-4">
+    <!-- Harita: sorgu poligonu (A) burada çizilir, sonuç geometrisi de burada vurgulanır -->
+    <div class="col-lg-7">
+      <app-map-draw (wktChange)="onQueryPolygonChange($event)"></app-map-draw>
+      <small class="text-muted d-block mt-2">
+        Kesişim analizi için haritaya sorgu poligonu (A) çizin. Birleşim analizi mevcut
+        taşınmazlar üzerinden çalışır, poligon çizmenize gerek yoktur.
+      </small>
+    </div>
+
+    <div class="col-lg-5 d-flex flex-column gap-4">
+      <!-- Kesişim: A (çizilen poligon) ∩ B (seçilen taşınmaz) -->
+      <div class="card">
+        <div class="card-header">Kesişim (A ∩ B)</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Taşınmaz (B)</label>
+            <select class="form-select" [(ngModel)]="intersectionPropertyId">
+              <option [ngValue]="null">Seçiniz...</option>
+              <option *ngFor="let p of properties()" [ngValue]="p.id">
+                #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
+                (Ada {{ p.adaNo }}, Parsel {{ p.parselNo }})
+              </option>
+            </select>
+          </div>
+
+          <button
+            class="btn btn-primary btn-sm"
+            [disabled]="intersectionLoading()"
+            (click)="runIntersection()"
+          >
+            {{ intersectionLoading() ? 'Hesaplanıyor...' : 'Kesişimi Hesapla' }}
+          </button>
+
+          <div *ngIf="intersectionError()" class="alert alert-danger mt-3 mb-0">
+            {{ intersectionError() }}
+          </div>
+
+          <div *ngIf="intersectionResult() as result" class="mt-3">
+            <div *ngIf="!result.intersects" class="alert alert-warning mb-0">
+              Seçilen poligon ile taşınmaz kesişmiyor.
+            </div>
+            <table *ngIf="result.intersects" class="table table-sm mb-0">
+              <tbody>
+                <tr>
+                  <th>Taşınmaz Alanı</th>
+                  <td>{{ result.propertyAreaSquareMeters | number: '1.2-2' }} m²</td>
+                </tr>
+                <tr>
+                  <th>Kesişim Alanı</th>
+                  <td>{{ result.intersectionAreaSquareMeters | number: '1.2-2' }} m²</td>
+                </tr>
+                <tr>
+                  <th>Kesişim Oranı</th>
+                  <td>%{{ result.intersectionPercentage | number: '1.2-2' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Birleşim: A ∪ B [∪ C], sonuç D veya E olarak etiketlenip kaydedilir -->
+      <div class="card">
+        <div class="card-header">Birleşim (A ∪ B ∪ C)</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Taşınmaz A</label>
+            <select class="form-select" [(ngModel)]="unionAId">
+              <option [ngValue]="null">Seçiniz...</option>
+              <option *ngFor="let p of properties()" [ngValue]="p.id">
+                #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Taşınmaz B</label>
+            <select class="form-select" [(ngModel)]="unionBId">
+              <option [ngValue]="null">Seçiniz...</option>
+              <option *ngFor="let p of properties()" [ngValue]="p.id">
+                #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Taşınmaz C (opsiyonel)</label>
+            <select class="form-select" [(ngModel)]="unionCId">
+              <option [ngValue]="null">Yok</option>
+              <option *ngFor="let p of properties()" [ngValue]="p.id">
+                #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            class="btn btn-primary btn-sm"
+            [disabled]="unionLoading()"
+            (click)="runUnion()"
+          >
+            {{ unionLoading() ? 'Hesaplanıyor...' : 'Birleştir' }}
+          </button>
+
+          <div *ngIf="unionError()" class="alert alert-danger mt-3 mb-0">
+            {{ unionError() }}
+          </div>
+
+          <div *ngIf="unionResult() as result" class="mt-3">
+            <span class="badge bg-primary">Sonuç: {{ result.resultLabel }}</span>
+            <table class="table table-sm mt-2 mb-0">
+              <tbody>
+                <tr>
+                  <th>Alan</th>
+                  <td>{{ result.areaSquareMeters | number: '1.2-2' }} m²</td>
+                </tr>
+              </tbody>
+            </table>
+            <small class="text-muted">
+              Bu sonuç veritabanına {{ result.resultLabel }} etiketiyle kaydedildi.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-outline-secondary btn-sm align-self-start" (click)="clearResults()">
+        Sonuçları Temizle
+      </button>
+    </div>
+  </div>
+</div>
