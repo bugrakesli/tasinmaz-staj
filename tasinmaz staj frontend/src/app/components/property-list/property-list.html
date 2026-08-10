@@ -5,12 +5,54 @@
       <button *ngIf="!isAdmin()" class="btn btn-primary btn-sm" (click)="addNew()">
         Yeni Taşınmaz Ekle
       </button>
+
+      <button
+        class="btn btn-outline-success btn-sm"
+        [disabled]="exportingExcel()"
+        (click)="exportExcel()"
+      >
+        {{ exportingExcel() ? 'Aktarılıyor...' : "Excel'e Aktar" }}
+      </button>
+
+      <button
+        class="btn btn-outline-success btn-sm"
+        [disabled]="exportingPdf()"
+        (click)="exportPdf()"
+      >
+        {{ exportingPdf() ? 'Aktarılıyor...' : "PDF'e Aktar" }}
+      </button>
+
+      <!-- SRS 3.2.8 REQ-8: sadece normal kullanıcılar import edebilir -->
+      <button
+        *ngIf="!isAdmin()"
+        class="btn btn-outline-primary btn-sm"
+        [disabled]="importing()"
+        (click)="importFileInput.click()"
+      >
+        {{ importing() ? 'İçe Aktarılıyor...' : "Excel'den İçe Aktar" }}
+      </button>
+      <input
+        #importFileInput
+        type="file"
+        accept=".xlsx"
+        class="d-none"
+        (change)="onImportFileSelected($event)"
+      />
+
       <button class="btn btn-outline-danger btn-sm" (click)="logout()">Çıkış Yap</button>
     </div>
   </div>
 
   <div *ngIf="loading()" class="alert alert-info">Yükleniyor...</div>
   <div *ngIf="errorMessage()" class="alert alert-danger">{{ errorMessage() }}</div>
+
+  <div *ngIf="importMessage()" class="alert alert-success">{{ importMessage() }}</div>
+  <div *ngIf="importErrors().length > 0" class="alert alert-danger">
+    <div>Import failed. Please check the file format and data.</div>
+    <ul class="mb-0">
+      <li *ngFor="let err of importErrors()">{{ err }}</li>
+    </ul>
+  </div>
 
   <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle">
     <thead>
