@@ -85,7 +85,17 @@
             </div>
 
             <div class="col-12">
-              <label for="coordinate" class="form-label">Koordinat (WKT Polygon)</label>
+              <label class="form-label">Konum (haritadan çizin)</label>
+              <app-map-draw [initialWkt]="mapWkt()" (wktChange)="onGeometryDrawn($event)"></app-map-draw>
+            </div>
+
+            <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="coordinate" class="form-label mb-0">Koordinat (WKT Polygon)</label>
+                <button type="button" class="btn btn-sm btn-link p-0" (click)="showOnMap()">
+                  Haritada Göster
+                </button>
+              </div>
               <textarea id="coordinate" class="form-control" rows="3" formControlName="coordinate"
                         placeholder="POLYGON((29.0 41.0, 29.1 41.0, 29.1 41.1, 29.0 41.1, 29.0 41.0))"></textarea>
               @if (propertyForm.get('coordinate')?.touched && propertyForm.get('coordinate')?.invalid) {

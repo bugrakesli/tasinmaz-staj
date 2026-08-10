@@ -5,11 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
 import { CreatePropertyDto } from '../../models/create-property.model';
 import { Property } from '../../models/property.model';
+import { MapDraw } from '../map-draw/map-draw';
 
 @Component({
   selector: 'app-property-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MapDraw],
   templateUrl: './property-form.html',
   styleUrl: './property-form.scss'
 })
@@ -25,6 +26,11 @@ export class PropertyForm implements OnInit {
   // Düzenleme modunda, listeden route state ile taşınan kayıt bulunamazsa
   // (örn. sayfa doğrudan URL ile açıldıysa) kullanıcıyı bilgilendiriyoruz.
   loadError = false;
+
+  // Haritada gösterilecek/başlangıç WKT değeri. Harita OpenLayers'ın kendi
+  // (zone dışı) event'leriyle çalıştığından, güncellemeler signal üzerinden
+  // yapılıyor ki zoneless change detection değişikliği yakalasın.
+  mapWkt = signal<string | null>(null);
 
   propertyForm;
 
@@ -78,6 +84,21 @@ export class PropertyForm implements OnInit {
       propertyType: property.propertyType,
       coordinate: property.coordinate
     });
+
+    this.mapWkt.set(property.coordinate);
+  }
+
+  // Harita üzerinde poligon çizildiğinde/temizlendiğinde tetiklenir.
+  onGeometryDrawn(wkt: string): void {
+    this.propertyForm.patchValue({ coordinate: wkt });
+    // Signal set'i zoneless CD'yi tetikler, böylece textarea'daki değer de
+    // güncellenmiş olarak render edilir.
+    this.mapWkt.set(wkt);
+  }
+
+  // Kullanıcı textarea'ya elle WKT yapıştırdıysa haritada göstermek için.
+  showOnMap(): void {
+    this.mapWkt.set(this.propertyForm.value.coordinate ?? '');
   }
 
   onSubmit(): void {
