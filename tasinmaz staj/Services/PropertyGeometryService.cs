@@ -290,47 +290,24 @@ public PropertyGeometryService(RemsDbContext context)
                 selectionPolygon
             );
 
-        // EPSG:4326 derece birimindedir.
-        // Alan hesabı için geometriyi metre tabanlı
-        // EPSG:3857 koordinat sistemine dönüştürüyoruz.
-        var propertyGeometry3857 =
-            property.Geometry.Copy();
+        // SRS 3.2.10: Alan hesabı EPSG:3857 (Web Mercator) yerine, WGS84
+        // (EPSG:4326) lon/lat koordinatları üzerinden geodesic olarak
+        // hesaplanır. EPSG:3857, Türkiye enlemlerinde alanı ~1.6-1.8x
+        // şişiriyordu (bkz. GeodesicAreaCalculator).
+        double propertyAreaSquareMeters =
+            GeodesicAreaCalculator.ComputeAreaSquareMeters(
+                property.Geometry
+            );
 
-        var selectionGeometry3857 =
-            selectionPolygon.Copy();
-
-        // PostGIS üzerinden metre cinsinden alan hesabı
-        // yapacağımız için aşağıdaki alanlar SQL tarafında
-        // hesaplanacak.
-        var areaResult = await _context.Properties
-            .Where(x => x.Id == property.Id)
-            .Select(x => new
-            {
-                PropertyArea =
-                    EF.Functions
-                        .Transform(
-                            x.Geometry,
-                            3857
-                        )
-                        .Area,
-
-                IntersectionArea =
-                    EF.Functions
-                        .Transform(
-                            x.Geometry
-                                .Intersection(
-                                    selectionPolygon
-                                ),
-                            3857
-                        )
-                        .Area
-            })
-            .FirstAsync();
+        double intersectionAreaSquareMeters =
+            GeodesicAreaCalculator.ComputeAreaSquareMeters(
+                intersection
+            );
 
         double percentage =
-            areaResult.PropertyArea > 0
-                ? (areaResult.IntersectionArea /
-                   areaResult.PropertyArea) * 100
+            propertyAreaSquareMeters > 0
+                ? (intersectionAreaSquareMeters /
+                   propertyAreaSquareMeters) * 100
                 : 0;
 
         return new IntersectionResultDto
@@ -339,12 +316,12 @@ public PropertyGeometryService(RemsDbContext context)
             Intersects = true,
             PropertyAreaSquareMeters =
                 Math.Round(
-                    areaResult.PropertyArea,
+                    propertyAreaSquareMeters,
                     2
                 ),
             IntersectionAreaSquareMeters =
                 Math.Round(
-                    areaResult.IntersectionArea,
+                    intersectionAreaSquareMeters,
                     2
                 ),
             IntersectionPercentage =
@@ -470,16 +447,12 @@ public PropertyGeometryService(RemsDbContext context)
             );
         }
 
-        // Union geometrisi EPSG:4326 koordinat sisteminde.
-        // Alan hesabı için EPSG:3857'e dönüştürülür.
-        var unionGeometry3857 =
-            unionGeometry.Copy();
-
-        unionGeometry3857.SRID = 3857;
-
-        // Metre cinsinden alan
+        // SRS 3.2.10: Alan hesabı EPSG:4326 lon/lat koordinatları üzerinden
+        // geodesic olarak yapılır (bkz. GeodesicAreaCalculator).
+        // Not: Geometrinin SRID'ini yalnızca 3857 olarak işaretlemek
+        // koordinatları gerçekten dönüştürmüyordu; eski hesap da hatalıydı.
         double surfaceArea = Math.Round(
-            unionGeometry3857.Area,
+            GeodesicAreaCalculator.ComputeAreaSquareMeters(unionGeometry),
             2
         );
 
