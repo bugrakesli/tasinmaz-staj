@@ -39,6 +39,12 @@ export const routes: Routes = [
     canActivate: [adminGuard]
   },
   {
+    path: 'logs',
+    loadComponent: () =>
+      import('./components/log-list/log-list').then(m => m.LogList),
+    canActivate: [adminGuard]
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

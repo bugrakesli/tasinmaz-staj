@@ -1,0 +1,14 @@
+.description-cell {
+  min-width: 280px;
+  max-width: 500px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+th {
+  white-space: nowrap;
+}
+
+.pagination {
+  flex-wrap: wrap;
+}
