@@ -21,21 +21,22 @@ export class LogList implements OnInit {
   loading = false;
   exporting = false;
   errorMessage = '';
-
-  readonly filterForm = this.formBuilder.group({
-    userId: [''],
-    status: [''],
-    operationType: [''],
-    description: [''],
-    userIp: [''],
-    startDate: [''],
-    endDate: ['']
-  });
+  readonly filterForm: any;
 
   constructor(
     private formBuilder: FormBuilder,
     private logService: LogService
-  ) {}
+  ) {
+    this.filterForm = this.formBuilder.group({
+      userId: '',
+      status: '',
+      operationType: '',
+      description: '',
+      userIp: '',
+      startDate: '',
+      endDate: ''
+    });
+  }
 
   ngOnInit(): void {
     this.loadLogs();
