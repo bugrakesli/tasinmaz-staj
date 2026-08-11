@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using System;
@@ -10,19 +9,21 @@ using System.Threading.Tasks;
 public class PropertyService : IPropertyService
 {
     private readonly RemsDbContext _context;
-    private static readonly WKTReader _wktReader = new WKTReader();
+
+    // Coordinate (WKT metin) alanindaki poligonu, spatial sorgularda
+    // (kesisim/birlesim analizi) kullanilan Geometry kolonuna da yansitmak
+    // icin kullaniliyor. PropertyImportService'teki mantikla ayni.
+    private readonly WKTReader _wktReader = new WKTReader();
 
     public PropertyService(RemsDbContext context)
     {
         _context = context;
     }
 
-    // REQ (geometri analizi): Property.Coordinate (WKT metni) her zaman
-    // Property.Geometry (NTS Polygon) ile senkron tutulmali. Aksi halde
-    // AnalyzeIntersectionAsync/AnalyzeUnionAsync "Property not found or
-    // access denied" hatasi firlatir, cunku o sorgular Geometry != null
-    // sarti ariyor.
-    private static Polygon ParseGeometryOrNull(string wkt)
+    // dto.Coordinate gecerli bir WKT polygon ise Geometry (SRID 4326)
+    // olarak dondurur; degilse null doner (Coordinate yine de kaydedilir,
+    // boylece REQ'lerdeki serbest metin davranisi bozulmaz).
+    private Polygon TryParseGeometry(string wkt)
     {
         if (string.IsNullOrWhiteSpace(wkt))
         {
@@ -32,23 +33,19 @@ public class PropertyService : IPropertyService
         try
         {
             var geometry = _wktReader.Read(wkt);
-
-            if (geometry is Polygon polygon)
+            if (geometry is Polygon polygon && polygon.IsValid)
             {
-                if (polygon.SRID == 0)
-                {
-                    polygon.SRID = 4326;
-                }
-
+                polygon.SRID = 4326;
                 return polygon;
             }
-
-            return null;
         }
         catch
         {
-            return null;
+            // Gecersiz WKT: Geometry null birakilir, Coordinate metni
+            // yine de saklanir; spatial analizlerde bu kayit atlanir.
         }
+
+        return null;
     }
 
     public async Task<List<PropertyDto>> GetAllAsync(int userId, string role)
@@ -221,7 +218,7 @@ public class PropertyService : IPropertyService
             Adres = dto.Address,
             PropertyType = dto.PropertyType,
             Coordinate = dto.Coordinate,
-            Geometry = ParseGeometryOrNull(dto.Coordinate),
+            Geometry = TryParseGeometry(dto.Coordinate),
             ImagePath = null
         };
 
@@ -277,7 +274,7 @@ public class PropertyService : IPropertyService
         property.Adres = dto.Address;
         property.PropertyType = dto.PropertyType;
         property.Coordinate = dto.Coordinate;
-        property.Geometry = ParseGeometryOrNull(dto.Coordinate);
+        property.Geometry = TryParseGeometry(dto.Coordinate);
 
         await _context.SaveChangesAsync();
 
@@ -315,36 +312,6 @@ public class PropertyService : IPropertyService
         await _context.SaveChangesAsync();
 
         return true;
-    }
-
-    // Mevcut kayitlarda Coordinate (WKT) dolu ama Geometry NULL olabilir
-    // (bu alan eklenmeden once olusturulmus veya Excel import ile eklenmis
-    // taşınmazlar). Bu metot bir kerelik calistirilarak Geometry alanini
-    // Coordinate'ten yeniden turetir.
-    public async Task<int> BackfillGeometryAsync()
-    {
-        var properties = await _context.Properties
-            .Where(p => p.Geometry == null && p.Coordinate != null)
-            .ToListAsync();
-
-        int updated = 0;
-
-        foreach (var property in properties)
-        {
-            var geometry = ParseGeometryOrNull(property.Coordinate);
-            if (geometry != null)
-            {
-                property.Geometry = geometry;
-                updated++;
-            }
-        }
-
-        if (updated > 0)
-        {
-            await _context.SaveChangesAsync();
-        }
-
-        return updated;
     }
 
     private async Task<Mahalle> GetNeighborhoodAsync(
