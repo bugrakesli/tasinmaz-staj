@@ -1,15 +1,17 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { PropertyService } from '../../services/property.service';
 import { Property } from '../../models/property.model';
+import { PropertyFilter } from '../../models/property-filter.model';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-property-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss'
 })
@@ -36,11 +38,56 @@ export class PropertyList implements OnInit {
   importMessage = signal('');
   importErrors = signal<string[]>([]);
 
+  filterForm!: FormGroup;
+
+  totalCount = signal(0);
+  pageNumber = signal(1);
+  pageSize = signal(10);
+
+  get totalPages(): number {
+    return Math.ceil(this.totalCount() / this.pageSize());
+  }
+
+  private buildFilter(): PropertyFilter {
+    const value = this.filterForm.getRawValue();
+    const filter: PropertyFilter = {
+      pageNumber: this.pageNumber(),
+      pageSize: this.pageSize()
+    };
+
+    if (value.city?.trim()) filter.city = value.city.trim();
+    if (value.district?.trim()) filter.district = value.district.trim();
+    if (value.neighborhood?.trim()) filter.neighborhood = value.neighborhood.trim();
+    if (value.parcelNumber?.trim()) filter.parcelNumber = value.parcelNumber.trim();
+    if (value.lotNumber?.trim()) filter.lotNumber = value.lotNumber.trim();
+    if (value.address?.trim()) filter.address = value.address.trim();
+    if (value.propertyType?.trim()) filter.propertyType = value.propertyType.trim();
+
+    if (this.isAdmin() && value.ownerId?.trim()) {
+      const ownerId = Number(value.ownerId);
+      if (!Number.isNaN(ownerId)) filter.ownerId = ownerId;
+    }
+
+    return filter;
+  }
+
   constructor(
-    private propertyService: PropertyService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  private propertyService: PropertyService,
+  private authService: AuthService,
+  private router: Router,
+  private fb: FormBuilder
+) {
+  this.filterForm = this.fb.group({
+    city: [''],
+    district: [''],
+    neighborhood: [''],
+    parcelNumber: [''],
+    lotNumber: [''],
+    address: [''],
+    propertyType: [''],
+    ownerId: ['']
+  });
+}
 
   ngOnInit(): void {
     this.isAdmin.set(this.authService.isAdmin());
@@ -51,9 +98,12 @@ export class PropertyList implements OnInit {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.propertyService.getAll().subscribe({
+    this.propertyService.getAll(this.buildFilter()).subscribe({
       next: (result) => {
         this.properties.set(result.data);
+        this.totalCount.set(result.totalCount);
+        this.pageNumber.set(result.pageNumber);
+        this.pageSize.set(result.pageSize);
         this.loading.set(false);
       },
       error: () => {
@@ -61,6 +111,38 @@ export class PropertyList implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  applyFilter(): void {
+    this.pageNumber.set(1);
+    this.loadProperties();
+  }
+
+  clearFilter(): void {
+    this.filterForm.reset({
+      city: '',
+      district: '',
+      neighborhood: '',
+      parcelNumber: '',
+      lotNumber: '',
+      address: '',
+      propertyType: '',
+      ownerId: ''
+    });
+    this.pageNumber.set(1);
+    this.loadProperties();
+  }
+
+  previousPage(): void {
+    if (this.pageNumber() <= 1) return;
+    this.pageNumber.update(page => page - 1);
+    this.loadProperties();
+  }
+
+  nextPage(): void {
+    if (this.pageNumber() >= this.totalPages) return;
+    this.pageNumber.update(page => page + 1);
+    this.loadProperties();
   }
 
   goToAnalysis(): void {
@@ -107,7 +189,7 @@ export class PropertyList implements OnInit {
   // SRS 3.2.4 REQ-4/REQ-5/REQ-6
   exportExcel(): void {
     this.exportingExcel.set(true);
-    this.propertyService.exportToExcel().subscribe({
+    this.propertyService.exportToExcel(this.buildFilter()).subscribe({
       next: (blob) => {
         this.downloadBlob(blob, `properties_${this.timestampForFileName()}.xlsx`);
         this.exportingExcel.set(false);
@@ -121,7 +203,7 @@ export class PropertyList implements OnInit {
 
   exportPdf(): void {
     this.exportingPdf.set(true);
-    this.propertyService.exportToPdf().subscribe({
+    this.propertyService.exportToPdf(this.buildFilter()).subscribe({
       next: (blob) => {
         this.downloadBlob(blob, `properties_${this.timestampForFileName()}.pdf`);
         this.exportingPdf.set(false);

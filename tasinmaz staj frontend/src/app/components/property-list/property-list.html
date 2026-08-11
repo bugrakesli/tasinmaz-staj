@@ -47,6 +47,54 @@
     </div>
   </div>
 
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()" class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Taşınmaz Filtreleme</h5>
+
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Şehir</label>
+          <input class="form-control" formControlName="city" placeholder="Şehir">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">İlçe</label>
+          <input class="form-control" formControlName="district" placeholder="İlçe">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Mahalle</label>
+          <input class="form-control" formControlName="neighborhood" placeholder="Mahalle">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Parsel No</label>
+          <input class="form-control" formControlName="parcelNumber" placeholder="Parsel No">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Ada No</label>
+          <input class="form-control" formControlName="lotNumber" placeholder="Ada No">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Adres</label>
+          <input class="form-control" formControlName="address" placeholder="Adres">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Taşınmaz Tipi</label>
+          <input class="form-control" formControlName="propertyType" placeholder="Taşınmaz tipi">
+        </div>
+        <div *ngIf="isAdmin()" class="col-md-3">
+          <label class="form-label">Owner ID</label>
+          <input type="number" class="form-control" formControlName="ownerId" placeholder="Kullanıcı ID">
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">Filtrele</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="clearFilter()">
+          Clear Filter
+        </button>
+      </div>
+    </div>
+  </form>
+
   <div *ngIf="loading()" class="alert alert-info">Yükleniyor...</div>
   <div *ngIf="errorMessage()" class="alert alert-danger">{{ errorMessage() }}</div>
 
@@ -98,9 +146,38 @@
       </tr>
       <tr *ngIf="properties().length === 0">
         <td [attr.colspan]="isAdmin() ? 7 : 8" class="text-center text-muted">
-          Henüz taşınmaz kaydı yok.
+          No properties match the criteria.
         </td>
       </tr>
     </tbody>
   </table>
+
+  <div
+    *ngIf="!loading() && totalCount() > 0"
+    class="d-flex justify-content-between align-items-center mt-3"
+  >
+    <div>
+      Toplam kayıt: <strong>{{ totalCount() }}</strong>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        [disabled]="pageNumber() <= 1"
+        (click)="previousPage()"
+      >
+        Önceki
+      </button>
+
+      <span>Sayfa {{ pageNumber() }} / {{ totalPages }}</span>
+
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        [disabled]="pageNumber() >= totalPages"
+        (click)="nextPage()"
+      >
+        Sonraki
+      </button>
+    </div>
+  </div>
 </div>

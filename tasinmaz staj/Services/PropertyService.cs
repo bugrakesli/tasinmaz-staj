@@ -293,6 +293,37 @@ public class PropertyService : IPropertyService
         };
     }
 
+    // Bu fix'ten once eklenmis/guncellenmis kayitlarin Geometry kolonu
+    // hala null olabilir (Coordinate WKT'si var ama Geometry hic
+    // yazilmamis). Bu metot Coordinate'i dolu, Geometry'si null olan tum
+    // kayitlari tarar ve gecerli WKT'leri Geometry'ye parse eder. Tek
+    // seferlik backfill icin kullanilir.
+    public async Task<int> BackfillGeometryAsync()
+    {
+        var candidates = await _context.Properties
+            .Where(p => p.Geometry == null && p.Coordinate != null && p.Coordinate != "")
+            .ToListAsync();
+
+        int updatedCount = 0;
+
+        foreach (var property in candidates)
+        {
+            var geometry = TryParseGeometry(property.Coordinate);
+            if (geometry != null)
+            {
+                property.Geometry = geometry;
+                updatedCount++;
+            }
+        }
+
+        if (updatedCount > 0)
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        return updatedCount;
+    }
+
     public async Task<bool> DeleteAsync(
         int propertyId,
         int userId)

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { PropertyFilter } from '../models/property-filter.model';
+
 import { environment } from '../../environments/environment';
 import { PagedResult, Property } from '../models/property.model';
 import { CreatePropertyDto } from '../models/create-property.model';
@@ -21,10 +23,21 @@ export class PropertyService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(pageNumber = 1, pageSize = 10): Observable<PagedResult<Property>> {
-    const params = new HttpParams()
-      .set('pageNumber', pageNumber)
-      .set('pageSize', pageSize);
+  getAll(filter: PropertyFilter): Observable<PagedResult<Property>> {
+    let params = new HttpParams()
+      .set('pageNumber', filter.pageNumber)
+      .set('pageSize', filter.pageSize);
+
+    if (filter.city?.trim()) params = params.set('city', filter.city.trim());
+    if (filter.district?.trim()) params = params.set('district', filter.district.trim());
+    if (filter.neighborhood?.trim()) params = params.set('neighborhood', filter.neighborhood.trim());
+    if (filter.parcelNumber?.trim()) params = params.set('parcelNumber', filter.parcelNumber.trim());
+    if (filter.lotNumber?.trim()) params = params.set('lotNumber', filter.lotNumber.trim());
+    if (filter.address?.trim()) params = params.set('address', filter.address.trim());
+    if (filter.propertyType?.trim()) params = params.set('propertyType', filter.propertyType.trim());
+    if (filter.ownerId !== undefined && filter.ownerId !== null) {
+      params = params.set('ownerId', filter.ownerId);
+    }
 
     return this.http.get<PagedResult<Property>>(this.apiUrl, { params });
   }
@@ -45,14 +58,38 @@ export class PropertyService {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
   }
 
-  // SRS 3.2.4: ekrandaki (o an uygulanan) filtreleri yansıtır; şu an filtre
-  // formu bağlı olmadığından tüm eşleşen kayıtlar export edilir.
-  exportToExcel(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/export/excel`, { responseType: 'blob' });
+  private buildFilterParams(filter: PropertyFilter): HttpParams {
+    let params = new HttpParams();
+
+    const fields = [
+      'city', 'district', 'neighborhood', 'parcelNumber',
+      'lotNumber', 'address', 'propertyType'
+    ] as const;
+
+    for (const field of fields) {
+      const value = filter[field];
+      if (value?.trim()) params = params.set(field, value.trim());
+    }
+
+    if (filter.ownerId !== undefined && filter.ownerId !== null) {
+      params = params.set('ownerId', filter.ownerId);
+    }
+
+    return params;
   }
 
-  exportToPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/export/pdf`, { responseType: 'blob' });
+  exportToExcel(filter: PropertyFilter): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/export/excel`, {
+      params: this.buildFilterParams(filter),
+      responseType: 'blob'
+    });
+  }
+
+  exportToPdf(filter: PropertyFilter): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/export/pdf`, {
+      params: this.buildFilterParams(filter),
+      responseType: 'blob'
+    });
   }
 
   // SRS 3.2.8: sadece normal kullanıcılar erişebilir (Admin backend'de Forbid alır).
@@ -65,7 +102,7 @@ export class PropertyService {
   // Geometri analiz ekranı için seçim listeleri gerekiyor; sayfalamayı
   // aşacak büyük bir sayfa boyutuyla tüm kayıtları tek seferde çekiyoruz.
   getAllForSelection(): Observable<PagedResult<Property>> {
-    return this.getAll(1, 1000);
+    return this.getAll({ pageNumber: 1, pageSize: 1000 });
   }
 
   // 3.2.7: bir sorgu poligonu (A) ile seçili bir taşınmazın (B) kesişimini
