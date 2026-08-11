@@ -127,6 +127,7 @@ public class PropertyImportService : IPropertyImportService
                 }
 
                 // REQ-3: koordinat gecerli bir WKT polygon mu?
+                NetTopologySuite.Geometries.Polygon parsedGeometry;
                 try
                 {
                     var geometry = _wktReader.Read(coordinate);
@@ -134,6 +135,12 @@ public class PropertyImportService : IPropertyImportService
                     {
                         errors.Add($"Satır {row}: Koordinat geçerli bir polygon (WKT) değil.");
                         continue;
+                    }
+
+                    parsedGeometry = (NetTopologySuite.Geometries.Polygon)geometry;
+                    if (parsedGeometry.SRID == 0)
+                    {
+                        parsedGeometry.SRID = 4326;
                     }
                 }
                 catch
@@ -171,6 +178,7 @@ public class PropertyImportService : IPropertyImportService
                     Adres = address,
                     PropertyType = propertyType,
                     Coordinate = coordinate,
+                    Geometry = parsedGeometry,
                     ImagePath = null
                 });
             }

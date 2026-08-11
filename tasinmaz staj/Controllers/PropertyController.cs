@@ -113,6 +113,30 @@ public class PropertyController : ControllerBase
         }
     }
 
+    // Tek seferlik bakim islemi: Geometry alani NULL olan (ornegin bu alan
+    // eklenmeden once olusturulmus veya import edilmis) taşınmazlarin
+    // Geometry sutununu Coordinate (WKT) alanindan yeniden turetir.
+    // Bu calistirilmadan bazi taşınmazlarda spatial/intersection/union
+    // analizleri "Property not found or access denied" hatasi verebilir.
+    [HttpPost("backfill-geometry")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> BackfillGeometry()
+    {
+        try
+        {
+            var updatedCount = await _propertyService.BackfillGeometryAsync();
+            return Ok(new
+            {
+                message = "Geometry backfill completed.",
+                updatedCount
+            });
+        }
+        catch
+        {
+            return StatusCode(500, new { message = "Geometry backfill failed." });
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
