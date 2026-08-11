@@ -181,3 +181,10 @@
     </div>
   </div>
 </div>
+      <button
+        *ngIf="isAdmin()"
+        type="button"
+        class="btn btn-outline-primary btn-sm"
+        (click)="goToUsers()"
+      >
+        Kullan&#305;c&#305; Y&#246;netimi

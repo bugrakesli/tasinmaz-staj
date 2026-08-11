@@ -265,4 +265,9 @@ export class PropertyList implements OnInit {
       `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
     );
   }
+
+  goToUsers(): void {
+    this.router.navigate(['/users']);
+  }
 }
+
