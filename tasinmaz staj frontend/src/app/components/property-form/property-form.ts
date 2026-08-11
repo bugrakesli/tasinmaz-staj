@@ -6,6 +6,8 @@ import { PropertyService } from '../../services/property.service';
 import { CreatePropertyDto } from '../../models/create-property.model';
 import { Property } from '../../models/property.model';
 import { MapDraw } from '../map-draw/map-draw';
+import WKT from 'ol/format/WKT';
+import Polygon from 'ol/geom/Polygon';
 
 @Component({
   selector: 'app-property-form',
@@ -15,6 +17,7 @@ import { MapDraw } from '../map-draw/map-draw';
   styleUrl: './property-form.scss'
 })
 export class PropertyForm implements OnInit {
+  private readonly wktFormat = new WKT();
   isEditMode = false;
   propertyId: number | null = null;
 
@@ -96,6 +99,20 @@ export class PropertyForm implements OnInit {
     this.mapWkt.set(wkt);
   }
 
+  private wktToCoordinates(wkt: string): { longitude: number; latitude: number }[][] {
+
+    const geometry = this.wktFormat.readGeometry(wkt);
+
+    if (geometry.getType() !== 'Polygon') {
+      throw new Error('Geometri bir Polygon olmalıdır.');
+    }
+
+    const polygon = geometry as Polygon;
+    const coordinates = polygon.getCoordinates();
+
+    return coordinates.map(ring => ring.map(([longitude, latitude]) => ({longitude, latitude})));
+  }
+
   // Kullanıcı textarea'ya elle WKT yapıştırdıysa haritada göstermek için.
   showOnMap(): void {
     this.mapWkt.set(this.propertyForm.value.coordinate ?? '');
@@ -126,7 +143,37 @@ export class PropertyForm implements OnInit {
       : this.propertyService.create(dto);
 
     request$.subscribe({
-      next: () => this.router.navigate(['/properties']),
+      next: (result) => {
+        const savedPropertyId = this.isEditMode && this.propertyId
+          ? this.propertyId
+          : result.data.id;
+
+        try {
+          const coordinates = this.wktToCoordinates(dto.coordinate);
+
+          this.propertyService
+            .updateGeometry(savedPropertyId, coordinates)
+            .subscribe({
+              next: () => {
+                this.router.navigate(['/properties']);
+              },
+              error: (err) => {
+                this.saving.set(false);
+                this.submitError.set(
+                  err?.error?.message ??
+                  'Taşınmaz kaydedildi ancak geometri kaydedilemedi.'
+                );
+              }
+            });
+
+        } catch (error) {
+          this.saving.set(false);
+          this.submitError.set(
+            'Geometri formatı geçersiz. Lütfen harita üzerinden tekrar polygon çizin.'
+          );
+        }
+      },
+
       error: (err) => {
         this.saving.set(false);
         this.submitError.set(

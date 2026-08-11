@@ -37,6 +37,10 @@ export class PropertyService {
     return this.http.put<{ message: string; data: Property }>(`${this.apiUrl}/${id}`, dto);
   }
 
+  updateGeometry(id: number, coordinates: { longitude: number; latitude: number }[][]): Observable<{ message: string }> {
+  return this.http.put<{ message: string }>(`${this.apiUrl}/${id}/geometry`, { coordinates });
+  }
+
   delete(id: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
   }

@@ -10,7 +10,10 @@
   <div *ngIf="!loadingProperties() && !loadError()" class="row g-4">
     <!-- Harita: sorgu poligonu (A) burada çizilir, sonuç geometrisi de burada vurgulanır -->
     <div class="col-lg-7">
-      <app-map-draw (wktChange)="onQueryPolygonChange($event)"></app-map-draw>
+      <app-map-draw
+        [initialWkt]="null"
+        (wktChange)="onQueryPolygonChange($event)">
+      </app-map-draw>
       <small class="text-muted d-block mt-2">
         Kesişim analizi için haritaya sorgu poligonu (A) çizin. Birleşim analizi mevcut
         taşınmazlar üzerinden çalışır, poligon çizmenize gerek yoktur.
