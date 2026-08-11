@@ -5,6 +5,7 @@ import { PropertyList } from './components/property-list/property-list';
 import { PropertyForm } from './components/property-form/property-form';
 import { GeometryAnalysis } from './components/geometry-analysis/geometry-analysis';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,12 @@ export const routes: Routes = [
     path: 'analysis',
     component: GeometryAnalysis,
     canActivate: [authGuard]
+  },
+  {
+    path: 'users',
+    loadComponent: () =>
+      import('./components/user-management/user-management').then(m => m.UserManagement),
+    canActivate: [adminGuard]
   },
   {
     path: '',
