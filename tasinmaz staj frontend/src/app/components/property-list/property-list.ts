@@ -269,5 +269,9 @@ export class PropertyList implements OnInit {
   goToUsers(): void {
     this.router.navigate(['/users']);
   }
+
+  goToLogs(): void {
+    this.router.navigate(['/logs']);
+  }
 }
 
