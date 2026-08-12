@@ -25,7 +25,6 @@ export class PropertyList implements OnInit {
   properties = signal<Property[]>([]);
   loading = signal(true);
   errorMessage = signal('');
-  deletingId = signal<number | null>(null);
 
   // Admin taşınmaz ekleyemez/düzenleyemez/silemez (REQ-10) — şablon bu bayrağa göre
   // ilgili butonları gizler.
@@ -227,30 +226,6 @@ export class PropertyList implements OnInit {
     if (event) event.stopPropagation();
     this.router.navigate(['/properties', property.id, 'edit'], {
       state: { property }
-    });
-  }
-
-  remove(property: Property, event?: Event): void {
-    if (event) event.stopPropagation();
-    const confirmed = window.confirm(
-      `"${property.adres}" adresli taşınmazı silmek istediğinize emin misiniz?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    this.deletingId.set(property.id);
-
-    this.propertyService.delete(property.id).subscribe({
-      next: () => {
-        this.deletingId.set(null);
-        this.loadProperties();
-      },
-      error: () => {
-        this.deletingId.set(null);
-        this.errorMessage.set('Taşınmaz silinirken bir hata oluştu.');
-      }
     });
   }
 

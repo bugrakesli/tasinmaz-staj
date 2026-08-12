@@ -195,17 +195,10 @@
         <td>{{ p.propertyType }}</td>
         <td *ngIf="!isAdmin()" class="text-end">
           <button
-            class="btn btn-outline-secondary btn-sm me-2"
+            class="btn btn-outline-secondary btn-sm"
             (click)="edit(p, $event)"
           >
             Düzenle
-          </button>
-          <button
-            class="btn btn-outline-danger btn-sm"
-            [disabled]="deletingId() === p.id"
-            (click)="remove(p, $event)"
-          >
-            {{ deletingId() === p.id ? 'Siliniyor...' : 'Sil' }}
           </button>
         </td>
       </tr>
