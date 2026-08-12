@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 import { PropertyService } from '../../services/property.service';
 import { Property } from '../../models/property.model';
@@ -53,6 +54,59 @@ export class PropertyList implements OnInit {
 
   toggleSelection(id: number): void {
     this.selectedId.set(this.selectedId() === id ? null : id);
+  }
+
+  selectedForDelete = signal<Set<number>>(new Set<number>());
+  isDeletingSelected = signal(false);
+
+  isAllSelected = computed(() => {
+    const props = this.properties();
+    return props.length > 0 && props.every(p => this.selectedForDelete().has(p.id));
+  });
+
+  toggleForDelete(property: Property, event: Event): void {
+    event.stopPropagation();
+    const current = new Set(this.selectedForDelete());
+    if (current.has(property.id)) {
+      current.delete(property.id);
+    } else {
+      current.add(property.id);
+    }
+    this.selectedForDelete.set(current);
+  }
+
+  toggleAllForDelete(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.checked) {
+      const allIds = this.properties().map(p => p.id);
+      this.selectedForDelete.set(new Set(allIds));
+    } else {
+      this.selectedForDelete.set(new Set<number>());
+    }
+  }
+
+  deleteSelected(): void {
+    const ids = Array.from(this.selectedForDelete());
+    if (ids.length === 0) return;
+
+    const confirmed = window.confirm(`Seçili ${ids.length} taşınmazı silmek istediğinize emin misiniz?`);
+    if (!confirmed) return;
+
+    this.isDeletingSelected.set(true);
+    const requests = ids.map(id => this.propertyService.delete(id));
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.selectedForDelete.set(new Set<number>());
+        this.isDeletingSelected.set(false);
+        this.loadProperties();
+      },
+      error: () => {
+        this.errorMessage.set('Bazı taşınmazlar silinirken hata oluştu.');
+        this.isDeletingSelected.set(false);
+        this.loadProperties();
+      }
+    });
   }
 
   get totalPages(): number {
@@ -116,6 +170,7 @@ export class PropertyList implements OnInit {
         this.pageNumber.set(result.pageNumber);
         this.pageSize.set(result.pageSize);
         this.loading.set(false);
+        this.selectedForDelete.set(new Set<number>());
       },
       error: () => {
         this.errorMessage.set('Taşınmazlar yüklenirken bir hata oluştu.');

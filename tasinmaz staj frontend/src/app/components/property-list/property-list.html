@@ -7,6 +7,15 @@
       </button>
 
       <button
+        *ngIf="!isAdmin() && selectedForDelete().size > 0"
+        class="btn btn-danger btn-sm"
+        [disabled]="isDeletingSelected()"
+        (click)="deleteSelected()"
+      >
+        {{ isDeletingSelected() ? 'Siliniyor...' : 'Seçilenleri Sil (' + selectedForDelete().size + ')' }}
+      </button>
+
+      <button
         class="btn btn-outline-success btn-sm"
         [disabled]="exportingExcel()"
         (click)="exportExcel()"
@@ -142,6 +151,14 @@
   <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle">
     <thead>
       <tr>
+        <th *ngIf="!isAdmin()" style="width: 40px;">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [checked]="isAllSelected()"
+            (change)="toggleAllForDelete($event)"
+          />
+        </th>
         <th>Şehir</th>
         <th>İlçe</th>
         <th>Mahalle</th>
@@ -160,6 +177,15 @@
           [class.table-primary]="p.id === selectedId()"
           [class.table-active]="p.id === hoveredId() && p.id !== selectedId()"
           style="cursor: pointer;">
+        <td *ngIf="!isAdmin()">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [checked]="selectedForDelete().has(p.id)"
+            (change)="toggleForDelete(p, $event)"
+            (click)="$event.stopPropagation()"
+          />
+        </td>
         <td>{{ p.city }}</td>
         <td>{{ p.district }}</td>
         <td>{{ p.neighborhood }}</td>
