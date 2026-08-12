@@ -1,14 +1,17 @@
 <div class="container-fluid py-4">
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
     <div>
+      <button type="button" class="btn btn-outline-secondary btn-sm mb-2" (click)="goBack()">
+        Taşınmazlara Dön
+      </button>
       <h2 class="mb-1">Sistem Logları</h2>
       <p class="text-muted mb-0">Admin log kayıtlarını filtrele ve dışa aktar.</p>
     </div>
     <div class="d-flex gap-2">
-      <button type="button" class="btn btn-success" [disabled]="exporting" (click)="exportToExcel()">
+      <button type="button" class="btn btn-success" [disabled]="exporting()" (click)="exportToExcel()">
         Excel'e Aktar
       </button>
-      <button type="button" class="btn btn-danger" [disabled]="exporting" (click)="exportToPdf()">
+      <button type="button" class="btn btn-danger" [disabled]="exporting()" (click)="exportToPdf()">
         PDF'e Aktar
       </button>
     </div>
@@ -48,8 +51,8 @@
             <input id="endDate" type="datetime-local" class="form-control" formControlName="endDate">
           </div>
           <div class="col-12 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" [disabled]="loading">Filtrele</button>
-            <button type="button" class="btn btn-outline-secondary" [disabled]="loading" (click)="clearFilters()">
+            <button type="submit" class="btn btn-primary" [disabled]="loading()">Filtrele</button>
+            <button type="button" class="btn btn-outline-secondary" [disabled]="loading()" (click)="clearFilters()">
               Temizle
             </button>
           </div>
@@ -58,14 +61,14 @@
     </div>
   </div>
 
-  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-    {{ errorMessage }}
+  <div *ngIf="errorMessage()" class="alert alert-danger" role="alert">
+    {{ errorMessage() }}
   </div>
 
   <div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
       <strong>Log Kayıtları</strong>
-      <span class="text-muted">Toplam kayıt: {{ totalCount }}</span>
+      <span class="text-muted">Toplam kayıt: {{ totalCount() }}</span>
     </div>
     <div class="table-responsive">
       <table class="table table-hover table-striped align-middle mb-0">
@@ -81,10 +84,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngIf="loading">
+          <tr *ngIf="loading()">
             <td colspan="7" class="text-center py-4">Loglar yükleniyor...</td>
           </tr>
-          <tr *ngFor="let log of logs; trackBy: trackByLogId">
+          <tr *ngFor="let log of logs(); trackBy: trackByLogId">
             <td>{{ log.id }}</td>
             <td>{{ log.userId }}</td>
             <td>{{ log.status }}</td>
@@ -93,7 +96,7 @@
             <td>{{ log.timestamp | date:'dd.MM.yyyy HH:mm:ss' }}</td>
             <td>{{ log.userIp }}</td>
           </tr>
-          <tr *ngIf="!loading && logs.length === 0">
+          <tr *ngIf="!loading() && logs().length === 0">
             <td colspan="7" class="text-center text-muted py-4">
               No log records match the criteria.
             </td>
@@ -101,21 +104,21 @@
         </tbody>
       </table>
     </div>
-    <div *ngIf="!loading && totalPages > 1"
+    <div *ngIf="!loading() && totalPages > 1"
          class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
-      <span class="text-muted">Sayfa {{ pageNumber }} / {{ totalPages }}</span>
+      <span class="text-muted">Sayfa {{ pageNumber() }} / {{ totalPages }}</span>
       <nav aria-label="Log pagination">
         <ul class="pagination mb-0">
-          <li class="page-item" [class.disabled]="pageNumber === 1">
-            <button type="button" class="page-link" [disabled]="pageNumber === 1"
-                    (click)="goToPage(pageNumber - 1)">Önceki</button>
+          <li class="page-item" [class.disabled]="pageNumber() === 1">
+            <button type="button" class="page-link" [disabled]="pageNumber() === 1"
+                    (click)="goToPage(pageNumber() - 1)">Önceki</button>
           </li>
-          <li *ngFor="let page of pageNumbers" class="page-item" [class.active]="page === pageNumber">
+          <li *ngFor="let page of pageNumbers" class="page-item" [class.active]="page === pageNumber()">
             <button type="button" class="page-link" (click)="goToPage(page)">{{ page }}</button>
           </li>
-          <li class="page-item" [class.disabled]="pageNumber === totalPages">
-            <button type="button" class="page-link" [disabled]="pageNumber === totalPages"
-                    (click)="goToPage(pageNumber + 1)">Sonraki</button>
+          <li class="page-item" [class.disabled]="pageNumber() === totalPages">
+            <button type="button" class="page-link" [disabled]="pageNumber() === totalPages"
+                    (click)="goToPage(pageNumber() + 1)">Sonraki</button>
           </li>
         </ul>
       </nav>

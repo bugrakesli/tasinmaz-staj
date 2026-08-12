@@ -40,5 +40,15 @@ public class RemsDbContext : DbContext
             entity.Property(x => x.CreatedAt)
                 .IsRequired();
         });
+
+        // Log ekrani/exportu her zaman Timestamp'e gore siraliyor (LogService.
+        // BuildFilteredQuery) ve sik filtrelenen UserId/Status alanlari var;
+        // index olmadan tablo buyudukce sorgu/siralama yavasliyor.
+        modelBuilder.Entity<Log>(entity =>
+        {
+            entity.HasIndex(x => x.Timestamp);
+            entity.HasIndex(x => x.UserId);
+            entity.HasIndex(x => x.Status);
+        });
     }
 }
