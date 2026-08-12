@@ -48,6 +48,13 @@ export class PropertyList implements OnInit {
   // SRS 3.2.7: liste ile harita gösterimi arasında geçiş.
   showMap = signal(true);
 
+  hoveredId = signal<number | null>(null);
+  selectedId = signal<number | null>(null);
+
+  toggleSelection(id: number): void {
+    this.selectedId.set(this.selectedId() === id ? null : id);
+  }
+
   get totalPages(): number {
     return Math.ceil(this.totalCount() / this.pageSize());
   }
@@ -161,13 +168,15 @@ export class PropertyList implements OnInit {
     this.router.navigate(['/properties/new']);
   }
 
-  edit(property: Property): void {
+  edit(property: Property, event?: Event): void {
+    if (event) event.stopPropagation();
     this.router.navigate(['/properties', property.id, 'edit'], {
       state: { property }
     });
   }
 
-  remove(property: Property): void {
+  remove(property: Property, event?: Event): void {
+    if (event) event.stopPropagation();
     const confirmed = window.confirm(
       `"${property.adres}" adresli taşınmazı silmek istediğinize emin misiniz?`
     );
