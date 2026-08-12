@@ -84,6 +84,41 @@
               }
             </div>
 
+            @if (isEditMode) {
+              <div class="col-12">
+                <label class="form-label">Taşınmaz Görseli</label>
+
+                @if (imageError()) {
+                  <div class="alert alert-danger py-2">{{ imageError() }}</div>
+                }
+
+                @if (currentImagePath()) {
+                  <div class="mb-2">
+                    <img [src]="imageUrl(currentImagePath()!)" alt="Taşınmaz görseli"
+                         class="img-thumbnail" style="max-height: 200px;">
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-danger me-2"
+                          [disabled]="imageUploading()" (click)="deleteImage()">
+                    Görseli Sil
+                  </button>
+                } @else {
+                  <div class="text-muted small mb-2">Henüz görsel yüklenmemiş.</div>
+                }
+
+                <input type="file" class="form-control mt-2" accept=".jpg,.jpeg,.png"
+                       [disabled]="imageUploading()" (change)="onImageSelected($event)">
+                @if (imageUploading()) {
+                  <div class="text-muted small mt-1">Yükleniyor...</div>
+                }
+              </div>
+            } @else {
+              <div class="col-12">
+                <div class="alert alert-secondary py-2 mb-0">
+                  Görsel eklemek için önce taşınmazı kaydedin.
+                </div>
+              </div>
+            }
+
             <div class="col-12">
               <label class="form-label">Konum (haritadan çizin)</label>
               <app-map-draw [initialWkt]="mapWkt()" (wktChange)="onGeometryDrawn($event)"></app-map-draw>

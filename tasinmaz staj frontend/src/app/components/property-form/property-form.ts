@@ -3,9 +3,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { PropertyService } from '../../services/property.service';
+import { PropertyImageService } from '../../services/property-image.service';
 import { CreatePropertyDto } from '../../models/create-property.model';
 import { Property } from '../../models/property.model';
 import { MapDraw } from '../map-draw/map-draw';
+import { environment } from '../../../environments/environment';
 import WKT from 'ol/format/WKT';
 import Polygon from 'ol/geom/Polygon';
 
@@ -35,11 +37,22 @@ export class PropertyForm implements OnInit {
   // yapılıyor ki zoneless change detection değişikliği yakalasın.
   mapWkt = signal<string | null>(null);
 
+  // Görsel yükleme (SRS 4.3 / PropertyImageController): yalnızca düzenleme
+  // modunda gösterilir çünkü upload/delete endpoint'leri var olan bir
+  // taşınmaz kaydı gerektirir.
+  currentImagePath = signal<string | null>(null);
+  imageUploading = signal(false);
+  imageError = signal('');
+  // Statik dosyalar apiUrl'in ("/api" içeren) kökünden değil, sunucu
+  // kökünden servis ediliyor (UseStaticFiles), o yüzden "/api" kısmını çıkarıyoruz.
+  private readonly staticFilesBaseUrl = environment.apiUrl.replace(/\/api\/?$/, '');
+
   propertyForm;
 
   constructor(
     private formBuilder: FormBuilder,
     private propertyService: PropertyService,
+    private propertyImageService: PropertyImageService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -89,6 +102,58 @@ export class PropertyForm implements OnInit {
     });
 
     this.mapWkt.set(property.coordinate);
+    this.currentImagePath.set(property.imagePath);
+  }
+
+  // Görselin tam URL'sini oluşturur (relative path DB'de "/uploads/..." olarak tutuluyor).
+  imageUrl(path: string): string {
+    return `${this.staticFilesBaseUrl}${path}`;
+  }
+
+  onImageSelected(event: Event): void {
+    if (!this.propertyId) return;
+
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.imageError.set('');
+    this.imageUploading.set(true);
+
+    this.propertyImageService.upload(this.propertyId, file).subscribe({
+      next: (result) => {
+        this.currentImagePath.set(result.imagePath);
+        this.imageUploading.set(false);
+        input.value = '';
+      },
+      error: (err) => {
+        this.imageUploading.set(false);
+        this.imageError.set(
+          err?.error?.message ?? 'Görsel yüklenirken bir hata oluştu.'
+        );
+        input.value = '';
+      }
+    });
+  }
+
+  deleteImage(): void {
+    if (!this.propertyId) return;
+
+    this.imageError.set('');
+    this.imageUploading.set(true);
+
+    this.propertyImageService.delete(this.propertyId).subscribe({
+      next: () => {
+        this.currentImagePath.set(null);
+        this.imageUploading.set(false);
+      },
+      error: (err) => {
+        this.imageUploading.set(false);
+        this.imageError.set(
+          err?.error?.message ?? 'Görsel silinirken bir hata oluştu.'
+        );
+      }
+    });
   }
 
   // Harita üzerinde poligon çizildiğinde/temizlendiğinde tetiklenir.
