@@ -43,6 +43,10 @@
         Kesişim / Birleşim Analizi
       </button>
 
+      <button class="btn btn-outline-info btn-sm" (click)="toggleMap()">
+        {{ showMap() ? 'Haritayı Gizle' : 'Haritada Göster' }}
+      </button>
+
       <button
         *ngIf="isAdmin()"
         type="button"
@@ -122,6 +126,11 @@
     <ul class="mb-0">
       <li *ngFor="let err of importErrors()">{{ err }}</li>
     </ul>
+  </div>
+
+  <!-- SRS 3.2.7: mevcut sayfadaki taşınmazların harita üzerinde gösterimi -->
+  <div *ngIf="showMap() && !loading() && !errorMessage()" class="mb-4">
+    <app-property-map [properties]="properties()"></app-property-map>
   </div>
 
   <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle">

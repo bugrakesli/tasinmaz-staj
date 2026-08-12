@@ -7,11 +7,12 @@ import { PropertyService } from '../../services/property.service';
 import { Property } from '../../models/property.model';
 import { PropertyFilter } from '../../models/property-filter.model';
 import { AuthService } from '../../services/auth.service';
+import { PropertyMap } from '../property-map/property-map';
 
 @Component({
   selector: 'app-property-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PropertyMap],
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss'
 })
@@ -43,6 +44,9 @@ export class PropertyList implements OnInit {
   totalCount = signal(0);
   pageNumber = signal(1);
   pageSize = signal(10);
+
+  // SRS 3.2.7: liste ile harita gösterimi arasında geçiş.
+  showMap = signal(true);
 
   get totalPages(): number {
     return Math.ceil(this.totalCount() / this.pageSize());
@@ -147,6 +151,10 @@ export class PropertyList implements OnInit {
 
   goToAnalysis(): void {
     this.router.navigate(['/analysis']);
+  }
+
+  toggleMap(): void {
+    this.showMap.update(value => !value);
   }
 
   addNew(): void {
