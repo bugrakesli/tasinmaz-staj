@@ -1,3 +1,50 @@
+.app-navbar {
+  background: linear-gradient(135deg, var(--brand-700) 0%, var(--brand-600) 55%, var(--brand-500) 100%);
+  box-shadow: var(--shadow-md);
+  padding-block: 0;
+}
+
 .navbar-brand {
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-lg);
+  letter-spacing: -0.01em;
+}
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-base);
+}
+
+.navbar-nav .nav-link {
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-sm);
+  padding-inline: var(--sp-3);
+  border-radius: var(--radius-sm);
+  color: rgba(255, 255, 255, 0.82);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav .nav-link.active {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+.user-chip {
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.user-chip .badge {
+  font-size: var(--fs-xs);
 }

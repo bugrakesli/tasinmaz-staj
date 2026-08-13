@@ -1,12 +1,14 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4" *ngIf="isAuthenticated">
-  <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/properties">
-      <i class="bi bi-building me-2"></i>Taşınmaz Yönetim Sistemi
+<nav class="navbar navbar-expand-lg navbar-dark app-navbar mb-4" *ngIf="isAuthenticated">
+  <div class="container-fluid page-container py-2">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/properties">
+      <span class="brand-icon me-2"><i class="bi bi-building"></i></span>
+      <span class="d-none d-sm-inline">Taşınmaz Yönetim Sistemi</span>
+      <span class="d-inline d-sm-none">TYS</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
@@ -30,9 +32,9 @@
           </a>
         </li>
       </ul>
-      
+
       <div class="d-flex align-items-center gap-3">
-        <div class="text-light d-flex align-items-center">
+        <div class="user-chip d-flex align-items-center">
           <i class="bi bi-person-circle me-2"></i>
           <span>{{ email }}</span>
           <span class="badge ms-2" [ngClass]="isAdmin ? 'bg-danger' : 'bg-info'">
