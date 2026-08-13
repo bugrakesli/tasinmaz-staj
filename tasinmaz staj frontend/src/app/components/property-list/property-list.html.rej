@@ -15,7 +15,107 @@ diff a/tasinmaz staj frontend/src/app/components/property-list/property-list.htm
        <button
          class="btn btn-outline-success btn-sm"
          [disabled]="exportingExcel()"
-@@ -130,12 +115,26 @@
+@@ -39,72 +48,52 @@
+         (change)="onImportFileSelected($event)"
+       />
+ 
+-      <button class="btn btn-outline-info btn-sm" (click)="goToAnalysis()">
+-        Kesişim / Birleşim Analizi
+-      </button>
+-
+       <button class="btn btn-outline-info btn-sm" (click)="toggleMap()">
+         {{ showMap() ? 'Haritayı Gizle' : 'Haritada Göster' }}
+       </button>
+ 
+-      <button
+-        *ngIf="isAdmin()"
+-        type="button"
+-        class="btn btn-outline-primary btn-sm"
+-        (click)="goToUsers()"
+-      >
+-        Kullanıcı Yönetimi
+-      </button>
+-
+-      <button
+-        *ngIf="isAdmin()"
+-        type="button"
+-        class="btn btn-outline-primary btn-sm"
+-        (click)="goToLogs()"
+-      >
+-        Sistem Logları
++      <button class="btn btn-outline-secondary btn-sm" (click)="toggleFilter()">
++        {{ showFilter() ? 'Filtreleri Gizle' : 'Filtreleri Göster' }}
+       </button>
+-
+-      <button class="btn btn-outline-danger btn-sm" (click)="logout()">Çıkış Yap</button>
+     </div>
+   </div>
+ 
+-  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()" class="card shadow-sm mb-4">
++  <form *ngIf="showFilter()" [formGroup]="filterForm" (ngSubmit)="applyFilter()" class="card shadow-sm mb-4">
+     <div class="card-body">
+       <h5 class="card-title mb-3">Taşınmaz Filtreleme</h5>
+ 
+       <div class="row g-3">
+-        <div class="col-md-3">
+-          <label class="form-label">Şehir</label>
+-          <input class="form-control" formControlName="city" placeholder="Şehir">
++        <div class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterCity">Şehir</label>
++          <input id="filterCity" class="form-control" formControlName="city" placeholder="Şehir">
+         </div>
+-        <div class="col-md-3">
+-          <label class="form-label">İlçe</label>
+-          <input class="form-control" formControlName="district" placeholder="İlçe">
++        <div class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterDistrict">İlçe</label>
++          <input id="filterDistrict" class="form-control" formControlName="district" placeholder="İlçe">
+         </div>
+-        <div class="col-md-3">
+-          <label class="form-label">Mahalle</label>
+-          <input class="form-control" formControlName="neighborhood" placeholder="Mahalle">
++        <div class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterNeighborhood">Mahalle</label>
++          <input id="filterNeighborhood" class="form-control" formControlName="neighborhood" placeholder="Mahalle">
+         </div>
+-        <div class="col-md-3">
+-          <label class="form-label">Parsel No</label>
+-          <input class="form-control" formControlName="parcelNumber" placeholder="Parsel No">
++        <div class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterParcel">Parsel No</label>
++          <input id="filterParcel" class="form-control" formControlName="parcelNumber" placeholder="Parsel No">
+         </div>
+-        <div class="col-md-3">
+-          <label class="form-label">Ada No</label>
+-          <input class="form-control" formControlName="lotNumber" placeholder="Ada No">
++        <div class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterLot">Ada No</label>
++          <input id="filterLot" class="form-control" formControlName="lotNumber" placeholder="Ada No">
+         </div>
+-        <div class="col-md-3">
+-          <label class="form-label">Adres</label>
+-          <input class="form-control" formControlName="address" placeholder="Adres">
++        <div class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterAddress">Adres</label>
++          <input id="filterAddress" class="form-control" formControlName="address" placeholder="Adres">
+         </div>
+-        <div class="col-md-3">
+-          <label class="form-label">Taşınmaz Tipi</label>
+-          <input class="form-control" formControlName="propertyType" placeholder="Taşınmaz tipi">
++        <div class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterType">Taşınmaz Tipi</label>
++          <input id="filterType" class="form-control" formControlName="propertyType" placeholder="Taşınmaz tipi">
+         </div>
+-        <div *ngIf="isAdmin()" class="col-md-3">
+-          <label class="form-label">Owner ID</label>
+-          <input type="number" class="form-control" formControlName="ownerId" placeholder="Kullanıcı ID">
++        <div *ngIf="isAdmin()" class="col-12 col-sm-6 col-md-3">
++          <label class="form-label" for="filterOwnerId">Owner ID</label>
++          <input id="filterOwnerId" type="number" class="form-control" formControlName="ownerId" placeholder="Kullanıcı ID">
+         </div>
+       </div>
+ 
+@@ -130,12 +123,28 @@
  
    <!-- SRS 3.2.7: mevcut sayfadaki taşınmazların harita üzerinde gösterimi -->
    <div *ngIf="showMap() && !loading() && !errorMessage()" class="mb-4">
@@ -29,13 +129,17 @@ diff a/tasinmaz staj frontend/src/app/components/property-list/property-list.htm
 +    </app-property-map>
    </div>
  
-   <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle">
-     <thead>
+-  <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle">
+-    <thead>
++  <div *ngIf="!loading() && !errorMessage()" class="table-responsive">
++    <table class="table table-striped table-hover align-middle">
++      <thead>
        <tr>
 +        <th *ngIf="!isAdmin()" style="width: 40px;">
 +          <input
 +            type="checkbox"
 +            class="form-check-input"
++            aria-label="Tümünü Seç"
 +            [checked]="isAllSelected()"
 +            (change)="toggleAllForDelete($event)"
 +          />
@@ -43,7 +147,7 @@ diff a/tasinmaz staj frontend/src/app/components/property-list/property-list.htm
          <th>Şehir</th>
          <th>İlçe</th>
          <th>Mahalle</th>
-@@ -147,7 +146,22 @@
+@@ -147,7 +156,23 @@
        </tr>
      </thead>
      <tbody>
@@ -59,6 +163,7 @@ diff a/tasinmaz staj frontend/src/app/components/property-list/property-list.htm
 +          <input
 +            type="checkbox"
 +            class="form-check-input"
++            [attr.aria-label]="'Seç: ' + p.adres"
 +            [checked]="selectedForDelete().has(p.id)"
 +            (change)="toggleForDelete(p, $event)"
 +            (click)="$event.stopPropagation()"
@@ -67,7 +172,7 @@ diff a/tasinmaz staj frontend/src/app/components/property-list/property-list.htm
          <td>{{ p.city }}</td>
          <td>{{ p.district }}</td>
          <td>{{ p.neighborhood }}</td>
-@@ -157,18 +171,11 @@
+@@ -157,18 +182,11 @@
          <td>{{ p.propertyType }}</td>
          <td *ngIf="!isAdmin()" class="text-end">
            <button

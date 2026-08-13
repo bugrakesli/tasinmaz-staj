@@ -1,0 +1,11 @@
+diff a/tasinmaz staj frontend/src/app/components/log-list/log-list.html b/tasinmaz staj frontend/src/app/components/log-list/log-list.html	(rejected hunks)
+@@ -11,9 +11,6 @@
+       <button type="button" class="btn btn-danger" [disabled]="exporting()" (click)="exportToPdf()">
+         PDF'e Aktar
+       </button>
+-      <button class="btn btn-outline-secondary btn-sm" (click)="goBack()">
+-        Taşınmazlara Dön
+-      </button>
+     </div>
+   </div>
+ 

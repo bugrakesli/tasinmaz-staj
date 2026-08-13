@@ -108,11 +108,17 @@
     </div>
   </form>
 
-  <div *ngIf="loading()" class="alert alert-info">Yükleniyor...</div>
+  <div *ngIf="loading()" class="d-flex justify-content-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+  </div>
+
   <div *ngIf="errorMessage()" class="alert alert-danger">{{ errorMessage() }}</div>
 
   <div *ngIf="importMessage()" class="alert alert-success">{{ importMessage() }}</div>
   <div *ngIf="importErrors().length > 0" class="alert alert-danger">
+
     <div>Import failed. Please check the file format and data.</div>
     <ul class="mb-0">
       <li *ngFor="let err of importErrors()">{{ err }}</li>
@@ -189,8 +195,9 @@
           No properties match the criteria.
         </td>
       </tr>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
 
   <div
     *ngIf="!loading() && totalCount() > 0"
@@ -219,5 +226,5 @@
         Sonraki
       </button>
     </div>
-  </div>
-</div>
+
+

@@ -1,0 +1,18 @@
+diff a/tasinmaz staj frontend/src/app/app.config.ts b/tasinmaz staj frontend/src/app/app.config.ts	(rejected hunks)
+@@ -3,12 +3,14 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
+ import { provideRouter } from '@angular/router';
+ import { routes } from './app.routes';
+ import { authInterceptor } from './interceptors/auth.interceptor';
++import { errorInterceptor } from './interceptors/error.interceptor';
++import { loadingInterceptor } from './interceptors/loading.interceptor';
+ 
+ export const appConfig: ApplicationConfig = {
+   providers: [
+     provideBrowserGlobalErrorListeners(),
+     provideZonelessChangeDetection(),
+     provideRouter(routes),
+-    provideHttpClient(withInterceptors([authInterceptor])),
++    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])),
+   ]
+ };
+\ No newline at end of file

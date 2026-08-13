@@ -1,11 +1,12 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 import { PropertyService } from '../../services/property.service';
 import { LocationService } from '../../services/location.service';
+import { ToastService } from '../../services/toast.service'; // Eklendi
 import { Property } from '../../models/property.model';
 import { Il, Ilce } from '../../models/location.model';
 import { PropertyFilter } from '../../models/property-filter.model';
@@ -20,30 +21,21 @@ import { PropertyMap } from '../property-map/property-map';
   styleUrl: './property-list.scss'
 })
 export class PropertyList implements OnInit {
-  // Zoneless Angular'da düz sınıf alanları (this.x = ...) HTTP callback'i
-  // gibi zone dışı işlemlerden sonra ekranı otomatik güncellemiyor.
-  // Bu yüzden state'i signal olarak tutuyoruz; signal.set() her zaman
-  // change detection'ı tetikler.
   properties = signal<Property[]>([]);
   loading = signal(true);
   errorMessage = signal('');
 
-  // Admin taşınmaz ekleyemez/düzenleyemez/silemez (REQ-10) — şablon bu bayrağa göre
-  // ilgili butonları gizler.
   isAdmin = signal(false);
 
-  // SRS 3.2.4: export durumu (Excel/PDF ayrı ayrı, aynı anda ikisi de tetiklenebilir)
   exportingExcel = signal(false);
   exportingPdf = signal(false);
 
-  // SRS 3.2.8: import durumu ve sonucu
   importing = signal(false);
   importMessage = signal('');
   importErrors = signal<string[]>([]);
 
   filterForm!: FormGroup;
 
-  // Filtre formundaki Şehir/İlçe alanları için referans verisi.
   iller = signal<Il[]>([]);
   filterIlceler = signal<Ilce[]>([]);
 
@@ -51,12 +43,10 @@ export class PropertyList implements OnInit {
   pageNumber = signal(1);
   pageSize = signal(10);
 
-  // SRS 3.2.7: liste ile harita gösterimi arasında geçiş.
   showMap = signal(true);
 
   hoveredId = signal<number | null>(null);
   selectedId = signal<number | null>(null);
-  toastService: any;
 
   toggleSelection(id: number): void {
     this.selectedId.set(this.selectedId() === id ? null : id);
@@ -143,36 +133,34 @@ export class PropertyList implements OnInit {
   }
 
   constructor(
-  private propertyService: PropertyService,
-  private locationService: LocationService,
-  private authService: AuthService,
-  private router: Router,
-  private fb: FormBuilder
-) {
-  this.filterForm = this.fb.group({
-    city: [''],
-    district: [''],
-    neighborhood: [''],
-    parcelNumber: [''],
-    lotNumber: [''],
-    address: [''],
-    propertyType: [''],
-    ownerId: ['']
-  });
-}
+    private propertyService: PropertyService,
+    private locationService: LocationService,
+    private authService: AuthService,
+    private toastService: ToastService, // Eklendi
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.filterForm = this.fb.group({
+      city: [''],
+      district: [''],
+      neighborhood: [''],
+      parcelNumber: [''],
+      lotNumber: [''],
+      address: [''],
+      propertyType: [''],
+      ownerId: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.isAdmin.set(this.authService.isAdmin());
     this.locationService.getIller().subscribe({
       next: (iller) => this.iller.set(iller),
-      error: () => {
-        // Il listesi yuklenemezse filtre formu Sehir/Ilce olmadan da calisir.
-      }
+      error: () => {}
     });
     this.loadProperties();
   }
 
-  // Filtredeki Şehir seçimi değiştiğinde İlçe listesini yeniler.
   onFilterCityChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const cityName = select.value;
@@ -263,7 +251,6 @@ export class PropertyList implements OnInit {
     this.authService.logout();
   }
 
-  // SRS 3.2.4 REQ-4/REQ-5/REQ-6
   exportExcel(): void {
     this.exportingExcel.set(true);
     this.propertyService.exportToExcel(this.buildFilter()).subscribe({
@@ -296,9 +283,7 @@ export class PropertyList implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length > 0 ? input.files[0] : null;
 
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     this.importing.set(true);
     this.importMessage.set('');
