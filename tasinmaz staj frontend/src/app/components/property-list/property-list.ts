@@ -5,7 +5,9 @@ import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 import { PropertyService } from '../../services/property.service';
+import { LocationService } from '../../services/location.service';
 import { Property } from '../../models/property.model';
+import { Il, Ilce } from '../../models/location.model';
 import { PropertyFilter } from '../../models/property-filter.model';
 import { AuthService } from '../../services/auth.service';
 import { PropertyMap } from '../property-map/property-map';
@@ -40,6 +42,10 @@ export class PropertyList implements OnInit {
   importErrors = signal<string[]>([]);
 
   filterForm!: FormGroup;
+
+  // Filtre formundaki Şehir/İlçe alanları için referans verisi.
+  iller = signal<Il[]>([]);
+  filterIlceler = signal<Ilce[]>([]);
 
   totalCount = signal(0);
   pageNumber = signal(1);
@@ -137,6 +143,7 @@ export class PropertyList implements OnInit {
 
   constructor(
   private propertyService: PropertyService,
+  private locationService: LocationService,
   private authService: AuthService,
   private router: Router,
   private fb: FormBuilder
@@ -155,7 +162,32 @@ export class PropertyList implements OnInit {
 
   ngOnInit(): void {
     this.isAdmin.set(this.authService.isAdmin());
+    this.locationService.getIller().subscribe({
+      next: (iller) => this.iller.set(iller),
+      error: () => {
+        // Il listesi yuklenemezse filtre formu Sehir/Ilce olmadan da calisir.
+      }
+    });
     this.loadProperties();
+  }
+
+  // Filtredeki Şehir seçimi değiştiğinde İlçe listesini yeniler.
+  onFilterCityChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const cityName = select.value;
+
+    this.filterForm.patchValue({ district: '' });
+    this.filterIlceler.set([]);
+
+    if (!cityName) return;
+
+    const il = this.iller().find(i => i.ad === cityName);
+    if (!il) return;
+
+    this.locationService.getIlceler(il.id).subscribe({
+      next: (ilceler) => this.filterIlceler.set(ilceler),
+      error: () => {}
+    });
   }
 
   loadProperties(): void {
@@ -194,6 +226,7 @@ export class PropertyList implements OnInit {
       propertyType: '',
       ownerId: ''
     });
+    this.filterIlceler.set([]);
     this.pageNumber.set(1);
     this.loadProperties();
   }

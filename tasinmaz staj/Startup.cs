@@ -41,6 +41,8 @@ namespace tasinmaz_staj
             services.AddScoped<IGeometryService, GeometryService>();
             services.AddScoped<IPropertyImageService, PropertyImageService>();
             services.AddScoped<IPropertyGeometryService, PropertyGeometryService>();
+            services.AddScoped<IReferenceService, ReferenceService>();
+            services.AddScoped<ILocationService, LocationService>();
 
 
             services.AddSwaggerGen(c =>

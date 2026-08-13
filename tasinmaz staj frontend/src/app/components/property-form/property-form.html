@@ -29,7 +29,10 @@
 
             <div class="col-md-4">
               <label for="city" class="form-label">Şehir</label>
-              <input id="city" type="text" class="form-control" formControlName="city">
+              <select id="city" class="form-select" formControlName="city" (change)="onCityChange($event)">
+                <option value="">Seçiniz...</option>
+                <option *ngFor="let il of iller()" [value]="il.ad">{{ il.ad }}</option>
+              </select>
               @if (propertyForm.get('city')?.touched && propertyForm.get('city')?.invalid) {
                 <div class="text-danger small mt-1">Şehir zorunludur.</div>
               }
@@ -37,7 +40,15 @@
 
             <div class="col-md-4">
               <label for="district" class="form-label">İlçe</label>
-              <input id="district" type="text" class="form-control" formControlName="district">
+              <select
+                id="district"
+                class="form-select"
+                formControlName="district"
+                [disabled]="!propertyForm.value.city || loadingIlceler()"
+              >
+                <option value="">{{ loadingIlceler() ? 'Yükleniyor...' : 'Seçiniz...' }}</option>
+                <option *ngFor="let ilce of ilceler()" [value]="ilce.ad">{{ ilce.ad }}</option>
+              </select>
               @if (propertyForm.get('district')?.touched && propertyForm.get('district')?.invalid) {
                 <div class="text-danger small mt-1">İlçe zorunludur.</div>
               }

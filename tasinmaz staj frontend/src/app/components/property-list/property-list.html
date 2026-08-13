@@ -85,11 +85,17 @@
       <div class="row g-3">
         <div class="col-md-3">
           <label class="form-label">Şehir</label>
-          <input class="form-control" formControlName="city" placeholder="Şehir">
+          <select class="form-select" formControlName="city" (change)="onFilterCityChange($event)">
+            <option value="">Tümü</option>
+            <option *ngFor="let il of iller()" [value]="il.ad">{{ il.ad }}</option>
+          </select>
         </div>
         <div class="col-md-3">
           <label class="form-label">İlçe</label>
-          <input class="form-control" formControlName="district" placeholder="İlçe">
+          <select class="form-select" formControlName="district" [disabled]="!filterForm.value.city">
+            <option value="">Tümü</option>
+            <option *ngFor="let ilce of filterIlceler()" [value]="ilce.ad">{{ ilce.ad }}</option>
+          </select>
         </div>
         <div class="col-md-3">
           <label class="form-label">Mahalle</label>

@@ -2,10 +2,13 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { CommonModule } from '@angular/common';
 import { PropertyService } from '../../services/property.service';
 import { PropertyImageService } from '../../services/property-image.service';
+import { LocationService } from '../../services/location.service';
 import { CreatePropertyDto } from '../../models/create-property.model';
 import { Property } from '../../models/property.model';
+import { Il, Ilce } from '../../models/location.model';
 import { MapDraw } from '../map-draw/map-draw';
 import { environment } from '../../../environments/environment';
 import WKT from 'ol/format/WKT';
@@ -14,11 +17,17 @@ import Polygon from 'ol/geom/Polygon';
 @Component({
   selector: 'app-property-form',
   standalone: true,
-  imports: [ReactiveFormsModule, MapDraw],
+  imports: [CommonModule, ReactiveFormsModule, MapDraw],
   templateUrl: './property-form.html',
   styleUrl: './property-form.scss'
 })
 export class PropertyForm implements OnInit {
+  // Il/Ilce referans verisi (SRS: Sehir/Ilce alanlari serbest metin yerine
+  // birbirine bagli (cascading) combobox olarak sunulur; Mahalle hala
+  // serbest metin, cunku mahalle referans verisi kapsam disi birakildi).
+  iller = signal<Il[]>([]);
+  ilceler = signal<Ilce[]>([]);
+  loadingIlceler = signal(false);
   private readonly wktFormat = new WKT();
   isEditMode = false;
   propertyId: number | null = null;
@@ -53,6 +62,7 @@ export class PropertyForm implements OnInit {
     private formBuilder: FormBuilder,
     private propertyService: PropertyService,
     private propertyImageService: PropertyImageService,
+    private locationService: LocationService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -69,6 +79,22 @@ export class PropertyForm implements OnInit {
   }
 
   ngOnInit(): void {
+    this.locationService.getIller().subscribe({
+      next: (iller) => {
+        this.iller.set(iller);
+        // Duzenleme modunda mevcut sehir zaten secilmis olabilir; iller
+        // yuklendikten sonra o sehre ait ilceleri de getir.
+        const currentCity = this.propertyForm.value.city;
+        if (currentCity) {
+          this.loadIlceler(currentCity);
+        }
+      },
+      error: () => {
+        // Il listesi yuklenemezse kullanici yine de serbest metinle devam
+        // edebilir; formu bloklamiyoruz.
+      }
+    });
+
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (!idParam) {
@@ -103,6 +129,42 @@ export class PropertyForm implements OnInit {
 
     this.mapWkt.set(property.coordinate);
     this.currentImagePath.set(property.imagePath);
+
+    if (property.city) {
+      this.loadIlceler(property.city);
+    }
+  }
+
+  // Sehir adina gore Il kaydini bulup o ile ait ilceleri getirir.
+  // "city" alaninda Il adi (string) tutuldugu icin backend'deki
+  // Mahalle/Ilce/Il esleme mantigiyla ayni sekilde isim uzerinden calisir.
+  private loadIlceler(cityName: string): void {
+    const il = this.iller().find(i => i.ad === cityName);
+    if (!il) return;
+
+    this.loadingIlceler.set(true);
+    this.locationService.getIlceler(il.id).subscribe({
+      next: (ilceler) => {
+        this.ilceler.set(ilceler);
+        this.loadingIlceler.set(false);
+      },
+      error: () => {
+        this.loadingIlceler.set(false);
+      }
+    });
+  }
+
+  // Sehir combobox'i degistiginde ilce listesini yenile ve secili ilceyi sifirla.
+  onCityChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const cityName = select.value;
+
+    this.propertyForm.patchValue({ city: cityName, district: '' });
+    this.ilceler.set([]);
+
+    if (cityName) {
+      this.loadIlceler(cityName);
+    }
   }
 
   // Görselin tam URL'sini oluşturur (relative path DB'de "/uploads/..." olarak tutuluyor).
