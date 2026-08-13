@@ -14,6 +14,7 @@ import {
   UserCreateRequest,
   UserUpdateRequest
 } from '../../models/user.model';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-user-management',
@@ -28,7 +29,6 @@ export class UserManagement implements OnInit {
   saving = signal(false);
   deletingId = signal<number | null>(null);
   errorMessage = signal('');
-  successMessage = signal('');
 
   totalCount = signal(0);
   pageNumber = signal(1);
@@ -51,7 +51,8 @@ export class UserManagement implements OnInit {
   constructor(
     private userService: UserService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.userForm = this.fb.nonNullable.group({
       email: [
@@ -99,7 +100,6 @@ export class UserManagement implements OnInit {
   }
 
   submit(): void {
-    this.successMessage.set('');
     this.errorMessage.set('');
 
     if (this.userForm.invalid) {
@@ -145,7 +145,6 @@ export class UserManagement implements OnInit {
 
   edit(user: User): void {
     this.editingId.set(user.id);
-    this.successMessage.set('');
     this.errorMessage.set('');
 
     this.userForm.reset({
@@ -181,17 +180,16 @@ export class UserManagement implements OnInit {
 
     this.deletingId.set(user.id);
     this.errorMessage.set('');
-    this.successMessage.set('');
 
     this.userService.delete(user.id).subscribe({
       next: (result) => {
         this.deletingId.set(null);
-        this.successMessage.set(result.message);
+        this.toastService.success(result.message);
         this.loadUsers();
       },
       error: (err) => {
         this.deletingId.set(null);
-        this.errorMessage.set(
+        this.toastService.error(
           err?.error?.message ??
             'Kullanıcı silinirken bir hata oluştu.'
         );
@@ -223,13 +221,9 @@ export class UserManagement implements OnInit {
     this.loadUsers();
   }
 
-  goToProperties(): void {
-    this.router.navigate(['/properties']);
-  }
-
   private finishSave(message: string): void {
     this.saving.set(false);
-    this.successMessage.set(message);
+    this.toastService.success(message);
     this.editingId.set(null);
 
     this.resetForm();
@@ -239,7 +233,7 @@ export class UserManagement implements OnInit {
   private handleSaveError(err: any): void {
     this.saving.set(false);
 
-    this.errorMessage.set(
+    this.toastService.error(
       err?.error?.message ??
         'Kullanıcı kaydedilirken bir hata oluştu.'
     );

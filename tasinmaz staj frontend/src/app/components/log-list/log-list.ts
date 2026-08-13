@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Log } from '../../models/log.model';
 import { LogFilter } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-log-list',
@@ -31,7 +32,8 @@ export class LogList implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private logService: LogService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.filterForm = this.formBuilder.group({
       userId: '',
@@ -71,10 +73,6 @@ export class LogList implements OnInit {
     if (page < 1 || page > this.totalPages || page === this.pageNumber()) return;
     this.pageNumber.set(page);
     this.loadLogs();
-  }
-
-  goBack(): void {
-    this.router.navigate(['/properties']);
   }
 
   get totalPages(): number {
@@ -140,7 +138,7 @@ export class LogList implements OnInit {
       },
       error: () => {
         this.exporting.set(false);
-        this.errorMessage.set('Log dışa aktarma işlemi başarısız.');
+        this.toastService.error('Log dışa aktarma işlemi başarısız.');
       }
     });
   }

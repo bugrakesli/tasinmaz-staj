@@ -71,10 +71,6 @@ export class GeometryAnalysis implements OnInit {
     });
   }
 
-  goBack(): void {
-    this.router.navigate(['/properties']);
-  }
-
   // MapDraw poligon çizildiğinde/temizlendiğinde WKT'yi bildirir.
   onQueryPolygonChange(wkt: string): void {
     this.queryWkt.set(wkt);

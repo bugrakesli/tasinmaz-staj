@@ -56,6 +56,7 @@ export class PropertyList implements OnInit {
 
   hoveredId = signal<number | null>(null);
   selectedId = signal<number | null>(null);
+  toastService: any;
 
   toggleSelection(id: number): void {
     this.selectedId.set(this.selectedId() === id ? null : id);
@@ -243,10 +244,6 @@ export class PropertyList implements OnInit {
     this.loadProperties();
   }
 
-  goToAnalysis(): void {
-    this.router.navigate(['/analysis']);
-  }
-
   toggleMap(): void {
     this.showMap.update(value => !value);
   }
@@ -275,7 +272,7 @@ export class PropertyList implements OnInit {
         this.exportingExcel.set(false);
       },
       error: () => {
-        this.errorMessage.set('Failed to export.');
+        this.toastService.error('Dışa aktarma başarısız oldu.');
         this.exportingExcel.set(false);
       }
     });
@@ -289,13 +286,12 @@ export class PropertyList implements OnInit {
         this.exportingPdf.set(false);
       },
       error: () => {
-        this.errorMessage.set('Failed to export.');
+        this.toastService.error('Dışa aktarma başarısız oldu.');
         this.exportingPdf.set(false);
       }
     });
   }
 
-  // SRS 3.2.8: dosya seçilince otomatik yükle, sonucu goster, listeyi yenile.
   onImportFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length > 0 ? input.files[0] : null;
@@ -311,7 +307,7 @@ export class PropertyList implements OnInit {
     this.propertyService.importFromExcel(file).subscribe({
       next: (result) => {
         this.importing.set(false);
-        this.importMessage.set(result.message ?? 'Properties imported successfully.');
+        this.toastService.success(result.message ?? 'Properties imported successfully.');
         this.loadProperties();
         input.value = '';
       },
@@ -345,13 +341,4 @@ export class PropertyList implements OnInit {
       `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
     );
   }
-
-  goToUsers(): void {
-    this.router.navigate(['/users']);
-  }
-
-  goToLogs(): void {
-    this.router.navigate(['/logs']);
-  }
 }
-

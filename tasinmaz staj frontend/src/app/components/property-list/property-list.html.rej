@@ -1,0 +1,90 @@
+diff a/tasinmaz staj frontend/src/app/components/property-list/property-list.html b/tasinmaz staj frontend/src/app/components/property-list/property-list.html	(rejected hunks)
+@@ -6,6 +6,15 @@
+         Yeni Taşınmaz Ekle
+       </button>
+ 
++      <button
++        *ngIf="!isAdmin() && selectedForDelete().size > 0"
++        class="btn btn-danger btn-sm"
++        [disabled]="isDeletingSelected()"
++        (click)="deleteSelected()"
++      >
++        {{ isDeletingSelected() ? 'Siliniyor...' : 'Seçilenleri Sil (' + selectedForDelete().size + ')' }}
++      </button>
++
+       <button
+         class="btn btn-outline-success btn-sm"
+         [disabled]="exportingExcel()"
+@@ -130,12 +115,26 @@
+ 
+   <!-- SRS 3.2.7: mevcut sayfadaki taşınmazların harita üzerinde gösterimi -->
+   <div *ngIf="showMap() && !loading() && !errorMessage()" class="mb-4">
+-    <app-property-map [properties]="properties()"></app-property-map>
++    <app-property-map 
++      [properties]="properties()"
++      [hoveredPropertyId]="hoveredId()"
++      [selectedPropertyId]="selectedId()"
++      (propertyHovered)="hoveredId.set($event)"
++      (propertySelected)="selectedId.set($event)">
++    </app-property-map>
+   </div>
+ 
+   <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle">
+     <thead>
+       <tr>
++        <th *ngIf="!isAdmin()" style="width: 40px;">
++          <input
++            type="checkbox"
++            class="form-check-input"
++            [checked]="isAllSelected()"
++            (change)="toggleAllForDelete($event)"
++          />
++        </th>
+         <th>Şehir</th>
+         <th>İlçe</th>
+         <th>Mahalle</th>
+@@ -147,7 +146,22 @@
+       </tr>
+     </thead>
+     <tbody>
+-      <tr *ngFor="let p of properties()">
++      <tr *ngFor="let p of properties()"
++          (mouseenter)="hoveredId.set(p.id)"
++          (mouseleave)="hoveredId.set(null)"
++          (click)="toggleSelection(p.id)"
++          [class.table-primary]="p.id === selectedId()"
++          [class.table-active]="p.id === hoveredId() && p.id !== selectedId()"
++          style="cursor: pointer;">
++        <td *ngIf="!isAdmin()">
++          <input
++            type="checkbox"
++            class="form-check-input"
++            [checked]="selectedForDelete().has(p.id)"
++            (change)="toggleForDelete(p, $event)"
++            (click)="$event.stopPropagation()"
++          />
++        </td>
+         <td>{{ p.city }}</td>
+         <td>{{ p.district }}</td>
+         <td>{{ p.neighborhood }}</td>
+@@ -157,18 +171,11 @@
+         <td>{{ p.propertyType }}</td>
+         <td *ngIf="!isAdmin()" class="text-end">
+           <button
+-            class="btn btn-outline-secondary btn-sm me-2"
+-            (click)="edit(p)"
++            class="btn btn-outline-secondary btn-sm"
++            (click)="edit(p, $event)"
+           >
+             Düzenle
+           </button>
+-          <button
+-            class="btn btn-outline-danger btn-sm"
+-            [disabled]="deletingId() === p.id"
+-            (click)="remove(p)"
+-          >
+-            {{ deletingId() === p.id ? 'Siliniyor...' : 'Sil' }}
+-          </button>
+         </td>
+       </tr>
+       <tr *ngIf="properties().length === 0">

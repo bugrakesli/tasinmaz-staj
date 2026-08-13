@@ -48,33 +48,9 @@
         (change)="onImportFileSelected($event)"
       />
 
-      <button class="btn btn-outline-info btn-sm" (click)="goToAnalysis()">
-        Kesişim / Birleşim Analizi
-      </button>
-
       <button class="btn btn-outline-info btn-sm" (click)="toggleMap()">
         {{ showMap() ? 'Haritayı Gizle' : 'Haritada Göster' }}
       </button>
-
-      <button
-        *ngIf="isAdmin()"
-        type="button"
-        class="btn btn-outline-primary btn-sm"
-        (click)="goToUsers()"
-      >
-        Kullanıcı Yönetimi
-      </button>
-
-      <button
-        *ngIf="isAdmin()"
-        type="button"
-        class="btn btn-outline-primary btn-sm"
-        (click)="goToLogs()"
-      >
-        Sistem Logları
-      </button>
-
-      <button class="btn btn-outline-danger btn-sm" (click)="logout()">Çıkış Yap</button>
     </div>
   </div>
 
