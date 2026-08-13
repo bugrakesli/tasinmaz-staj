@@ -1,0 +1,12 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;">
+  <div *ngFor="let toast of toastService.toasts()" class="toast show fade-in" [ngClass]="getToastClass(toast.type)" role="alert">
+    <div class="toast-header" [ngClass]="getToastClass(toast.type)">
+      <i class="bi me-2" [ngClass]="getIconClass(toast.type)"></i>
+      <strong class="me-auto">{{ getTitle(toast.type) }}</strong>
+      <button type="button" class="btn-close" [class.btn-close-white]="toast.type !== 'warning'" (click)="toastService.remove(toast.id)"></button>
+    </div>
+    <div class="toast-body">
+      {{ toast.message }}
+    </div>
+  </div>
+</div>

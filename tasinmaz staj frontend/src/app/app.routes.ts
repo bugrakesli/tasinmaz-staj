@@ -6,6 +6,7 @@ import { PropertyForm } from './components/property-form/property-form';
 import { GeometryAnalysis } from './components/geometry-analysis/geometry-analysis';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+import { NotFound } from './components/not-found/not-found';
 
 export const routes: Routes = [
   {
@@ -48,5 +49,9 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
+  },
+  {
+    path: '**',
+    component: NotFound
   }
 ];

@@ -44,8 +44,22 @@ export class AuthService {
     return localStorage.getItem('email');
   }
 
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp;
+      // exp is in seconds, Date.now() is in milliseconds
+      return (Math.floor(Date.now() / 1000)) >= expiry;
+    } catch {
+      return true;
+    }
+  }
+
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return !!this.getToken() && !this.isTokenExpired();
   }
 
   isAdmin(): boolean {
