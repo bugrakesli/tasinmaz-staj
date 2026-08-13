@@ -1,74 +1,72 @@
-<div class="container-fluid py-4">
-  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+<div class="page-container">
+  <div class="page-header">
     <div>
-      <h2 class="mb-1">Sistem Logları</h2>
-      <p class="text-muted mb-0">Admin log kayıtlarını filtrele ve dışa aktar.</p>
+      <h2>Sistem Logları</h2>
+      <p class="page-subtitle mb-0">Admin log kayıtlarını filtrele ve dışa aktar.</p>
     </div>
     <div class="d-flex gap-2">
       <button type="button" class="btn btn-success" [disabled]="exporting()" (click)="exportToExcel()">
-        Excel'e Aktar
+        <i class="bi bi-file-earmark-excel me-1"></i>Excel'e Aktar
       </button>
       <button type="button" class="btn btn-danger" [disabled]="exporting()" (click)="exportToPdf()">
-        PDF'e Aktar
+        <i class="bi bi-file-earmark-pdf me-1"></i>PDF'e Aktar
       </button>
     </div>
   </div>
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-header"><strong>Log Filtreleri</strong></div>
-    <div class="card-body">
-      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
-        <div class="row g-3">
-          <div class="col-md-2">
-            <label for="userId" class="form-label">User ID</label>
-            <input id="userId" type="number" min="1" class="form-control" formControlName="userId">
-          </div>
-          <div class="col-md-2">
-            <label for="status" class="form-label">Status</label>
-            <input id="status" type="text" class="form-control" formControlName="status">
-          </div>
-          <div class="col-md-2">
-            <label for="operationType" class="form-label">Operation Type</label>
-            <input id="operationType" type="text" class="form-control" formControlName="operationType">
-          </div>
-          <div class="col-md-3">
-            <label for="description" class="form-label">Description</label>
-            <input id="description" type="text" class="form-control" formControlName="description">
-          </div>
-          <div class="col-md-3">
-            <label for="userIp" class="form-label">User IP</label>
-            <input id="userIp" type="text" class="form-control" formControlName="userIp">
-          </div>
-          <div class="col-md-3">
-            <label for="startDate" class="form-label">Başlangıç Tarihi</label>
-            <input id="startDate" type="datetime-local" class="form-control" formControlName="startDate">
-          </div>
-          <div class="col-md-3">
-            <label for="endDate" class="form-label">Bitiş Tarihi</label>
-            <input id="endDate" type="datetime-local" class="form-control" formControlName="endDate">
-          </div>
-          <div class="col-12 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" [disabled]="loading()">Filtrele</button>
-            <button type="button" class="btn btn-outline-secondary" [disabled]="loading()" (click)="clearFilters()">
-              Temizle
-            </button>
-          </div>
+  <div class="surface-card mb-4">
+    <div class="section-title"><i class="bi bi-funnel"></i>Log Filtreleri</div>
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label for="userId" class="form-label">User ID</label>
+          <input id="userId" type="number" min="1" class="form-control" formControlName="userId">
         </div>
-      </form>
-    </div>
+        <div class="col-md-2">
+          <label for="status" class="form-label">Status</label>
+          <input id="status" type="text" class="form-control" formControlName="status">
+        </div>
+        <div class="col-md-2">
+          <label for="operationType" class="form-label">Operation Type</label>
+          <input id="operationType" type="text" class="form-control" formControlName="operationType">
+        </div>
+        <div class="col-md-3">
+          <label for="description" class="form-label">Description</label>
+          <input id="description" type="text" class="form-control" formControlName="description">
+        </div>
+        <div class="col-md-3">
+          <label for="userIp" class="form-label">User IP</label>
+          <input id="userIp" type="text" class="form-control" formControlName="userIp">
+        </div>
+        <div class="col-md-3">
+          <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+          <input id="startDate" type="datetime-local" class="form-control" formControlName="startDate">
+        </div>
+        <div class="col-md-3">
+          <label for="endDate" class="form-label">Bitiş Tarihi</label>
+          <input id="endDate" type="datetime-local" class="form-control" formControlName="endDate">
+        </div>
+        <div class="col-12 d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="loading()">Filtrele</button>
+          <button type="button" class="btn btn-outline-secondary" [disabled]="loading()" (click)="clearFilters()">
+            Temizle
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
 
   <div *ngIf="errorMessage()" class="alert alert-danger" role="alert">
     {{ errorMessage() }}
   </div>
 
-  <div class="card shadow-sm">
+  <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <strong>Log Kayıtları</strong>
-      <span class="text-muted">Toplam kayıt: {{ totalCount() }}</span>
+      <span><i class="bi bi-journal-text me-2"></i>Log Kayıtları</span>
+      <span class="page-subtitle mb-0">Toplam kayıt: {{ totalCount() }}</span>
     </div>
     <div class="table-responsive">
-      <table class="table table-hover table-striped align-middle mb-0">
+      <table class="table table-hover align-middle mb-0">
         <thead>
           <tr>
             <th>ID</th>
@@ -98,8 +96,11 @@
             <td>{{ log.userIp }}</td>
           </tr>
           <tr *ngIf="!loading() && logs().length === 0">
-            <td colspan="7" class="text-center text-muted py-4">
-              No log records match the criteria.
+            <td colspan="7" class="p-0">
+              <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                No log records match the criteria.
+              </div>
             </td>
           </tr>
         </tbody>
@@ -107,7 +108,7 @@
     </div>
     <div *ngIf="!loading() && totalPages > 1"
          class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
-      <span class="text-muted">Sayfa {{ pageNumber() }} / {{ totalPages }}</span>
+      <span class="page-subtitle mb-0">Sayfa {{ pageNumber() }} / {{ totalPages }}</span>
       <nav aria-label="Log pagination">
         <ul class="pagination mb-0">
           <li class="page-item" [class.disabled]="pageNumber() === 1">

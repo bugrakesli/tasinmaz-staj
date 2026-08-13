@@ -1,25 +1,267 @@
 diff a/tasinmaz staj frontend/src/app/components/user-management/user-management.html b/tasinmaz staj frontend/src/app/components/user-management/user-management.html	(rejected hunks)
-@@ -1,23 +1,6 @@
- <div class="container py-4">
-   <div class="d-flex justify-content-between align-items-center mb-4">
-     <h1 class="h3 mb-0">Kullanıcı Yönetimi</h1>
--
--    <button
--      type="button"
--      class="btn btn-outline-secondary btn-sm"
--      (click)="goToProperties()"
--    >
--      Taşınmazlara Dön
--    </button>
--  </div>
--
--  <!-- Başarı mesajı -->
--  <div
--    *ngIf="successMessage()"
--    class="alert alert-success"
--    role="alert"
--  >
--    {{ successMessage() }}
+@@ -13,149 +16,148 @@
    </div>
  
-   <!-- Hata mesajı -->
+   <!-- Kullanıcı formu -->
+-  <div class="card shadow-sm mb-4">
+-    <div class="card-body">
+-      <h5 class="card-title mb-3">
+-        {{ editingId() === null ? 'Yeni Kullanıcı' : 'Kullanıcı Güncelle' }}
+-      </h5>
+-
+-      <form
+-        [formGroup]="userForm"
+-        (ngSubmit)="submit()"
+-      >
+-        <div class="row g-3">
+-
+-          <!-- E-posta -->
+-          <div class="col-md-4">
+-            <label
+-              for="userEmail"
+-              class="form-label"
+-            >
+-              E-posta
+-            </label>
+-
+-            <input
+-              id="userEmail"
+-              type="email"
+-              class="form-control"
+-              formControlName="email"
+-            />
+-
+-            <div
+-              *ngIf="
+-                userForm.controls['email'].touched &&
+-                userForm.controls['email'].invalid
+-              "
+-              class="text-danger small mt-1"
+-            >
+-              Geçerli bir e-posta adresi giriniz.
+-            </div>
+-          </div>
++  <div class="surface-card mb-4">
++    <div class="section-title">
++      <i class="bi" [ngClass]="editingId() === null ? 'bi-person-plus' : 'bi-pencil-square'"></i>
++      {{ editingId() === null ? 'Yeni Kullanıcı' : 'Kullanıcı Güncelle' }}
++    </div>
+ 
+-          <!-- Şifre -->
+-          <div class="col-md-4">
+-            <label
+-              for="userPassword"
+-              class="form-label"
+-            >
+-              Şifre
+-
+-              <span
+-                *ngIf="editingId() !== null"
+-                class="text-muted"
+-              >
+-                (değiştirmek istemiyorsanız boş bırakın)
+-              </span>
+-            </label>
+-
+-            <input
+-              id="userPassword"
+-              type="password"
+-              class="form-control"
+-              formControlName="password"
+-            />
+-
+-            <div
+-              *ngIf="
+-                userForm.controls['password'].touched &&
+-                userForm.controls['password'].invalid
+-              "
+-              class="text-danger small mt-1"
+-            >
+-              Şifre 8–12 karakter olmalı; en az bir harf,
+-              bir rakam ve bir özel karakter içermelidir.
+-            </div>
++    <form
++      [formGroup]="userForm"
++      (ngSubmit)="submit()"
++    >
++      <div class="row g-3">
++
++        <!-- E-posta -->
++        <div class="col-md-4">
++          <label
++            for="userEmail"
++            class="form-label"
++          >
++            E-posta
++          </label>
++
++          <input
++            id="userEmail"
++            type="email"
++            class="form-control"
++            formControlName="email"
++          />
++
++          <div
++            *ngIf="
++              userForm.controls['email'].touched &&
++              userForm.controls['email'].invalid
++            "
++            class="text-danger small mt-1"
++          >
++            Geçerli bir e-posta adresi giriniz.
+           </div>
++        </div>
+ 
+-          <!-- Rol -->
+-          <div class="col-md-4">
+-            <label
+-              for="userRole"
+-              class="form-label"
+-            >
+-              Rol
+-            </label>
++        <!-- Şifre -->
++        <div class="col-md-4">
++          <label
++            for="userPassword"
++            class="form-label"
++          >
++            Şifre
+ 
+-            <select
+-              id="userRole"
+-              class="form-select"
+-              formControlName="role"
++            <span
++              *ngIf="editingId() !== null"
++              class="text-muted"
+             >
+-              <option value="User">User</option>
+-              <option value="Admin">Admin</option>
+-            </select>
++              (değiştirmek istemiyorsanız boş bırakın)
++            </span>
++          </label>
++
++          <input
++            id="userPassword"
++            type="password"
++            class="form-control"
++            formControlName="password"
++          />
++
++          <div
++            *ngIf="
++              userForm.controls['password'].touched &&
++              userForm.controls['password'].invalid
++            "
++            class="text-danger small mt-1"
++          >
++            Şifre 8–12 karakter olmalı; en az bir harf,
++            bir rakam ve bir özel karakter içermelidir.
+           </div>
+         </div>
+ 
+-        <!-- Form butonları -->
+-        <div class="d-flex gap-2 mt-4">
+-          <button
+-            type="submit"
+-            class="btn btn-primary"
+-            [disabled]="saving()"
++        <!-- Rol -->
++        <div class="col-md-4">
++          <label
++            for="userRole"
++            class="form-label"
+           >
+-            {{
+-              saving()
+-                ? 'Kaydediliyor...'
+-                : (editingId() === null
+-                    ? 'Kullanıcı Ekle'
+-                    : 'Güncelle')
+-            }}
+-          </button>
+-
+-          <button
+-            *ngIf="editingId() !== null"
+-            type="button"
+-            class="btn btn-outline-secondary"
+-            (click)="cancelEdit()"
++            Rol
++          </label>
++
++          <select
++            id="userRole"
++            class="form-select"
++            formControlName="role"
+           >
+-            İptal
+-          </button>
++            <option value="User">User</option>
++            <option value="Admin">Admin</option>
++          </select>
+         </div>
+-      </form>
+-    </div>
++      </div>
++
++      <!-- Form butonları -->
++      <div class="d-flex gap-2 mt-4">
++        <button
++          type="submit"
++          class="btn btn-primary"
++          [disabled]="saving()"
++        >
++          {{
++            saving()
++              ? 'Kaydediliyor...'
++              : (editingId() === null
++                  ? 'Kullanıcı Ekle'
++                  : 'Güncelle')
++          }}
++        </button>
++
++        <button
++          *ngIf="editingId() !== null"
++          type="button"
++          class="btn btn-outline-secondary"
++          (click)="cancelEdit()"
++        >
++          İptal
++        </button>
++      </div>
++    </form>
+   </div>
+ 
+   <!-- Loading -->
+   <div
+     *ngIf="loading()"
+-    class="alert alert-info"
+-    role="alert"
++    class="loading-overlay"
+   >
+-    Kullanıcılar yükleniyor...
++    <span class="spinner-border spinner-border-sm"></span> Kullanıcılar yükleniyor...
+   </div>
+ 
+   <!-- Kullanıcı listesi -->
+   <div
+     *ngIf="!loading()"
+-    class="card shadow-sm"
++    class="card"
+   >
++    <div class="card-header">
++      <i class="bi bi-people me-2"></i>Kullanıcılar
++    </div>
+     <div class="card-body">
+-      <h5 class="card-title mb-3">Kullanıcılar</h5>
+-
+       <div class="table-responsive">
+         <table
+-          class="table table-striped table-hover align-middle mb-0"
++          class="table table-hover align-middle mb-0"
+         >
+           <thead>
+             <tr>

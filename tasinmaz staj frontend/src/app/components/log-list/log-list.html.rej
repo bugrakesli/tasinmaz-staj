@@ -1,11 +1,12 @@
 diff a/tasinmaz staj frontend/src/app/components/log-list/log-list.html b/tasinmaz staj frontend/src/app/components/log-list/log-list.html	(rejected hunks)
-@@ -11,9 +11,6 @@
-       <button type="button" class="btn btn-danger" [disabled]="exporting()" (click)="exportToPdf()">
-         PDF'e Aktar
-       </button>
--      <button class="btn btn-outline-secondary btn-sm" (click)="goBack()">
--        Taşınmazlara Dön
--      </button>
-     </div>
-   </div>
- 
+@@ -82,7 +80,9 @@
+         </thead>
+         <tbody>
+           <tr *ngIf="loading()">
+-            <td colspan="7" class="text-center py-4">Loglar yükleniyor...</td>
++            <td colspan="7" class="loading-overlay">
++              <span class="spinner-border spinner-border-sm"></span> Loglar yükleniyor...
++            </td>
+           </tr>
+           <tr *ngFor="let log of logs(); trackBy: trackByLogId">
+             <td>{{ log.id }}</td>
