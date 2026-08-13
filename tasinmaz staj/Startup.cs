@@ -15,8 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TasinmazStaj.Interfaces;
-using TasinmazStaj.Services;
 
 namespace tasinmaz_staj
 {
