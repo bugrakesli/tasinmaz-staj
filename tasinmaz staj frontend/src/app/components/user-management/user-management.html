@@ -34,7 +34,7 @@
               for="userEmail"
               class="form-label"
             >
-              E-posta
+              E-posta <span class="text-danger" aria-hidden="true">*</span>
             </label>
 
             <input
@@ -62,6 +62,7 @@
               class="form-label"
             >
               Şifre
+              <span *ngIf="editingId() === null" class="text-danger" aria-hidden="true">*</span>
 
               <span
                 *ngIf="editingId() !== null"
@@ -96,7 +97,7 @@
               for="userRole"
               class="form-label"
             >
-              Rol
+              Rol <span class="text-danger" aria-hidden="true">*</span>
             </label>
 
             <select
@@ -156,7 +157,7 @@
 
       <div class="table-responsive">
         <table
-          class="table table-striped table-hover align-middle mb-0"
+          class="table table-striped table-hover align-middle mb-0 standard-table"
         >
           <thead>
             <tr>
@@ -224,7 +225,7 @@
   >
     <div class="page-subtitle mb-0">
       Toplam kayıt:
-      <strong>{{ totalCount() }}</strong>
+      <strong>{{ totalCount() | number:'1.0-0' }}</strong>
     </div>
 
     <div class="d-flex align-items-center gap-2">

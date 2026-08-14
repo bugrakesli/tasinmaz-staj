@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Log } from '../../models/log.model';
@@ -43,6 +43,19 @@ export class LogList implements OnInit {
       userIp: '',
       startDate: '',
       endDate: ''
+    }, {
+      validators: (group: AbstractControl): ValidationErrors | null => {
+        const start = group.get('startDate')?.value;
+        const end = group.get('endDate')?.value;
+
+        if (!start || !end) {
+          return null;
+        }
+
+        return new Date(start) <= new Date(end)
+          ? null
+          : { dateRange: true };
+      }
     });
   }
 
@@ -51,6 +64,11 @@ export class LogList implements OnInit {
   }
 
   applyFilters(): void {
+    if (this.filterForm.invalid) {
+      this.filterForm.markAllAsTouched();
+      return;
+    }
+
     this.pageNumber.set(1);
     this.loadLogs();
   }

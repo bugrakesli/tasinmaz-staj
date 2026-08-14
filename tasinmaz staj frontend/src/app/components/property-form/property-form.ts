@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
@@ -58,6 +58,14 @@ export class PropertyForm implements OnInit {
 
   propertyForm;
 
+  private readonly nonBlankValidator = (control: AbstractControl): ValidationErrors | null => {
+    if (typeof control.value !== 'string') {
+      return null;
+    }
+
+    return control.value.trim().length === 0 ? { required: true } : null;
+  };
+
   constructor(
     private formBuilder: FormBuilder,
     private propertyService: PropertyService,
@@ -67,14 +75,14 @@ export class PropertyForm implements OnInit {
     private route: ActivatedRoute
   ) {
     this.propertyForm = this.formBuilder.group({
-      city: ['', Validators.required],
-      district: ['', Validators.required],
-      neighborhood: ['', Validators.required],
-      lotNumber: ['', Validators.required],
-      parcelNumber: ['', Validators.required],
-      address: ['', Validators.required],
-      propertyType: ['', Validators.required],
-      coordinate: ['', Validators.required]
+      city: ['', [Validators.required, this.nonBlankValidator]],
+      district: ['', [Validators.required, this.nonBlankValidator]],
+      neighborhood: ['', [Validators.required, this.nonBlankValidator]],
+      lotNumber: ['', [Validators.required, this.nonBlankValidator]],
+      parcelNumber: ['', [Validators.required, this.nonBlankValidator]],
+      address: ['', [Validators.required, this.nonBlankValidator]],
+      propertyType: ['', [Validators.required, this.nonBlankValidator]],
+      coordinate: ['', [Validators.required, this.nonBlankValidator]]
     });
   }
 

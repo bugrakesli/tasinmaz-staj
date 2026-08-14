@@ -188,6 +188,22 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom-width: 1px;
 }
 
+
+.standard-table th,
+.standard-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.standard-table .numeric-cell {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.standard-table .actions-cell {
+  text-align: right;
+}
+
 // --- Badge'ler ------------------------------------------------------------
 .badge {
   font-weight: var(--fw-medium);

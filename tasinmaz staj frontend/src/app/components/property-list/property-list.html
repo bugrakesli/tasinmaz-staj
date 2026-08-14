@@ -1,6 +1,9 @@
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">Taşınmazlarım</h1>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="h3 mb-0">Taşınmazlarım</h1>
+      <p class="page-subtitle mb-0">Taşınmaz kayıtlarını görüntüleyin, filtreleyin ve yönetin.</p>
+    </div>
     <div class="d-flex gap-2">
       <button *ngIf="!isAdmin()" class="btn btn-primary btn-sm" (click)="addNew()">
         Yeni Taşınmaz Ekle
@@ -136,7 +139,7 @@
     </app-property-map>
   </div>
 
-  <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle">
+  <table *ngIf="!loading() && !errorMessage()" class="table table-striped table-hover align-middle standard-table">
     <thead>
       <tr>
         <th *ngIf="!isAdmin()" style="width: 40px;">
@@ -150,10 +153,10 @@
         <th>Şehir</th>
         <th>İlçe</th>
         <th>Mahalle</th>
-        <th>Ada No</th>
-        <th>Parsel No</th>
-        <th>Adres</th>
-        <th>Tip</th>
+        <th class="text-center">Ada No</th>
+        <th class="text-center">Parsel No</th>
+        <th class="text-center">Adres</th>
+        <th class="text-center">Tip</th>
         <th *ngIf="!isAdmin()" class="text-end">İşlemler</th>
       </tr>
     </thead>
@@ -177,8 +180,8 @@
         <td>{{ p.city }}</td>
         <td>{{ p.district }}</td>
         <td>{{ p.neighborhood }}</td>
-        <td>{{ p.adaNo }}</td>
-        <td>{{ p.parselNo }}</td>
+        <td class="numeric-cell">{{ p.adaNo }}</td>
+        <td class="numeric-cell">{{ p.parselNo }}</td>
         <td>{{ p.adres }}</td>
         <td>{{ p.propertyType }}</td>
         <td *ngIf="!isAdmin()" class="text-end">
@@ -204,7 +207,7 @@
     class="d-flex justify-content-between align-items-center mt-3"
   >
     <div>
-      Toplam kayıt: <strong>{{ totalCount() }}</strong>
+      Toplam kayıt: <strong>{{ totalCount() | number:'1.0-0' }}</strong>
     </div>
 
     <div class="d-flex align-items-center gap-2">

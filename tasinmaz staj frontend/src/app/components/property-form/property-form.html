@@ -1,12 +1,12 @@
-<div class="container py-4">
+<div class="page-container">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="page-header">
     <h1 class="h3 mb-0">
       {{ isEditMode ? 'Taşınmazı Düzenle' : 'Yeni Taşınmaz Ekle' }}
     </h1>
 
-    <button class="btn btn-outline-secondary btn-sm" (click)="cancel()">
-      Listeye Dön
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancel()">
+      Vazgeç / Kapat
     </button>
   </div>
 
@@ -28,7 +28,7 @@
           <div class="row g-3">
 
             <div class="col-md-4">
-              <label for="city" class="form-label">Şehir</label>
+              <label for="city" class="form-label">Şehir <span class="text-danger" aria-hidden="true">*</span></label>
               <select id="city" class="form-select" formControlName="city" (change)="onCityChange($event)">
                 <option value="">Seçiniz...</option>
                 <option *ngFor="let il of iller()" [value]="il.ad">{{ il.ad }}</option>
@@ -39,7 +39,7 @@
             </div>
 
             <div class="col-md-4">
-              <label for="district" class="form-label">İlçe</label>
+              <label for="district" class="form-label">İlçe <span class="text-danger" aria-hidden="true">*</span></label>
               <select
                 id="district"
                 class="form-select"
@@ -55,7 +55,7 @@
             </div>
 
             <div class="col-md-4">
-              <label for="neighborhood" class="form-label">Mahalle</label>
+              <label for="neighborhood" class="form-label">Mahalle <span class="text-danger" aria-hidden="true">*</span></label>
               <input id="neighborhood" type="text" class="form-control" formControlName="neighborhood">
               @if (propertyForm.get('neighborhood')?.touched && propertyForm.get('neighborhood')?.invalid) {
                 <div class="text-danger small mt-1">Mahalle zorunludur.</div>
@@ -63,7 +63,7 @@
             </div>
 
             <div class="col-md-3">
-              <label for="lotNumber" class="form-label">Ada No</label>
+              <label for="lotNumber" class="form-label">Ada No <span class="text-danger" aria-hidden="true">*</span></label>
               <input id="lotNumber" type="text" class="form-control" formControlName="lotNumber">
               @if (propertyForm.get('lotNumber')?.touched && propertyForm.get('lotNumber')?.invalid) {
                 <div class="text-danger small mt-1">Ada no zorunludur.</div>
@@ -71,7 +71,7 @@
             </div>
 
             <div class="col-md-3">
-              <label for="parcelNumber" class="form-label">Parsel No</label>
+              <label for="parcelNumber" class="form-label">Parsel No <span class="text-danger" aria-hidden="true">*</span></label>
               <input id="parcelNumber" type="text" class="form-control" formControlName="parcelNumber">
               @if (propertyForm.get('parcelNumber')?.touched && propertyForm.get('parcelNumber')?.invalid) {
                 <div class="text-danger small mt-1">Parsel no zorunludur.</div>
@@ -79,7 +79,7 @@
             </div>
 
             <div class="col-md-6">
-              <label for="propertyType" class="form-label">Taşınmaz Tipi</label>
+              <label for="propertyType" class="form-label">Taşınmaz Tipi <span class="text-danger" aria-hidden="true">*</span></label>
               <input id="propertyType" type="text" class="form-control" formControlName="propertyType"
                      placeholder="Örn. Arsa, Konut, Tarla">
               @if (propertyForm.get('propertyType')?.touched && propertyForm.get('propertyType')?.invalid) {
@@ -88,7 +88,7 @@
             </div>
 
             <div class="col-12">
-              <label for="address" class="form-label">Adres</label>
+              <label for="address" class="form-label">Adres <span class="text-danger" aria-hidden="true">*</span></label>
               <input id="address" type="text" class="form-control" formControlName="address">
               @if (propertyForm.get('address')?.touched && propertyForm.get('address')?.invalid) {
                 <div class="text-danger small mt-1">Adres zorunludur.</div>
@@ -133,13 +133,13 @@
             }
 
             <div class="col-12">
-              <label class="form-label">Konum (haritadan çizin)</label>
+              <label class="form-label">Konum (haritadan çizin) <span class="text-danger" aria-hidden="true">*</span></label>
               <app-map-draw [initialWkt]="mapWkt()" (wktChange)="onGeometryDrawn($event)"></app-map-draw>
             </div>
 
             <div class="col-12">
               <div class="d-flex justify-content-between align-items-center">
-                <label for="coordinate" class="form-label mb-0">Koordinat (WKT Polygon)</label>
+                <label for="coordinate" class="form-label mb-0">Koordinat (WKT Polygon) <span class="text-danger" aria-hidden="true">*</span></label>
                 <button type="button" class="btn btn-sm btn-link p-0" (click)="showOnMap()">
                   Haritada Göster
                 </button>
