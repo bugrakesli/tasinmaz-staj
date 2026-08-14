@@ -23,15 +23,6 @@
       </button>
 
       <button
-        *ngIf="!isAdmin() && selectedForDelete().size > 0"
-        class="btn btn-danger btn-sm"
-        [disabled]="isDeletingSelected()"
-        (click)="deleteSelected()"
-      >
-        {{ isDeletingSelected() ? 'Siliniyor...' : 'Seçilenleri Sil (' + selectedForDelete().size + ')' }}
-      </button>
-
-      <button
         class="btn btn-outline-success btn-sm"
         [disabled]="exportingExcel()"
         (click)="exportExcel()"
@@ -123,6 +114,19 @@
       </div>
     </div>
   </form>
+
+  <button
+    *ngIf="!isAdmin() && selectedForDelete().size > 0"
+    type="button"
+    class="floating-delete-button"
+    [disabled]="isDeletingSelected()"
+    (click)="deleteSelected()"
+    aria-label="Seçili taşınmazları sil"
+  >
+    <span aria-hidden="true">🗑</span>
+    <span>{{ isDeletingSelected() ? 'Siliniyor...' : 'Seçilenleri Sil' }}</span>
+    <span class="floating-delete-count">{{ selectedForDelete().size }}</span>
+  </button>
 
   <div *ngIf="loading()" class="d-flex justify-content-center my-5">
     <div class="spinner-border text-primary" role="status">
