@@ -2,7 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged, forkJoin, map } from 'rxjs';
 
 import { PropertyService } from '../../services/property.service';
 import { LocationService } from '../../services/location.service';
@@ -183,6 +183,15 @@ export class PropertyList implements OnInit {
       error: () => {}
     });
     this.loadProperties();
+
+    this.filterForm.valueChanges.pipe(
+      map(value => JSON.stringify(value)),
+      distinctUntilChanged(),
+      debounceTime(300)
+    ).subscribe(() => {
+      this.pageNumber.set(1);
+      this.loadProperties();
+    });
   }
 
   onFilterCityChange(event: Event): void {
@@ -225,7 +234,6 @@ export class PropertyList implements OnInit {
 
   applyFilter(): void {
     this.pageNumber.set(1);
-    this.loadProperties();
   }
 
   clearFilter(): void {
@@ -241,7 +249,6 @@ export class PropertyList implements OnInit {
     });
     this.filterIlceler.set([]);
     this.pageNumber.set(1);
-    this.loadProperties();
   }
 
   previousPage(): void {

@@ -108,7 +108,7 @@ public class PropertyService : IPropertyService
             query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ilce.Ad, filter.District));
 
         if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ad, filter.Neighborhood));
+            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ad, $"%{filter.Neighborhood}%"));
 
         if (!string.IsNullOrWhiteSpace(filter.ParcelNumber))
             query = query.Where(p => EF.Functions.ILike(p.ParselNo, filter.ParcelNumber));
@@ -120,7 +120,7 @@ public class PropertyService : IPropertyService
             query = query.Where(p => EF.Functions.ILike(p.Adres, $"%{filter.Address}%"));
 
         if (!string.IsNullOrWhiteSpace(filter.PropertyType))
-            query = query.Where(p => p.PropertyType == filter.PropertyType);
+            query = query.Where(p => EF.Functions.ILike(p.PropertyType, $"%{filter.PropertyType}%"));
 
         return query;
     }
