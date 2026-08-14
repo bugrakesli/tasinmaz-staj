@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -12,7 +12,7 @@ import { LoginRequest } from '../../models/login-request.model';
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
-export class Login {
+export class Login implements OnInit {
   // Zoneless CD altında async subscribe callback'i içinde set edildiği için
   // signal kullanılıyor.
   loginError = signal('');
@@ -29,6 +29,15 @@ export class Login {
       password: ['', [Validators.required]]
     });
   }
+
+  ngOnInit(): void {
+    // Eğer kullanıcı (tarayıcının geri tuşuyla vb.) giriş sayfasına geri dönerse,
+    // güvenliği sağlamak ve navbar'ı gizlemek için otomatik çıkış yap.
+    if (this.authService.isAuthenticated()) {
+      this.authService.logout();
+    }
+  }
+
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
