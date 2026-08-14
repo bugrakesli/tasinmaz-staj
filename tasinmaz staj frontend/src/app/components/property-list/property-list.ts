@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, forkJoin, map } from 'rxjs';
 
 import { PropertyService } from '../../services/property.service';
@@ -17,7 +17,7 @@ import { ConfirmModal } from '../confirm-modal/confirm-modal';
 @Component({
   selector: 'app-property-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PropertyMap, ConfirmModal, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, PropertyMap, ConfirmModal],
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss'
 })
