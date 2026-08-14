@@ -8,3 +8,9 @@ export interface Ilce {
   ilId: number;
   ad: string;
 }
+
+export interface Mahalle {
+  id: number;
+  ilceId: number;
+  ad: string;
+}

@@ -45,6 +45,7 @@
                 class="form-select"
                 formControlName="district"
                 [disabled]="!propertyForm.value.city || loadingIlceler()"
+                (change)="onDistrictChange($event)"
               >
                 <option value="">{{ loadingIlceler() ? 'Yükleniyor...' : 'Seçiniz...' }}</option>
                 <option *ngFor="let ilce of ilceler()" [value]="ilce.ad">{{ ilce.ad }}</option>
@@ -56,7 +57,15 @@
 
             <div class="col-md-4">
               <label for="neighborhood" class="form-label">Mahalle <span class="text-danger" aria-hidden="true">*</span></label>
-              <input id="neighborhood" type="text" class="form-control" formControlName="neighborhood">
+              <select
+                id="neighborhood"
+                class="form-select"
+                formControlName="neighborhood"
+                [disabled]="!propertyForm.value.district || loadingMahalleler()"
+              >
+                <option value="">{{ loadingMahalleler() ? 'Yükleniyor...' : 'Seçiniz...' }}</option>
+                <option *ngFor="let mahalle of mahalleler()" [value]="mahalle.ad">{{ mahalle.ad }}</option>
+              </select>
               @if (propertyForm.get('neighborhood')?.touched && propertyForm.get('neighborhood')?.invalid) {
                 <div class="text-danger small mt-1">Mahalle zorunludur.</div>
               }

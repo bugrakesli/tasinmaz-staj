@@ -3,13 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Il, Ilce } from '../models/location.model';
+import { Il, Ilce, Mahalle } from '../models/location.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocationService {
   private readonly apiUrl = `${environment.apiUrl}/Location`;
+  private readonly referenceUrl = `${environment.apiUrl}/Reference`;
 
   constructor(private http: HttpClient) {}
 
@@ -23,5 +24,9 @@ export class LocationService {
       params = params.set('ilId', ilId);
     }
     return this.http.get<Ilce[]>(`${this.apiUrl}/ilceler`, { params });
+  }
+
+  getMahalleler(ilceId: number): Observable<Mahalle[]> {
+    return this.http.get<Mahalle[]>(`${this.referenceUrl}/ilceler/${ilceId}/mahalleler`);
   }
 }

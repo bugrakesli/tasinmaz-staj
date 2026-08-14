@@ -75,14 +75,17 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">İlçe</label>
-          <select class="form-select" formControlName="district" [disabled]="!filterForm.value.city">
+          <select class="form-select" formControlName="district" [disabled]="!filterForm.value.city" (change)="onFilterDistrictChange($event)">
             <option value="">Tümü</option>
             <option *ngFor="let ilce of filterIlceler()" [value]="ilce.ad">{{ ilce.ad }}</option>
           </select>
         </div>
         <div class="col-md-3">
           <label class="form-label">Mahalle</label>
-          <input class="form-control" formControlName="neighborhood" placeholder="Mahalle">
+          <select class="form-select" formControlName="neighborhood" [disabled]="!filterForm.value.district">
+            <option value="">Tümü</option>
+            <option *ngFor="let mahalle of filterMahalleler()" [value]="mahalle.ad">{{ mahalle.ad }}</option>
+          </select>
         </div>
         <div class="col-md-3">
           <label class="form-label">Parsel No</label>

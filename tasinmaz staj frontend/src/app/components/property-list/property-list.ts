@@ -8,7 +8,7 @@ import { PropertyService } from '../../services/property.service';
 import { LocationService } from '../../services/location.service';
 import { ToastService } from '../../services/toast.service'; // Eklendi
 import { Property } from '../../models/property.model';
-import { Il, Ilce } from '../../models/location.model';
+import { Il, Ilce, Mahalle } from '../../models/location.model';
 import { PropertyFilter } from '../../models/property-filter.model';
 import { AuthService } from '../../services/auth.service';
 import { PropertyMap } from '../property-map/property-map';
@@ -39,6 +39,7 @@ export class PropertyList implements OnInit {
 
   iller = signal<Il[]>([]);
   filterIlceler = signal<Ilce[]>([]);
+  filterMahalleler = signal<Mahalle[]>([]);
 
   totalCount = signal(0);
   pageNumber = signal(1);
@@ -198,8 +199,9 @@ export class PropertyList implements OnInit {
     const select = event.target as HTMLSelectElement;
     const cityName = select.value;
 
-    this.filterForm.patchValue({ district: '' });
+    this.filterForm.patchValue({ district: '', neighborhood: '' });
     this.filterIlceler.set([]);
+    this.filterMahalleler.set([]);
 
     if (!cityName) return;
 
@@ -208,6 +210,24 @@ export class PropertyList implements OnInit {
 
     this.locationService.getIlceler(il.id).subscribe({
       next: (ilceler) => this.filterIlceler.set(ilceler),
+      error: () => {}
+    });
+  }
+
+  onFilterDistrictChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const districtName = select.value;
+
+    this.filterForm.patchValue({ neighborhood: '' });
+    this.filterMahalleler.set([]);
+
+    if (!districtName) return;
+
+    const ilce = this.filterIlceler().find(i => i.ad === districtName);
+    if (!ilce) return;
+
+    this.locationService.getMahalleler(ilce.id).subscribe({
+      next: (mahalleler) => this.filterMahalleler.set(mahalleler),
       error: () => {}
     });
   }
@@ -248,6 +268,7 @@ export class PropertyList implements OnInit {
       ownerId: ''
     });
     this.filterIlceler.set([]);
+    this.filterMahalleler.set([]);
     this.pageNumber.set(1);
   }
 

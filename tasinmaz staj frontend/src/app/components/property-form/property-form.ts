@@ -8,7 +8,7 @@ import { PropertyImageService } from '../../services/property-image.service';
 import { LocationService } from '../../services/location.service';
 import { CreatePropertyDto } from '../../models/create-property.model';
 import { Property } from '../../models/property.model';
-import { Il, Ilce } from '../../models/location.model';
+import { Il, Ilce, Mahalle } from '../../models/location.model';
 import { MapDraw } from '../map-draw/map-draw';
 import { environment } from '../../../environments/environment';
 import WKT from 'ol/format/WKT';
@@ -27,7 +27,9 @@ export class PropertyForm implements OnInit {
   // serbest metin, cunku mahalle referans verisi kapsam disi birakildi).
   iller = signal<Il[]>([]);
   ilceler = signal<Ilce[]>([]);
+  mahalleler = signal<Mahalle[]>([]);
   loadingIlceler = signal(false);
+  loadingMahalleler = signal(false);
   private readonly wktFormat = new WKT();
   isEditMode = false;
   propertyId: number | null = null;
@@ -141,6 +143,9 @@ export class PropertyForm implements OnInit {
     if (property.city) {
       this.loadIlceler(property.city);
     }
+    if (property.district) {
+      this.loadMahalleler(property.district);
+    }
   }
 
   // Sehir adina gore Il kaydini bulup o ile ait ilceleri getirir.
@@ -167,11 +172,40 @@ export class PropertyForm implements OnInit {
     const select = event.target as HTMLSelectElement;
     const cityName = select.value;
 
-    this.propertyForm.patchValue({ city: cityName, district: '' });
+    this.propertyForm.patchValue({ city: cityName, district: '', neighborhood: '' });
     this.ilceler.set([]);
+    this.mahalleler.set([]);
 
     if (cityName) {
       this.loadIlceler(cityName);
+    }
+  }
+
+  private loadMahalleler(districtName: string): void {
+    const ilce = this.ilceler().find(i => i.ad === districtName);
+    if (!ilce) return;
+
+    this.loadingMahalleler.set(true);
+    this.locationService.getMahalleler(ilce.id).subscribe({
+      next: (mahalleler) => {
+        this.mahalleler.set(mahalleler);
+        this.loadingMahalleler.set(false);
+      },
+      error: () => {
+        this.loadingMahalleler.set(false);
+      }
+    });
+  }
+
+  onDistrictChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const districtName = select.value;
+
+    this.propertyForm.patchValue({ district: districtName, neighborhood: '' });
+    this.mahalleler.set([]);
+
+    if (districtName) {
+      this.loadMahalleler(districtName);
     }
   }
 
