@@ -36,7 +36,6 @@ namespace tasinmaz_staj
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<ILogExportService, LogExportService>();
             services.AddScoped<IUserService, UserService>();
-            //services.AddScoped<IGeometryService, GeometryService>();
             services.AddScoped<IPropertyImageService, PropertyImageService>();
             services.AddScoped<IPropertyGeometryService, PropertyGeometryService>();
             services.AddScoped<IReferenceService, ReferenceService>();
