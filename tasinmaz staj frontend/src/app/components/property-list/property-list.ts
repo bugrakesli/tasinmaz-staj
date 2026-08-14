@@ -149,7 +149,7 @@ export class PropertyList implements OnInit {
     if (value.address?.trim()) filter.address = value.address.trim();
     if (value.propertyType?.trim()) filter.propertyType = value.propertyType.trim();
 
-    if (this.isAdmin() && value.ownerId?.trim()) {
+    if (this.isAdmin() && value.ownerId !== null && value.ownerId !== undefined && value.ownerId !== '') {
       const ownerId = Number(value.ownerId);
       if (!Number.isNaN(ownerId)) filter.ownerId = ownerId;
     }
