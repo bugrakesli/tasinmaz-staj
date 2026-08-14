@@ -105,7 +105,7 @@
         </div>
         <div *ngIf="isAdmin()" class="col-md-3">
           <label class="form-label">Owner ID</label>
-          <input type="number" class="form-control" formControlName="ownerId" placeholder="Kullanıcı ID">
+          <input type="number" min="1" class="form-control" formControlName="ownerId" placeholder="Kullanıcı ID">
         </div>
       </div>
 
