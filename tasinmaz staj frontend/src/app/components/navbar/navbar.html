@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-lg navbar-dark app-navbar mb-4" *ngIf="isAuthenticated">
-  <div class="container-fluid page-container py-2">
+<nav class="navbar navbar-expand-lg app-navbar mb-4" *ngIf="isAuthenticated">
+  <div class="container-fluid px-3 py-2">
     <a class="navbar-brand d-flex align-items-center" routerLink="/properties">
       <span class="brand-icon me-2"><i class="bi bi-building"></i></span>
-      <span class="d-none d-sm-inline">Taşınmaz Yönetim Sistemi</span>
+      <span class="d-none d-sm-inline">Taşınmaz Yönetim</span>
       <span class="d-inline d-sm-none">TYS</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,7 +10,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" routerLink="/properties" routerLinkActive="active">
             <i class="bi bi-list-ul me-1"></i>Taşınmazlar
@@ -35,14 +35,14 @@
 
       <div class="d-flex align-items-center gap-3">
         <div class="user-chip d-flex align-items-center">
-          <i class="bi bi-person-circle me-2"></i>
+          <i class="bi bi-person-circle me-2 fs-5 text-secondary"></i>
           <span>{{ email }}</span>
-          <span class="badge ms-2" [ngClass]="isAdmin ? 'bg-danger' : 'bg-info'">
+          <span class="badge ms-2" [ngClass]="isAdmin ? 'bg-danger' : 'bg-primary'">
             {{ isAdmin ? 'Admin' : 'User' }}
           </span>
         </div>
-        <button class="btn btn-outline-light btn-sm" (click)="logout()">
-          <i class="bi bi-box-arrow-right me-1"></i>Çıkış Yap
+        <button class="btn-logout" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i>Çıkış
         </button>
       </div>
     </div>

@@ -65,9 +65,9 @@
     {{ errorMessage() }}
   </div>
 
-  <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <span><i class="bi bi-journal-text me-2"></i>Log Kayıtları</span>
+  <div class="surface-card p-0 overflow-hidden">
+    <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+      <h5 class="section-title mb-0"><i class="bi bi-journal-text text-primary"></i> Log Kayıtları</h5>
       <span class="page-subtitle mb-0">Toplam kayıt: {{ totalCount() | number:'1.0-0' }}</span>
     </div>
     <div class="table-responsive">
@@ -112,7 +112,7 @@
       </table>
     </div>
     <div *ngIf="!loading() && totalPages > 1"
-         class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
+         class="p-3 bg-white border-top d-flex flex-wrap justify-content-between align-items-center gap-2">
       <span class="page-subtitle mb-0">Sayfa {{ pageNumber() }} / {{ totalPages }}</span>
       <nav aria-label="Log pagination">
         <ul class="pagination mb-0">

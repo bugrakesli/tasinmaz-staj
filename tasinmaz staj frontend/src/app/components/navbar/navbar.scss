@@ -1,50 +1,86 @@
 .app-navbar {
-  background: linear-gradient(135deg, var(--brand-700) 0%, var(--brand-600) 55%, var(--brand-500) 100%);
-  box-shadow: var(--shadow-md);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.05);
   padding-block: 0;
+  margin-top: 1rem;
+  margin-inline: auto;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  max-width: 1400px;
+  width: 95%;
+  z-index: 1030;
 }
 
 .navbar-brand {
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-bold);
   font-size: var(--fs-lg);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  color: var(--ink-900) !important;
 }
 
 .brand-icon {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+  color: white;
   border-radius: var(--radius-sm);
-  font-size: var(--fs-base);
+  font-size: var(--fs-lg);
+  box-shadow: 0 4px 10px rgba(0, 158, 227, 0.3);
+}
+
+.navbar-nav {
+  gap: 0.5rem;
 }
 
 .navbar-nav .nav-link {
-  font-weight: var(--fw-medium);
-  font-size: var(--fs-sm);
-  padding-inline: var(--sp-3);
-  border-radius: var(--radius-sm);
-  color: rgba(255, 255, 255, 0.82);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  font-weight: var(--fw-semibold);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem !important;
+  border-radius: 999px;
+  color: var(--ink-700);
+  transition: all 0.2s ease;
 }
 
 .navbar-nav .nav-link:hover {
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--brand-600);
+  background-color: var(--brand-50);
 }
 
 .navbar-nav .nav-link.active {
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.18);
+  color: var(--brand-600);
+  background-color: var(--brand-100);
 }
 
 .user-chip {
   font-size: var(--fs-sm);
-  color: rgba(255, 255, 255, 0.92);
+  font-weight: var(--fw-medium);
+  color: var(--ink-700);
 }
 
 .user-chip .badge {
   font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  border-radius: 6px;
+  padding: 0.4em 0.6em;
+}
+
+.btn-logout {
+  border-radius: 999px;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  padding: 0.4rem 1rem;
+  color: var(--ink-700);
+  background: var(--ink-100);
+  border: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #ffe4e6;
+    color: #e11d48;
+  }
 }

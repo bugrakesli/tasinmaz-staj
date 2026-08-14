@@ -6,38 +6,38 @@
 
 :root {
   // --- Renk Paleti ---------------------------------------------------
-  --brand-50:  #eef2ff;
-  --brand-100: #e0e7ff;
-  --brand-200: #c7d2fe;
-  --brand-300: #a5b4fc;
-  --brand-400: #818cf8;
-  --brand-500: #6366f1;
-  --brand-600: #4f46e5;
-  --brand-700: #4338ca;
-  --brand-800: #3730a3;
-  --brand-900: #312e81;
+  --brand-50:  #f0f7fd;
+  --brand-100: #d8ecf8;
+  --brand-200: #b1dcf1;
+  --brand-300: #7dc6e9;
+  --brand-400: #42b2e1;
+  --brand-500: #1ca2d9;
+  --brand-600: #009ee3; // OdakGIS Blue
+  --brand-700: #007cb4;
+  --brand-800: #006897;
+  --brand-900: #04567e;
 
-  --ink-900: #0f172a;
-  --ink-700: #334155;
-  --ink-500: #64748b;
-  --ink-300: #cbd5e1;
-  --ink-100: #f1f5f9;
-  --ink-50:  #f8fafc;
+  --ink-900: #111111;
+  --ink-700: #222222;
+  --ink-500: #555555;
+  --ink-300: #888888;
+  --ink-100: #e8e8e8;
+  --ink-50:  #f7f9fb;
 
-  --success: #16a34a;
-  --warning: #d97706;
-  --danger:  #dc2626;
-  --info:    #0891b2;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger:  #ef4444;
+  --info:    #3b82f6;
 
   --surface: #ffffff;
-  --surface-muted: #f5f7fb;
-  --border-color: #e2e8f0;
+  --surface-muted: #f7f9fb;
+  --border-color: #0000000d; // Soft transparent border
 
   // --- Tipografi -------------------------------------------------------
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --fs-xs: 0.75rem;
-  --fs-sm: 0.875rem;
+  --fs-sm: 0.85rem;
   --fs-base: 1rem;
   --fs-lg: 1.125rem;
   --fs-xl: 1.375rem;
@@ -59,12 +59,13 @@
   --sp-8: 3rem;
 
   // --- Radius & Shadow ---------------------------------------------------
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 1rem;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.375rem;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 16px 36px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 22px 56px rgba(0, 0, 0, 0.14);
 
   // Bootstrap değişkenlerini marka paletine bağla
   --bs-primary: var(--brand-600);
@@ -154,15 +155,21 @@ h1, h2, h3, h4, h5, h6 {
 // --- Formlar --------------------------------------------------------------
 .form-control,
 .form-select {
-  border-radius: var(--radius-sm);
-  border-color: var(--border-color);
-  padding-block: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  font-size: var(--fs-base);
+  color: var(--ink-700);
+  background-color: var(--surface);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--brand-400);
-  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.15);
+  border-color: var(--brand-500);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(0, 158, 227, 0.15);
 }
 
 .form-label {
@@ -176,23 +183,34 @@ h1, h2, h3, h4, h5, h6 {
 .table {
   --bs-table-hover-bg: var(--brand-50);
   font-size: var(--fs-sm);
+  vertical-align: middle;
+  border-collapse: collapse;
 }
 
 .table thead th {
   text-transform: uppercase;
-  font-size: var(--fs-xs);
-  letter-spacing: 0.04em;
-  font-weight: var(--fw-semibold);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  font-weight: var(--fw-bold);
   color: var(--ink-500);
   background-color: var(--surface-muted);
-  border-bottom-width: 1px;
+  border-bottom: 2px solid var(--border-color);
+  padding: 1rem 0.75rem;
 }
 
+.table tbody td {
+  padding: 1rem 0.75rem;
+  color: var(--ink-700);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
 
 .standard-table th,
 .standard-table td {
   text-align: center;
-  vertical-align: middle;
 }
 
 .standard-table .numeric-cell {
@@ -202,6 +220,16 @@ h1, h2, h3, h4, h5, h6 {
 
 .standard-table .actions-cell {
   text-align: right;
+}
+
+// Checkbox'lar tabloda daha belirgin olsun
+.form-check-input {
+  border: 1px solid var(--ink-300);
+  cursor: pointer;
+}
+.form-check-input:checked {
+  background-color: var(--brand-600);
+  border-color: var(--brand-600);
 }
 
 // --- Badge'ler ------------------------------------------------------------
@@ -247,9 +275,9 @@ h1, h2, h3, h4, h5, h6 {
 // Genel yüzey kartı (filtre paneli, form paneli vb.)
 .surface-card {
   background: var(--surface);
-  border: 1px solid var(--border-color);
+  border: none;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   padding: var(--sp-5);
 }
 

@@ -16,10 +16,11 @@
   </div>
 
   <!-- Kullanıcı formu -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <h5 class="card-title mb-3">
-        {{ editingId() === null ? 'Yeni Kullanıcı' : 'Kullanıcı Güncelle' }}
+  <div class="surface-card mb-4">
+    <div class="card-body p-0">
+      <h5 class="section-title mb-4">
+        <i class="bi" [ngClass]="editingId() === null ? 'bi-person-plus' : 'bi-person-gear'"></i>
+        {{ editingId() === null ? 'Yeni Kullanıcı Ekle' : 'Kullanıcı Güncelle' }}
       </h5>
 
       <form
@@ -150,14 +151,16 @@
   <!-- Kullanıcı listesi -->
   <div
     *ngIf="!loading()"
-    class="card shadow-sm"
+    class="surface-card p-0 overflow-hidden"
   >
-    <div class="card-body">
-      <h5 class="card-title mb-3">Kullanıcılar</h5>
+    <div class="card-body p-0">
+      <div class="p-4 border-bottom">
+        <h5 class="section-title mb-0"><i class="bi bi-people-fill text-primary"></i> Kayıtlı Kullanıcılar</h5>
+      </div>
 
       <div class="table-responsive">
         <table
-          class="table table-striped table-hover align-middle mb-0 standard-table"
+          class="table table-hover align-middle mb-0 standard-table"
         >
           <thead>
             <tr>
@@ -219,7 +222,7 @@
       <!-- Pagination -->
       <div
         *ngIf="totalCount() > 0"
-        class="card-footer d-flex justify-content-between align-items-center"
+        class="p-3 bg-white border-top d-flex justify-content-between align-items-center"
       >
         <div class="page-subtitle mb-0">
           Toplam kayıt:
