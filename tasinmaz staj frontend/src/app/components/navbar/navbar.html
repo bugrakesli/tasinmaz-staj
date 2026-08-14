@@ -34,6 +34,11 @@
       </ul>
 
       <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-link p-0 text-secondary fs-5" (click)="toggleTheme()" 
+                [title]="currentTheme === 'light' ? 'Karanlık Moda Geç' : 'Aydınlık Moda Geç'">
+          <i class="bi" [ngClass]="currentTheme === 'light' ? 'bi-moon-stars' : 'bi-sun'"></i>
+        </button>
+
         <div class="user-chip d-flex align-items-center">
           <i class="bi bi-person-circle me-2 fs-5 text-secondary"></i>
           <span>{{ email }}</span>

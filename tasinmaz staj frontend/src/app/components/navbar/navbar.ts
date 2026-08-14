@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService, Theme } from '../../services/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,6 +14,15 @@ import { AuthService } from '../../services/auth.service';
 export class Navbar {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
+
+  get currentTheme(): Theme {
+    return this.themeService.currentTheme();
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
 
   get isAuthenticated(): boolean {
     return this.authService.isAuthenticated();

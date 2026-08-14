@@ -31,7 +31,8 @@
 
   --surface: #ffffff;
   --surface-muted: #f7f9fb;
-  --border-color: #0000000d; // Soft transparent border
+  --border-color: rgba(0, 0, 0, 0.05); // Soft transparent border
+  --navbar-bg: rgba(255, 255, 255, 0.85);
 
   // --- Tipografi -------------------------------------------------------
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -75,6 +76,66 @@
   --bs-border-color: var(--border-color);
   --bs-body-color: var(--ink-900);
   --bs-body-font-family: var(--font-sans);
+}
+
+[data-theme="dark"] {
+  --ink-900: #f8fafc;
+  --ink-700: #e2e8f0;
+  --ink-500: #94a3b8;
+  --ink-300: #64748b;
+  --ink-100: #334155;
+  --ink-50:  #1e293b;
+
+  --surface: #1e1e1e;
+  --surface-muted: #121212;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --navbar-bg: rgba(20, 20, 20, 0.85);
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 16px 36px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 22px 56px rgba(0, 0, 0, 0.4);
+  
+  // Tablo değişkenlerini karanlık moda uyarla
+  --bs-table-bg: var(--surface);
+  --bs-table-color: var(--ink-700);
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.05);
+  --bs-table-hover-color: var(--ink-900);
+  --bs-table-border-color: var(--border-color);
+
+  // Gövde ve kart içi ayarları
+  --bs-body-bg: var(--surface-muted);
+  --bs-body-color: var(--ink-900);
+  
+  color-scheme: dark;
+}
+
+[data-theme="dark"] ::selection {
+  background-color: var(--ink-300);
+  color: var(--surface);
+}
+
+[data-theme="dark"] .table-primary {
+  --bs-table-bg: #2d3748 !important; /* Koyu mat gri */
+  --bs-table-color: #f8fafc !important;
+  background-color: #2d3748 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .table-primary > td,
+[data-theme="dark"] .table-primary > th {
+  background-color: #2d3748 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .table-active {
+  --bs-table-bg: #1a202c !important;
+  --bs-table-color: #f8fafc !important;
+  background-color: #1a202c !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .table-active > td,
+[data-theme="dark"] .table-active > th {
+  background-color: #1a202c !important;
+  color: #f8fafc !important;
 }
 
 html,
