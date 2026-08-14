@@ -102,22 +102,22 @@ public class PropertyService : IPropertyService
         }
 
         if (!string.IsNullOrWhiteSpace(filter.City))
-            query = query.Where(p => p.Mahalle.Ilce.Il.Ad == filter.City);
+            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ilce.Il.Ad, filter.City));
 
         if (!string.IsNullOrWhiteSpace(filter.District))
-            query = query.Where(p => p.Mahalle.Ilce.Ad == filter.District);
+            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ilce.Ad, filter.District));
 
         if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-            query = query.Where(p => p.Mahalle.Ad == filter.Neighborhood);
+            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ad, filter.Neighborhood));
 
         if (!string.IsNullOrWhiteSpace(filter.ParcelNumber))
-            query = query.Where(p => p.ParselNo == filter.ParcelNumber);
+            query = query.Where(p => EF.Functions.ILike(p.ParselNo, filter.ParcelNumber));
 
         if (!string.IsNullOrWhiteSpace(filter.LotNumber))
-            query = query.Where(p => p.AdaNo == filter.LotNumber);
+            query = query.Where(p => EF.Functions.ILike(p.AdaNo, filter.LotNumber));
 
         if (!string.IsNullOrWhiteSpace(filter.Address))
-            query = query.Where(p => p.Adres.Contains(filter.Address));
+            query = query.Where(p => EF.Functions.ILike(p.Adres, $"%{filter.Address}%"));
 
         if (!string.IsNullOrWhiteSpace(filter.PropertyType))
             query = query.Where(p => p.PropertyType == filter.PropertyType);
