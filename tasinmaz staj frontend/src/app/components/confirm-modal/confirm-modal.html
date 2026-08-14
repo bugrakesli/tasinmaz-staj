@@ -1,0 +1,69 @@
+<div
+  class="confirm-modal-backdrop"
+  (click)="cancel()"
+></div>
+
+<div
+  class="confirm-modal-wrapper"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="'confirm-modal-title'"
+>
+  <div class="confirm-modal">
+
+    <div class="confirm-modal-header">
+      <h5 id="confirm-modal-title">
+        {{ title }}
+      </h5>
+
+      <button
+        type="button"
+        class="confirm-modal-close"
+        aria-label="Kapat"
+        [disabled]="busy"
+        (click)="cancel()"
+      >
+        &times;
+      </button>
+    </div>
+
+    <div class="confirm-modal-body">
+
+      <div class="confirm-modal-icon">
+        !
+      </div>
+
+      <div class="confirm-modal-message">
+        {{ message }}
+      </div>
+
+      <div class="confirm-modal-warning">
+        Bu işlem geri alınamaz.
+      </div>
+
+    </div>
+
+    <div class="confirm-modal-footer">
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [disabled]="busy"
+        (click)="cancel()"
+      >
+        {{ cancelText }}
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-danger"
+        [disabled]="busy"
+        (click)="confirm()"
+      >
+        {{ busy ? 'İşleniyor...' : confirmText }}
+      </button>
+
+    </div>
+
+  </div>
+</div>

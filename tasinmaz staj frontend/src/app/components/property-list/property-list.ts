@@ -12,11 +12,12 @@ import { Il, Ilce } from '../../models/location.model';
 import { PropertyFilter } from '../../models/property-filter.model';
 import { AuthService } from '../../services/auth.service';
 import { PropertyMap } from '../property-map/property-map';
+import { ConfirmModal } from '../confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-property-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PropertyMap],
+  imports: [CommonModule, ReactiveFormsModule, PropertyMap, ConfirmModal, RouterLink],
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss'
 })
@@ -54,6 +55,7 @@ export class PropertyList implements OnInit {
 
   selectedForDelete = signal<Set<number>>(new Set<number>());
   isDeletingSelected = signal(false);
+  showDeleteModal = signal(false);
 
   isAllSelected = computed(() => {
     const props = this.properties();
@@ -83,13 +85,28 @@ export class PropertyList implements OnInit {
 
   deleteSelected(): void {
     const ids = Array.from(this.selectedForDelete());
-    if (ids.length === 0) return;
 
-    const confirmed = window.confirm(`Seçili ${ids.length} taşınmazı silmek istediğinize emin misiniz?`);
-    if (!confirmed) return;
+    if (ids.length === 0) {
+      return;
+    }
 
+    this.showDeleteModal.set(true);
+  }
+
+  confirmDeleteSelected(): void {
+    const ids = Array.from(this.selectedForDelete());
+
+    if (ids.length === 0) {
+      this.showDeleteModal.set(false);
+      return;
+    }
+
+    this.showDeleteModal.set(false);
     this.isDeletingSelected.set(true);
-    const requests = ids.map(id => this.propertyService.delete(id));
+
+    const requests = ids.map(id =>
+      this.propertyService.delete(id)
+    );
 
     forkJoin(requests).subscribe({
       next: () => {
@@ -98,11 +115,18 @@ export class PropertyList implements OnInit {
         this.loadProperties();
       },
       error: () => {
-        this.errorMessage.set('Bazı taşınmazlar silinirken hata oluştu.');
+        this.errorMessage.set(
+          'Bazı taşınmazlar silinirken hata oluştu.'
+        );
+
         this.isDeletingSelected.set(false);
         this.loadProperties();
       }
     });
+  }
+
+  cancelDeleteSelected(): void {
+    this.showDeleteModal.set(false);
   }
 
   get totalPages(): number {

@@ -1,3 +1,16 @@
+<app-confirm-modal
+    *ngIf="showDeleteModal()"
+    title="Taşınmazları Sil"
+    [message]="
+      'Seçili taşınmazları silmek istediğinize emin misiniz?'
+    "
+    confirmText="Sil"
+    cancelText="Vazgeç"
+    [busy]="isDeletingSelected()"
+    (confirmed)="confirmDeleteSelected()"
+    (cancelled)="cancelDeleteSelected()"
+  ></app-confirm-modal>
+
 <div class="page-container">
   <div class="page-header">
     <div>
