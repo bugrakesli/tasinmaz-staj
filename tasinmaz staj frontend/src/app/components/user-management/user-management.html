@@ -151,10 +151,10 @@
   <!-- Kullanıcı listesi -->
   <div
     *ngIf="!loading()"
-    class="surface-card p-0 overflow-hidden"
+    class="surface-card p-0"
   >
     <div class="card-body p-0">
-      <div class="p-4 border-bottom">
+      <div class="p-4 border-bottom" style="border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-lg);">
         <h5 class="section-title mb-0"><i class="bi bi-people-fill text-primary"></i> Kayıtlı Kullanıcılar</h5>
       </div>
 
@@ -223,7 +223,7 @@
       <div
         *ngIf="totalCount() > 0"
         class="p-3 border-top d-flex justify-content-between align-items-center"
-        style="background-color: var(--surface);"
+        style="background-color: var(--surface); border-bottom-left-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-lg);"
       >
         <div class="d-flex align-items-center gap-2">
           <div class="page-subtitle mb-0">
