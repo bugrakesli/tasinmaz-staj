@@ -225,19 +225,14 @@ h1, h2, h3, h4, h5, h6 {
 // --- Formlar --------------------------------------------------------------
 .form-control,
 .form-select {
+  padding-right: 32px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  padding: 0.75rem 1rem;
   font-size: var(--fs-base);
   color: var(--ink-700) !important;
   background-color: var(--surface);
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
-  // Tarayıcının native form kontrolleri için OS/prefers-color-scheme
-  // varsayılanını değil, bizim tanımladığımız renkleri kullanmasını
-  // garanti eder. Aksi halde bazı tarayıcılarda (özellikle sistem
-  // karanlık modda) select metni arka planla aynı renkte çizilip
-  // görünmez hale gelebiliyordu.
   color-scheme: light;
 }
 
