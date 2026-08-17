@@ -297,13 +297,32 @@ h1, h2, h3, h4, h5, h6 {
   text-align: right;
 }
 
-// --- Sticky tablo başlığı --------------------------------------------------
-// .table-responsive'e eklendiğinde thead, dikey kaydırma sırasında üstte
-// sabit kalır. Tema (light/dark) ile uyumlu olması için arkaplan rengi
-// Bootstrap'in --bs-table-bg değişkeninden alınır.
-.table-scroll-sticky {
-  max-height: 65vh;
-  overflow-y: auto;
+// --- Tablo başlığı ----------------------------------------------------------
+// Not: Önceden .table-scroll-sticky, kart içinde ayrı bir dikey scroll alanı
+// oluşturuyordu (max-height + overflow-y). 50 kayıt/sayfa gibi durumlarda bu,
+// sayfanın kendi scroll'u ile iç içe "çift scroll" görünümüne yol açtığından
+// kaldırıldı. Artık tablo, kart ile birlikte doğal olarak uzuyor; sayfa
+// içinde tek bir scroll deneyimi var.
+//
+// Bu class hâlâ Bootstrap'in .table-responsive'i ile birlikte kullanılıyor
+// (yatay scroll için overflow-x: auto). Ancak overflow-x: auto tek başına
+// verildiğinde tarayıcı overflow-y'yi de otomatik olarak "auto" yapıyor
+// (CSS Overflow spec'inin bilinen bir davranışı). Bu da .table-responsive
+// div'ini kendi başına bir scroll konteynerine çeviriyor; sayfa kaydırıldığında
+// bu konteynerin kendi scrollTop'u hiç değişmediğinden içindeki
+// position: sticky thead pratikte hiç "yapışmıyor". Bu yüzden masaüstünde
+// yatay scroll'u devre dışı bırakıp sticky'nin sayfa scroll'una göre
+// çalışmasını sağlıyoruz; dar ekranlarda (kolonların sığmadığı mobil
+// görünümde) yatay scroll'u geri açıyoruz (orada sticky çalışmaz, kabul
+// edilebilir bir ödünleşim).
+.table-scroll-sticky.table-responsive {
+  overflow-x: visible;
+}
+
+@media (max-width: 768px) {
+  .table-scroll-sticky.table-responsive {
+    overflow-x: auto;
+  }
 }
 
 .table-scroll-sticky thead th {
