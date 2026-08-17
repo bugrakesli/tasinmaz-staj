@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,9 +13,24 @@ public class LogService : ILogService
         _context = context;
     }
 
+    private static DateTime NormalizeToUtc(DateTime value)
+    {
+        return value.Kind switch
+        {
+            DateTimeKind.Utc => value,
+            DateTimeKind.Local => value.ToUniversalTime(),
+            // Unspecified: tarayicidan Kind bilgisi olmadan gelen yerel saat
+            // olarak kabul edip sunucunun yerel saatinden UTC'ye ceviriyoruz.
+            _ => DateTime.SpecifyKind(value, DateTimeKind.Local).ToUniversalTime()
+        };
+    }
+
     private IQueryable<Log> BuildFilteredQuery(LogFilterDto filter)
     {
         var query = _context.Logs.AsQueryable();
+
+        if (filter.Id.HasValue)
+            query = query.Where(l => l.Id == filter.Id.Value);
 
         if (filter.UserId.HasValue)
             query = query.Where(l => l.UserId == filter.UserId.Value);
@@ -31,11 +47,22 @@ public class LogService : ILogService
         if (!string.IsNullOrWhiteSpace(filter.UserIp))
             query = query.Where(l => l.UserIp == filter.UserIp);
 
+        // Timestamp kolonu PostgreSQL'de "timestamp with time zone".
+        // Frontend'den (datetime-local input) gelen deger Kind=Unspecified
+        // oluyor; Npgsql bu kind ile timestamptz karsilastirmasinda hata
+        // fırlatiyordu (filtre calismiyor gibi gorunuyordu). Kullanicinin
+        // yerel saatini girdigi varsayimiyla UTC'ye ceviriyoruz.
         if (filter.StartDate.HasValue)
-            query = query.Where(l => l.Timestamp >= filter.StartDate.Value);
+        {
+            var startUtc = NormalizeToUtc(filter.StartDate.Value);
+            query = query.Where(l => l.Timestamp >= startUtc);
+        }
 
         if (filter.EndDate.HasValue)
-            query = query.Where(l => l.Timestamp <= filter.EndDate.Value);
+        {
+            var endUtc = NormalizeToUtc(filter.EndDate.Value);
+            query = query.Where(l => l.Timestamp <= endUtc);
+        }
 
         // Varsayılan olarak en yeni loglar en üstte gelsin
         return query.OrderByDescending(l => l.Timestamp);

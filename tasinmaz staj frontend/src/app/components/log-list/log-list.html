@@ -19,6 +19,10 @@
     <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
       <div class="row g-3">
         <div class="col-md-2">
+          <label for="id" class="form-label">Log ID</label>
+          <input id="id" type="number" min="1" class="form-control" formControlName="id">
+        </div>
+        <div class="col-md-2">
           <label for="userId" class="form-label">User ID</label>
           <input id="userId" type="number" min="1" class="form-control" formControlName="userId">
         </div>

@@ -9,6 +9,7 @@ export interface Log {
 }
 
 export interface LogFilter {
+  id?: number;
   userId?: number;
   status?: string;
   operationType?: string;

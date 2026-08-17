@@ -25,7 +25,7 @@ public class RemsDbContext : DbContext
                 .IsRequired(false);
         });
 
-        // Union sonuçlarý: D ve E
+        // Union sonuï¿½larï¿½: D ve E
         modelBuilder.Entity<GeometryResult>(entity =>
         {
             entity.Property(x => x.Label)

@@ -20,8 +20,15 @@ public class LogController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetLogs([FromQuery] LogFilterDto filter)
     {
-        var result = await _logService.GetFilteredLogsAsync(filter);
-        return Ok(result);
+        try
+        {
+            var result = await _logService.GetFilteredLogsAsync(filter);
+            return Ok(result);
+        }
+        catch
+        {
+            return StatusCode(500, new { message = "Loglar getirilirken bir hata oluştu." });
+        }
     }
 
     [HttpGet("export/excel")]

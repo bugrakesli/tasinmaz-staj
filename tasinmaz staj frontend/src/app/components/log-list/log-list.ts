@@ -34,6 +34,7 @@ export class LogList implements OnInit {
     private toastService: ToastService
   ) {
     this.filterForm = this.formBuilder.group({
+      id: '',
       userId: '',
       status: '',
       operationType: '',
@@ -73,6 +74,7 @@ export class LogList implements OnInit {
 
   clearFilters(): void {
     this.filterForm.reset({
+      id: '',
       userId: '',
       status: '',
       operationType: '',
@@ -183,6 +185,10 @@ export class LogList implements OnInit {
       pageSize: this.pageSize()
     };
 
+    const id = Number(raw.id);
+    if (raw.id?.trim() && Number.isInteger(id) && id > 0) {
+      filter.id = id;
+    }
     const userId = Number(raw.userId);
     if (raw.userId?.trim() && Number.isInteger(userId) && userId > 0) {
       filter.userId = userId;

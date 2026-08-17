@@ -36,6 +36,9 @@ export class LogService {
   private buildFilterParams(filter: LogFilter, includePagination: boolean): HttpParams {
     let params = new HttpParams();
 
+    if (filter.id !== undefined && filter.id !== null) {
+      params = params.set('id', filter.id);
+    }
     if (filter.userId !== undefined && filter.userId !== null) {
       params = params.set('userId', filter.userId);
     }
