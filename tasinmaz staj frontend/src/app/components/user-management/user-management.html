@@ -236,10 +236,11 @@
             [value]="pageSize()"
             (change)="changePageSize($event)"
           >
-            <option [value]="10">10 / sayfa</option>
-            <option [value]="20">20 / sayfa</option>
-            <option [value]="50">50 / sayfa</option>
+            <option [value]="10" [selected]="pageSize() === 10">10</option>
+            <option [value]="20" [selected]="pageSize() === 20">20</option>
+            <option [value]="50" [selected]="pageSize() === 50">50</option>
           </select>
+          <span class="text-muted">/ sayfa</span>
         </div>
 
         <div class="d-flex align-items-center gap-2">
