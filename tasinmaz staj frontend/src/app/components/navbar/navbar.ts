@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService, Theme } from '../../services/theme.service';
 
@@ -13,7 +13,6 @@ import { ThemeService, Theme } from '../../services/theme.service';
 })
 export class Navbar {
   private authService = inject(AuthService);
-  private router = inject(Router);
   private themeService = inject(ThemeService);
 
   get currentTheme(): Theme {

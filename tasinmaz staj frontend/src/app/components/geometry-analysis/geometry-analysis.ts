@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 
 import WKTFormat from 'ol/format/WKT';
 import Polygon from 'ol/geom/Polygon';
@@ -54,8 +53,7 @@ export class GeometryAnalysis implements OnInit {
   unionError = signal('');
 
   constructor(
-    private propertyService: PropertyService,
-    private router: Router
+    private propertyService: PropertyService
   ) {}
 
   ngOnInit(): void {

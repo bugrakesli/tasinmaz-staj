@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
 
 import { Log } from '../../models/log.model';
 import { LogFilter } from '../../models/log.model';
@@ -32,7 +31,6 @@ export class LogList implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private logService: LogService,
-    private router: Router,
     private toastService: ToastService
   ) {
     this.filterForm = this.formBuilder.group({

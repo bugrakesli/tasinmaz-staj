@@ -6,7 +6,6 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
 
 import { UserService } from '../../services/user.service';
 import {
@@ -51,7 +50,6 @@ export class UserManagement implements OnInit {
   constructor(
     private userService: UserService,
     private fb: FormBuilder,
-    private router: Router,
     private toastService: ToastService
   ) {
     this.userForm = this.fb.nonNullable.group({
