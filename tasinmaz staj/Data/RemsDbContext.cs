@@ -11,6 +11,7 @@ public class RemsDbContext : DbContext
     public DbSet<Property> Properties { get; set; }
     public DbSet<Log> Logs { get; set; }
     public DbSet<GeometryResult> GeometryResults { get; set; }
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +50,16 @@ public class RemsDbContext : DbContext
             entity.HasIndex(x => x.Timestamp);
             entity.HasIndex(x => x.UserId);
             entity.HasIndex(x => x.Status);
+        });
+
+        modelBuilder.Entity<PasswordResetToken>(entity =>
+        {
+            entity.HasIndex(x => x.TokenHash).IsUnique();
+
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.PasswordResetTokens)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

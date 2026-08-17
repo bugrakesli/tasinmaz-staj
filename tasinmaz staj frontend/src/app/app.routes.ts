@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 
 import { Login } from './components/login/login';
+import { ForgotPassword } from './components/forgot-password/forgot-password';
+import { ResetPassword } from './components/reset-password/reset-password';
 import { PropertyList } from './components/property-list/property-list';
 import { PropertyForm } from './components/property-form/property-form';
 import { GeometryAnalysis } from './components/geometry-analysis/geometry-analysis';
@@ -12,6 +14,14 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPassword
+  },
+  {
+    path: 'reset-password',
+    component: ResetPassword
   },
   {
     path: 'properties',

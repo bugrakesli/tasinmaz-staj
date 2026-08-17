@@ -8,4 +8,5 @@ public class User
     public string Role { get; set; } // "Admin" veya "User"
     public ICollection<Property> Properties { get; set; }
     public string Salt { get; set; }
+    public ICollection<PasswordResetToken> PasswordResetTokens { get; set; }
 }
