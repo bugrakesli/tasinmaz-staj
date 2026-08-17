@@ -22,7 +22,7 @@ export class LogList implements OnInit {
   logs = signal<Log[]>([]);
   totalCount = signal(0);
   pageNumber = signal(1);
-  readonly pageSize = 10;
+  pageSize = signal(10);
   loading = signal(false);
   exporting = signal(false);
   errorMessage = signal('');
@@ -91,8 +91,25 @@ export class LogList implements OnInit {
     this.loadLogs();
   }
 
+  firstPage(): void {
+    this.goToPage(1);
+  }
+
+  lastPage(): void {
+    this.goToPage(this.totalPages);
+  }
+
+  changePageSize(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const size = Number(select.value);
+    if (!size || size === this.pageSize()) return;
+    this.pageSize.set(size);
+    this.pageNumber.set(1);
+    this.loadLogs();
+  }
+
   get totalPages(): number {
-    return Math.ceil(this.totalCount() / this.pageSize);
+    return Math.ceil(this.totalCount() / this.pageSize());
   }
 
   get pageNumbers(): number[] {
@@ -163,7 +180,7 @@ export class LogList implements OnInit {
     const raw = this.filterForm.getRawValue();
     const filter: LogFilter = {
       pageNumber: this.pageNumber(),
-      pageSize: this.pageSize
+      pageSize: this.pageSize()
     };
 
     const userId = Number(raw.userId);

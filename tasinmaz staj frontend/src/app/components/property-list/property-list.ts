@@ -284,6 +284,27 @@ export class PropertyList implements OnInit {
     this.loadProperties();
   }
 
+  firstPage(): void {
+    if (this.pageNumber() <= 1) return;
+    this.pageNumber.set(1);
+    this.loadProperties();
+  }
+
+  lastPage(): void {
+    if (this.pageNumber() >= this.totalPages) return;
+    this.pageNumber.set(this.totalPages);
+    this.loadProperties();
+  }
+
+  changePageSize(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const size = Number(select.value);
+    if (!size || size === this.pageSize()) return;
+    this.pageSize.set(size);
+    this.pageNumber.set(1);
+    this.loadProperties();
+  }
+
   toggleMap(): void {
     this.showMap.update(value => !value);
   }

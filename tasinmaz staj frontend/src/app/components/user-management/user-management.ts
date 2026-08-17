@@ -219,6 +219,36 @@ export class UserManagement implements OnInit {
     this.loadUsers();
   }
 
+  firstPage(): void {
+    if (this.pageNumber() <= 1) {
+      return;
+    }
+
+    this.pageNumber.set(1);
+    this.loadUsers();
+  }
+
+  lastPage(): void {
+    if (this.pageNumber() >= this.totalPages) {
+      return;
+    }
+
+    this.pageNumber.set(this.totalPages);
+    this.loadUsers();
+  }
+
+  changePageSize(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const size = Number(select.value);
+    if (!size || size === this.pageSize()) {
+      return;
+    }
+
+    this.pageSize.set(size);
+    this.pageNumber.set(1);
+    this.loadUsers();
+  }
+
   private finishSave(message: string): void {
     this.saving.set(false);
     this.toastService.success(message);

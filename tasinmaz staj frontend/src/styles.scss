@@ -297,6 +297,23 @@ h1, h2, h3, h4, h5, h6 {
   text-align: right;
 }
 
+// --- Sticky tablo başlığı --------------------------------------------------
+// .table-responsive'e eklendiğinde thead, dikey kaydırma sırasında üstte
+// sabit kalır. Tema (light/dark) ile uyumlu olması için arkaplan rengi
+// Bootstrap'in --bs-table-bg değişkeninden alınır.
+.table-scroll-sticky {
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.table-scroll-sticky thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--bs-table-bg, var(--surface-muted));
+  box-shadow: 0 2px 0 0 var(--border-color);
+}
+
 // Checkbox'lar tabloda daha belirgin olsun
 .form-check-input {
   border: 1px solid var(--ink-300);
