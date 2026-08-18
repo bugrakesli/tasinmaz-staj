@@ -32,4 +32,13 @@ public class LocationService : ILocationService
             .Select(x => new IlceDto { Id = x.Id, IlId = x.IlId, Ad = x.Ad })
             .ToListAsync();
     }
+
+    public async Task<List<MahalleDto>> GetMahallelerAsync(int ilceId)
+    {
+        return await _context.Mahalleler
+            .Where(x => x.IlceId == ilceId)
+            .OrderBy(x => x.Ad)
+            .Select(x => new MahalleDto { Id = x.Id, IlceId = x.IlceId, Ad = x.Ad })
+            .ToListAsync();
+    }
 }

@@ -38,7 +38,6 @@ namespace tasinmaz_staj
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPropertyImageService, PropertyImageService>();
             services.AddScoped<IPropertyGeometryService, PropertyGeometryService>();
-            services.AddScoped<IReferenceService, ReferenceService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IEmailService, EmailService>();
 

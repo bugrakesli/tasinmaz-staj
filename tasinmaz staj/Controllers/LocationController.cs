@@ -29,4 +29,12 @@ public class LocationController : ControllerBase
         var ilceler = await _locationService.GetIlcelerAsync(ilId);
         return Ok(ilceler);
     }
+
+    // GET api/location/ilceler/{ilceId}/mahalleler
+    [HttpGet("ilceler/{ilceId}/mahalleler")]
+    public async Task<IActionResult> GetMahalleler(int ilceId)
+    {
+        var mahalleler = await _locationService.GetMahallelerAsync(ilceId);
+        return Ok(mahalleler);
+    }
 }

@@ -10,7 +10,6 @@ import { Il, Ilce, Mahalle } from '../models/location.model';
 })
 export class LocationService {
   private readonly apiUrl = `${environment.apiUrl}/Location`;
-  private readonly referenceUrl = `${environment.apiUrl}/Reference`;
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +26,6 @@ export class LocationService {
   }
 
   getMahalleler(ilceId: number): Observable<Mahalle[]> {
-    return this.http.get<Mahalle[]>(`${this.referenceUrl}/ilceler/${ilceId}/mahalleler`);
+    return this.http.get<Mahalle[]>(`${this.apiUrl}/ilceler/${ilceId}/mahalleler`);
   }
 }
