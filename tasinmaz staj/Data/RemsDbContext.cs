@@ -12,6 +12,7 @@ public class RemsDbContext : DbContext
     public DbSet<Log> Logs { get; set; }
     public DbSet<GeometryResult> GeometryResults { get; set; }
     public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+    public DbSet<RevokedToken> RevokedTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,6 +61,15 @@ public class RemsDbContext : DbContext
                 .WithMany(x => x.PasswordResetTokens)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Her istekte blacklist kontrolu Jti uzerinden yapiliyor (bkz.
+        // Startup.cs OnTokenValidated); bu yuzden Jti'nin index'li ve
+        // benzersiz olmasi onemli.
+        modelBuilder.Entity<RevokedToken>(entity =>
+        {
+            entity.HasIndex(x => x.Jti).IsUnique();
+            entity.HasIndex(x => x.ExpiresAt);
         });
     }
 }

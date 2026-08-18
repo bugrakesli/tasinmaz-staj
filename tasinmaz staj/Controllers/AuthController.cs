@@ -59,6 +59,52 @@ public class AuthController : ControllerBase
         });
     }
 
+    // REQ (4.2-13): oturumu sonlandirir; token'in jti'sini RevokedTokens'a
+    // ekleyerek ayni token'in tekrar kullanilmasini engeller (bkz. Startup.cs
+    // JwtBearerEvents.OnTokenValidated).
+    [Microsoft.AspNetCore.Authorization.Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var jti = User.FindFirst(
+            System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti)?.Value;
+
+        if (string.IsNullOrEmpty(jti))
+            return BadRequest(new { message = "Geçersiz token." });
+
+        var expClaim = User.FindFirst(
+            System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Exp)?.Value;
+
+        var expiresAt = long.TryParse(expClaim, out var expUnix)
+            ? DateTimeOffset.FromUnixTimeSeconds(expUnix).UtcDateTime
+            : DateTime.UtcNow.AddMinutes(
+                double.Parse(_configuration["Jwt:ExpireMinutes"]));
+
+        var userIdClaim = User.FindFirst(
+            System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        int.TryParse(userIdClaim, out var userId);
+
+        // Ayni token ile art arda logout cagrilirsa (ornegin cift tikla)
+        // benzersizlik kisitlamasi hata firlatmasin.
+        var alreadyRevoked = await _context.RevokedTokens
+            .AnyAsync(x => x.Jti == jti);
+
+        if (!alreadyRevoked)
+        {
+            await _context.RevokedTokens.AddAsync(new RevokedToken
+            {
+                Jti = jti,
+                UserId = userId,
+                RevokedAt = DateTime.UtcNow,
+                ExpiresAt = expiresAt
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        return Ok(new { message = "Başarıyla çıkış yapıldı." });
+    }
+
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
     {

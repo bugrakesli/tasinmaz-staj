@@ -113,6 +113,34 @@ namespace tasinmaz_staj
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                 };
+
+                // REQ (4.2-13): "invalidate sessions on logout". JWT
+                // stateless oldugu icin imza/sure dogrulamasi basarili
+                // olsa bile, token'in jti'si RevokedTokens tablosunda
+                // varsa istegi reddediyoruz. Boylece logout sonrasi
+                // eldeki token bir daha kullanilamiyor.
+                options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var jti = context.Principal?.FindFirst(
+                            System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti)?.Value;
+
+                        if (string.IsNullOrEmpty(jti))
+                            return;
+
+                        var dbContext = context.HttpContext.RequestServices
+                            .GetRequiredService<RemsDbContext>();
+
+                        bool isRevoked = await dbContext.RevokedTokens
+                            .AnyAsync(x => x.Jti == jti);
+
+                        if (isRevoked)
+                        {
+                            context.Fail("Token has been revoked.");
+                        }
+                    }
+                };
             });
         }
 
