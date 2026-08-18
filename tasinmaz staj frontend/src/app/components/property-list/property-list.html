@@ -67,45 +67,45 @@
 
       <div class="row g-3">
         <div class="col-md-3">
-          <label class="form-label">Şehir</label>
-          <select class="form-select" formControlName="city" (change)="onFilterCityChange($event)">
+          <label class="form-label" for="filterCity">Şehir</label>
+          <select id="filterCity" name="city" class="form-select" formControlName="city" autocomplete="address-level1" (change)="onFilterCityChange($event)">
             <option value="">Tümü</option>
             <option *ngFor="let il of iller()" [value]="il.ad">{{ il.ad }}</option>
           </select>
         </div>
         <div class="col-md-3">
-          <label class="form-label">İlçe</label>
-          <select class="form-select" formControlName="district" [disabled]="!filterForm.value.city" (change)="onFilterDistrictChange($event)">
+          <label class="form-label" for="filterDistrict">İlçe</label>
+          <select id="filterDistrict" name="district" class="form-select" formControlName="district" autocomplete="address-level2" [disabled]="!filterForm.value.city" (change)="onFilterDistrictChange($event)">
             <option value="">Tümü</option>
             <option *ngFor="let ilce of filterIlceler()" [value]="ilce.ad">{{ ilce.ad }}</option>
           </select>
         </div>
         <div class="col-md-3">
-          <label class="form-label">Mahalle</label>
-          <select class="form-select" formControlName="neighborhood" [disabled]="!filterForm.value.district">
+          <label class="form-label" for="filterNeighborhood">Mahalle</label>
+          <select id="filterNeighborhood" name="neighborhood" class="form-select" formControlName="neighborhood" autocomplete="address-level3" [disabled]="!filterForm.value.district">
             <option value="">Tümü</option>
             <option *ngFor="let mahalle of filterMahalleler()" [value]="mahalle.ad">{{ mahalle.ad }}</option>
           </select>
         </div>
         <div class="col-md-3">
-          <label class="form-label">Parsel No</label>
-          <input class="form-control" formControlName="parcelNumber" placeholder="Parsel No">
+          <label class="form-label" for="filterParcelNumber">Parsel No</label>
+          <input id="filterParcelNumber" name="parcelNumber" class="form-control" formControlName="parcelNumber" autocomplete="off" placeholder="Parsel No">
         </div>
         <div class="col-md-3">
-          <label class="form-label">Ada No</label>
-          <input class="form-control" formControlName="lotNumber" placeholder="Ada No">
+          <label class="form-label" for="filterLotNumber">Ada No</label>
+          <input id="filterLotNumber" name="lotNumber" class="form-control" formControlName="lotNumber" autocomplete="off" placeholder="Ada No">
         </div>
         <div class="col-md-3">
-          <label class="form-label">Adres</label>
-          <input class="form-control" formControlName="address" placeholder="Adres">
+          <label class="form-label" for="filterAddress">Adres</label>
+          <input id="filterAddress" name="address" class="form-control" formControlName="address" autocomplete="street-address" placeholder="Adres">
         </div>
         <div class="col-md-3">
-          <label class="form-label">Taşınmaz Tipi</label>
-          <input class="form-control" formControlName="propertyType" placeholder="Taşınmaz tipi">
+          <label class="form-label" for="filterPropertyType">Taşınmaz Tipi</label>
+          <input id="filterPropertyType" name="propertyType" class="form-control" formControlName="propertyType" autocomplete="off" placeholder="Taşınmaz tipi">
         </div>
         <div *ngIf="isAdmin()" class="col-md-3">
-          <label class="form-label">Owner ID</label>
-          <input type="number" min="1" class="form-control" formControlName="ownerId" placeholder="Kullanıcı ID">
+          <label class="form-label" for="filterOwnerId">Owner ID</label>
+          <input id="filterOwnerId" name="ownerId" type="number" min="1" class="form-control" formControlName="ownerId" autocomplete="off" placeholder="Kullanıcı ID">
         </div>
       </div>
 
@@ -232,7 +232,7 @@
       <div class="d-flex align-items-center gap-2 text-muted">
         <span>Toplam kayıt: <strong>{{ totalCount() | number:'1.0-0' }}</strong></span>
 
-        <select
+        <select id="pageSize" name="pageSize"
           class="form-select form-select-sm w-auto ms-2"
           [value]="pageSize()"
           (change)="changePageSize($event)"

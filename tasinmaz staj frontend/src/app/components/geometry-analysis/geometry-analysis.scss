@@ -1,3 +1,38 @@
 .card-header {
   font-weight: 600;
 }
+/* Dark Mode için Sonuç Tabloları / Metinleri Düzeltmesi */
+[data-theme="dark"] {
+  
+  /* Eğer o kısımlar bir <table> ile yapıldıysa: */
+  .table {
+    th, td, span {
+      color: rgba(255, 255, 255, 0.85) !important;
+    }
+  }
+
+  /* Eğer HTML içinde doğrudan text-dark vb. Bootstrap sınıfları kullanıldıysa 
+     bunları dark moda zorla: */
+  .text-dark,
+  .text-muted {
+    color: rgba(255, 255, 255, 0.75) !important;
+  }
+
+  /* Kapsayıcı kutuların içindeki tüm okunmayan etiketler için genel bir sigorta: */
+  .card-body,
+  .area-result { // Eğer sonuçları sardığın özel bir div varsa onun adını buraya yazabilirsin
+    label, 
+    th,
+    .label-text {
+      color: #cbd5e1 !important; /* Göz yormayan, açık ve şık bir gri/beyaz tonu */
+    }
+  }
+}
+
+[data-theme="dark"] {
+  /* Buradaki class ismini HTML'deki gerçek isimle değiştir */
+  .analysis-label, 
+  .area-result { 
+    color: rgba(255, 255, 255, 0.75) !important; /* Göz yormayan şık bir beyaz/gri */
+  }
+}

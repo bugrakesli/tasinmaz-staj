@@ -25,8 +25,8 @@
         <div class="card-header">Kesişim (A ∩ B)</div>
         <div class="card-body">
           <div class="mb-3">
-            <label class="form-label">Taşınmaz (B)</label>
-            <select class="form-select" [(ngModel)]="intersectionPropertyId">
+            <label class="form-label" for="intersectionPropertyId">Taşınmaz (B)</label>
+            <select class="form-select" id="intersectionPropertyId" name="intersectionPropertyId" [(ngModel)]="intersectionPropertyId">
               <option [ngValue]="null">Seçiniz...</option>
               <option *ngFor="let p of properties()" [ngValue]="p.id">
                 #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
@@ -54,15 +54,15 @@
             <table *ngIf="result.intersects" class="table table-sm mb-0">
               <tbody>
                 <tr>
-                  <th>Taşınmaz Alanı</th>
+                  <th class="area-result">Taşınmaz Alanı</th>
                   <td>{{ result.propertyAreaSquareMeters | number: '1.4-4' }} m²</td>
                 </tr>
                 <tr>
-                  <th>Kesişim Alanı</th>
+                  <th class="area-result">Kesişim Alanı</th>
                   <td>{{ result.intersectionAreaSquareMeters | number: '1.4-4' }} m²</td>
                 </tr>
                 <tr>
-                  <th>Kesişim Oranı</th>
+                  <th class="area-result">Kesişim Oranı</th>
                   <td>%{{ result.intersectionPercentage | number: '1.4-4' }}</td>
                 </tr>
               </tbody>
@@ -76,8 +76,8 @@
         <div class="card-header">Birleşim (A ∪ B ∪ C)</div>
         <div class="card-body">
           <div class="mb-3">
-            <label class="form-label">Taşınmaz A</label>
-            <select class="form-select" [(ngModel)]="unionAId">
+            <label class="form-label" for="unionAId">Taşınmaz A</label>
+            <select class="form-select" id="unionAId" name="unionAId" [(ngModel)]="unionAId">
               <option [ngValue]="null">Seçiniz...</option>
               <option *ngFor="let p of properties()" [ngValue]="p.id">
                 #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
@@ -86,8 +86,8 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Taşınmaz B</label>
-            <select class="form-select" [(ngModel)]="unionBId">
+            <label class="form-label" for="unionBId">Taşınmaz B</label>
+            <select class="form-select" id="unionBId" name="unionBId" [(ngModel)]="unionBId">
               <option [ngValue]="null">Seçiniz...</option>
               <option *ngFor="let p of properties()" [ngValue]="p.id">
                 #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
@@ -96,8 +96,8 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Taşınmaz C (opsiyonel)</label>
-            <select class="form-select" [(ngModel)]="unionCId">
+            <label class="form-label" for="unionCId">Taşınmaz C (opsiyonel)</label>
+            <select class="form-select" id="unionCId" name="unionCId" [(ngModel)]="unionCId">
               <option [ngValue]="null">Yok</option>
               <option *ngFor="let p of properties()" [ngValue]="p.id">
                 #{{ p.id }} — {{ p.city }} / {{ p.district }} / {{ p.neighborhood }}
@@ -122,7 +122,7 @@
             <table class="table table-sm mt-2 mb-0">
               <tbody>
                 <tr>
-                  <th>Alan</th>
+                  <th class="area-result">Alan</th>
                   <td>{{ result.areaSquareMeters | number: '1.4-4' }} m²</td>
                 </tr>
               </tbody>

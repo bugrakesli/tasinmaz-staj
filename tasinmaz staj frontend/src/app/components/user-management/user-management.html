@@ -231,7 +231,7 @@
             <strong>{{ totalCount() | number:'1.0-0' }}</strong>
           </div>
 
-          <select
+          <select id="pageSize" name="pageSize"
             class="form-select form-select-sm w-auto ms-2"
             [value]="pageSize()"
             (change)="changePageSize($event)"

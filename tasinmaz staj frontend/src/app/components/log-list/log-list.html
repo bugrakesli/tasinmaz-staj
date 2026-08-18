@@ -121,7 +121,7 @@
       <div class="d-flex align-items-center gap-2">
         <span class="page-subtitle mb-0">Sayfa {{ pageNumber() }} / {{ totalPages }}</span>
 
-        <select
+        <select id="pageSize" name="pageSize"
           class="form-select form-select-sm w-auto ms-2"
           [value]="pageSize()"
           (change)="changePageSize($event)"
