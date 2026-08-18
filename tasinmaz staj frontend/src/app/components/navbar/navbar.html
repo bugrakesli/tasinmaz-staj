@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-lg app-navbar mb-4" *ngIf="isAuthenticated">
   <div class="container-fluid px-3 py-2">
     <a class="navbar-brand d-flex align-items-center" routerLink="/properties">
-      <span class="brand-icon me-2"><i class="bi bi-building"></i></span>
+      <span class="brand-icon me-2" aria-hidden="true">
+        <img src="/favicon/app-icon.svg" alt="" width="32" height="32">
+      </span>
       <span class="d-none d-sm-inline">Taşınmaz Yönetim</span>
       <span class="d-inline d-sm-none">TYS</span>
     </a>
