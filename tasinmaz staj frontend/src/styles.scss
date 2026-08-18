@@ -373,25 +373,23 @@ h1, h2, h3, h4, h5, h6 {
   margin-inline: auto;
 }
 
-// Ana taşınmaz ekranı: GIS hissi veren, hafif ve görsel ağırlıklı arka plan.
-// Harici görsel kullanmadığı için yükleme performansını etkilemez.
-.property-page {
+// Tüm sayfayı kaplayan GIS hissi veren arkaplan
+body {
   position: relative;
+  min-height: 100vh;
+  margin: 0;
   isolation: isolate;
-  max-width: 1440px;
-  min-height: calc(100vh - 92px);
-  padding: clamp(1.25rem, 3vw, 2.5rem) clamp(1rem, 3vw, 2.5rem);
-  border-radius: var(--radius-xl);
   background:
     radial-gradient(circle at 78% 18%, rgba(0, 158, 227, 0.16), transparent 28%),
     radial-gradient(circle at 12% 85%, rgba(16, 185, 129, 0.10), transparent 24%),
     linear-gradient(135deg, var(--surface-muted) 0%, var(--surface) 52%, var(--brand-50) 100%);
-  overflow: hidden;
+  background-attachment: fixed; // Sayfa kayarken arka plan sabit kalır
 }
 
-.property-page::before {
+// GIS Grid ve Çizgileri
+body::before {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: -1;
   opacity: 0.45;
@@ -404,13 +402,14 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
-.property-page::after {
+// Sağ üstteki konsantrik GIS halkaları
+body::after {
   content: "";
-  position: absolute;
+  position: fixed;
   width: 420px;
   height: 420px;
-  right: -160px;
-  top: -170px;
+  right: -100px;
+  top: -100px;
   z-index: -1;
   border: 1px solid rgba(0, 158, 227, 0.16);
   border-radius: 50%;
@@ -420,15 +419,32 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
-[data-theme="dark"] .property-page {
+// Dark Tema Ayarları
+[data-theme="dark"] body {
   background:
     radial-gradient(circle at 78% 18%, rgba(0, 158, 227, 0.12), transparent 28%),
     radial-gradient(circle at 12% 85%, rgba(16, 185, 129, 0.07), transparent 24%),
-    linear-gradient(135deg, var(--surface-muted) 0%, var(--surface) 52%, #182534 100%);
+    linear-gradient(135deg, #0b1118 0%, #101721 52%, #182534 100%);
 }
 
-[data-theme="dark"] .property-page::before {
-  opacity: 0.28;
+[data-theme="dark"] body::before {
+  opacity: 0.30;
+}
+
+// Açık tema (Light Mode) için Navbar - Ferah ve beyaz buzlu cam
+.app-navbar {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+}
+
+// Koyu tema (Dark Mode) için Navbar - Koyu buzlu cam
+[data-theme="dark"] .app-navbar {
+  background: rgba(16, 23, 33, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -539,4 +555,36 @@ h1, h2, h3, h4, h5, h6 {
   padding: var(--sp-8);
   color: var(--ink-500);
   gap: var(--sp-2);
+}
+
+// Slider (Range) Görünürlük Düzeltmesi
+.form-range, 
+input[type="range"] {
+  // Chrome, Safari, Edge, Opera
+  &::-webkit-slider-runnable-track {
+    background-color: rgba(0, 0, 0, 0.18) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 4px;
+  }
+  // Firefox
+  &::-moz-range-track {
+    background-color: rgba(0, 0, 0, 0.18) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 4px;
+  }
+}
+
+// Koyu Tema (Dark Mode) Uyumluluğu
+[data-theme="dark"] {
+  .form-range, 
+  input[type="range"] {
+    &::-webkit-slider-runnable-track {
+      background-color: rgba(255, 255, 255, 0.25) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    &::-moz-range-track {
+      background-color: rgba(255, 255, 255, 0.25) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+  }
 }

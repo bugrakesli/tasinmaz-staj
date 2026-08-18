@@ -29,3 +29,17 @@
 .opacity-control .form-range {
   width: 140px;
 }
+
+// Sadece harita değiştirme alanındaki fw-bold class'ını eziyoruz
+.map-toggle-container {
+  .fw-bold {
+    // Bootstrap'in fiziksel kalınlaştırmasını iptal et
+    font-weight: normal !important; 
+    
+    // Rengi bozmadan, dışına kendi renginden ince bir çerçeve çekerek kalın göster
+    -webkit-text-stroke: 0.6px currentColor !important; 
+    
+    // Gözüne biraz daha dolgun görünmesini istersen aşağıdaki gölgeyi de aktif edebilirsin
+    // text-shadow: 0 0 0.1px currentColor !important;
+  }
+}
