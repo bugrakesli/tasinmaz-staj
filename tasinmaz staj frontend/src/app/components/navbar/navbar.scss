@@ -56,6 +56,11 @@
   background-color: var(--brand-100);
 }
 
+:host-context([data-theme="dark"]) .navbar-nav .nav-link.active {
+  color: var(--brand-100);
+  background-color: var(--brand-600);
+}
+
 .user-chip {
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
 // =============================================================
 // TASINMAZ YÖNETİM SİSTEMİ — Tasarım Sistemi
 // Renk paleti, tipografi, spacing scale ve ortak stil sınıfları.
@@ -7,12 +9,12 @@
 :root {
   // --- Renk Paleti ---------------------------------------------------
   --brand-50:  #f0f7fd;
-  --brand-100: #d8ecf8;
+  --brand-100: #d8ecf8; //taşınmazlar butonu rengi
   --brand-200: #b1dcf1;
   --brand-300: #7dc6e9;
   --brand-400: #42b2e1;
   --brand-500: #1ca2d9;
-  --brand-600: #009ee3; // OdakGIS Blue
+  --brand-600: #009ee3; // OdakGIS Blue / logo rengi
   --brand-700: #007cb4;
   --brand-800: #006897;
   --brand-900: #04567e;
@@ -35,8 +37,7 @@
   --navbar-bg: rgba(255, 255, 255, 0.85);
 
   // --- Tipografi -------------------------------------------------------
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Manrope", sans-serif;
   --fs-xs: 0.75rem;
   --fs-sm: 0.85rem;
   --fs-base: 1rem;
