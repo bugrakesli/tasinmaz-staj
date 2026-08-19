@@ -167,8 +167,28 @@ export class PropertyMap implements AfterViewInit, OnChanges, OnDestroy {
           Ada: ${property.adaNo ?? ''} &nbsp; Parsel: ${property.parselNo ?? ''}
         `;
         this.popupOverlay!.setPosition(center);
+        this.panToFeature(extent);
       }
     }
+  }
+
+  // Listeden bir taşınmaz seçildiğinde harita da o taşınmaza pan etsin
+  // (kullanıcı listeyle haritayı elle senkronize etmek zorunda kalmasın).
+  private panToFeature(extent: number[]): void {
+    if (!this.map || !extent.every((n) => Number.isFinite(n))) return;
+
+    const view = this.map.getView();
+    const center = getCenter(extent);
+    const currentZoom = view.getZoom() ?? 6;
+    // Seçilen taşınmaz çok küçükse (nokta gibi) aşırı yakınlaşmayı önle,
+    // ama zaten uzaktaysak (şehir seviyesi) makul bir seviyeye yaklaştır.
+    const targetZoom = currentZoom < 15 ? 16 : currentZoom;
+
+    view.animate({
+      center,
+      zoom: targetZoom,
+      duration: 400
+    });
   }
 
   ngOnDestroy(): void {
