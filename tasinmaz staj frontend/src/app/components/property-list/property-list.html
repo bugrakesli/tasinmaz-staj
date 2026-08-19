@@ -75,14 +75,14 @@
         </div>
         <div class="col-md-3">
           <label class="form-label" for="filterDistrict">İlçe</label>
-          <select id="filterDistrict" name="district" class="form-select" formControlName="district" autocomplete="address-level2" [disabled]="!filterForm.value.city" (change)="onFilterDistrictChange($event)">
+          <select id="filterDistrict" name="district" class="form-select" formControlName="district" autocomplete="address-level2" (change)="onFilterDistrictChange($event)">
             <option value="">Tümü</option>
             <option *ngFor="let ilce of filterIlceler()" [value]="ilce.ad">{{ ilce.ad }}</option>
           </select>
         </div>
         <div class="col-md-3">
           <label class="form-label" for="filterNeighborhood">Mahalle</label>
-          <select id="filterNeighborhood" name="neighborhood" class="form-select" formControlName="neighborhood" autocomplete="address-level3" [disabled]="!filterForm.value.district">
+          <select id="filterNeighborhood" name="neighborhood" class="form-select" formControlName="neighborhood" autocomplete="address-level3">
             <option value="">Tümü</option>
             <option *ngFor="let mahalle of filterMahalleler()" [value]="mahalle.ad">{{ mahalle.ad }}</option>
           </select>

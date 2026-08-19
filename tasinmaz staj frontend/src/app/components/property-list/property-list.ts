@@ -167,8 +167,8 @@ export class PropertyList implements OnInit {
   ) {
     this.filterForm = this.fb.group({
       city: [''],
-      district: [''],
-      neighborhood: [''],
+      district: [{ value: '', disabled: true }],
+      neighborhood: [{ value: '', disabled: true }],
       parcelNumber: [''],
       lotNumber: [''],
       address: [''],
@@ -200,10 +200,16 @@ export class PropertyList implements OnInit {
     const cityName = select.value;
 
     this.filterForm.patchValue({ district: '', neighborhood: '' });
+    this.filterForm.get('neighborhood')?.disable();
     this.filterIlceler.set([]);
     this.filterMahalleler.set([]);
 
-    if (!cityName) return;
+    if (!cityName) {
+      this.filterForm.get('district')?.disable();
+      return;
+    }
+
+    this.filterForm.get('district')?.enable();
 
     const il = this.iller().find(i => i.ad === cityName);
     if (!il) return;
@@ -221,7 +227,12 @@ export class PropertyList implements OnInit {
     this.filterForm.patchValue({ neighborhood: '' });
     this.filterMahalleler.set([]);
 
-    if (!districtName) return;
+    if (!districtName) {
+      this.filterForm.get('neighborhood')?.disable();
+      return;
+    }
+
+    this.filterForm.get('neighborhood')?.enable();
 
     const ilce = this.filterIlceler().find(i => i.ad === districtName);
     if (!ilce) return;
@@ -267,6 +278,8 @@ export class PropertyList implements OnInit {
       propertyType: '',
       ownerId: ''
     });
+    this.filterForm.get('district')?.disable();
+    this.filterForm.get('neighborhood')?.disable();
     this.filterIlceler.set([]);
     this.filterMahalleler.set([]);
     this.pageNumber.set(1);
