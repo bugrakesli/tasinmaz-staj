@@ -149,9 +149,11 @@ export class PropertyForm implements OnInit {
     this.currentImagePath.set(property.imagePath);
 
     if (property.city) {
+      this.propertyForm.get('district')?.enable();
       this.loadIlceler(property.city);
     }
     if (property.district) {
+      this.propertyForm.get('neighborhood')?.enable();
       this.loadMahalleler(property.district);
     }
   }
@@ -185,9 +187,14 @@ export class PropertyForm implements OnInit {
     this.mahalleler.set([]);
 
     if (cityName) {
+      this.propertyForm.get('district')?.enable();
       this.loadIlceler(cityName);
       this.geocodeAndPan(`${cityName}, Türkiye`, 8);
+    } else {
+      this.propertyForm.get('district')?.disable();
     }
+
+    this.propertyForm.get('neighborhood')?.disable();
   }
 
   private loadMahalleler(districtName: string): void {
@@ -214,10 +221,13 @@ export class PropertyForm implements OnInit {
     this.mahalleler.set([]);
 
     if (districtName) {
+      this.propertyForm.get('neighborhood')?.enable();
       this.loadMahalleler(districtName);
 
       const cityName = this.propertyForm.value.city;
       this.geocodeAndPan(`${districtName}, ${cityName}, Türkiye`, 11);
+    } else {
+      this.propertyForm.get('neighborhood')?.disable();
     }
   }
 
