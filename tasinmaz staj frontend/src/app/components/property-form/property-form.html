@@ -44,7 +44,6 @@
                 id="district"
                 class="form-select"
                 formControlName="district"
-                [disabled]="!propertyForm.value.city || loadingIlceler()"
                 (change)="onDistrictChange($event)"
               >
                 <option value="">{{ loadingIlceler() ? 'Yükleniyor...' : 'Seçiniz...' }}</option>
@@ -61,7 +60,6 @@
                 id="neighborhood"
                 class="form-select"
                 formControlName="neighborhood"
-                [disabled]="!propertyForm.value.district || loadingMahalleler()"
               >
                 <option value="">{{ loadingMahalleler() ? 'Yükleniyor...' : 'Seçiniz...' }}</option>
                 <option *ngFor="let mahalle of mahalleler()" [value]="mahalle.ad">{{ mahalle.ad }}</option>

@@ -78,8 +78,8 @@ export class PropertyForm implements OnInit {
   ) {
     this.propertyForm = this.formBuilder.group({
       city: ['', [Validators.required, this.nonBlankValidator]],
-      district: ['', [Validators.required, this.nonBlankValidator]],
-      neighborhood: ['', [Validators.required, this.nonBlankValidator]],
+      district: [{ value: '', disabled: true }, [Validators.required, this.nonBlankValidator]],
+      neighborhood: [{ value: '', disabled: true }, [Validators.required, this.nonBlankValidator]],
       lotNumber: ['', [Validators.required, this.nonBlankValidator]],
       parcelNumber: ['', [Validators.required, this.nonBlankValidator]],
       address: ['', [Validators.required, this.nonBlankValidator]],
