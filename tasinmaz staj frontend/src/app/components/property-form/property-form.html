@@ -104,7 +104,7 @@
 
             @if (isEditMode) {
               <div class="col-12">
-                <label class="form-label">Taşınmaz Görseli</label>
+                <label for="propertyImage" class="form-label">Taşınmaz Görseli</label>
 
                 @if (imageError()) {
                   <div class="alert alert-danger py-2">{{ imageError() }}</div>
@@ -123,7 +123,7 @@
                   <div class="text-muted small mb-2">Henüz görsel yüklenmemiş.</div>
                 }
 
-                <input type="file" class="form-control mt-2" accept=".jpg,.jpeg,.png"
+                <input id="propertyImage" type="file" class="form-control mt-2" accept=".jpg,.jpeg,.png"
                        [disabled]="imageUploading()" (change)="onImageSelected($event)">
                 @if (imageUploading()) {
                   <div class="spinner-border spinner-border-sm text-primary mt-1" role="status">

@@ -20,35 +20,35 @@
       <div class="row g-3">
         <div class="col-md-2">
           <label for="id" class="form-label">Log ID</label>
-          <input id="id" type="number" min="1" class="form-control" formControlName="id">
+          <input id="id" type="number" autocomplete="off" min="1" class="form-control" formControlName="id">
         </div>
         <div class="col-md-2">
           <label for="userId" class="form-label">User ID</label>
-          <input id="userId" type="number" min="1" class="form-control" formControlName="userId">
+          <input id="userId" type="number" autocomplete="off" min="1" class="form-control" formControlName="userId">
         </div>
         <div class="col-md-2">
           <label for="status" class="form-label">Status</label>
-          <input id="status" type="text" class="form-control" formControlName="status">
+          <input id="status" type="text" autocomplete="off" class="form-control" formControlName="status">
         </div>
         <div class="col-md-2">
           <label for="operationType" class="form-label">Operation Type</label>
-          <input id="operationType" type="text" class="form-control" formControlName="operationType">
+          <input id="operationType" type="text" autocomplete="off" class="form-control" formControlName="operationType">
         </div>
         <div class="col-md-3">
           <label for="description" class="form-label">Description</label>
-          <input id="description" type="text" class="form-control" formControlName="description">
+          <input id="description" type="text" autocomplete="off" class="form-control" formControlName="description">
         </div>
         <div class="col-md-3">
           <label for="userIp" class="form-label">User IP</label>
-          <input id="userIp" type="text" class="form-control" formControlName="userIp">
+          <input id="userIp" type="text" autocomplete="off" class="form-control" formControlName="userIp">
         </div>
         <div class="col-md-3">
           <label for="startDate" class="form-label">Başlangıç Tarihi</label>
-          <input id="startDate" type="datetime-local" class="form-control" formControlName="startDate">
+          <input id="startDate" type="datetime-local" autocomplete="off" class="form-control" formControlName="startDate">
         </div>
         <div class="col-md-3">
           <label for="endDate" class="form-label">Bitiş Tarihi</label>
-          <input id="endDate" type="datetime-local" class="form-control" formControlName="endDate">
+          <input id="endDate" type="datetime-local" autocomplete="off" class="form-control" formControlName="endDate">
         </div>
         <div class="col-12">
           <div *ngIf="filterForm.touched && filterForm.hasError('dateRange')" class="text-danger small">

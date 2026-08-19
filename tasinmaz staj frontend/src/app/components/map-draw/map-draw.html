@@ -17,6 +17,7 @@
           class="form-check-input m-0" 
           type="checkbox" 
           role="switch"
+          aria-label="Basemap toggle"
           [checked]="basemap() === 'google'"
           (change)="setBasemap($any($event.target).checked ? 'google' : 'osm')"
           style="cursor: pointer; width: 2.5em; height: 1.25em;"
@@ -30,6 +31,7 @@
       <input
         id="mapOpacity"
         type="range"
+        aria-label="Map opacity"
         class="form-range"
         min="10"
         max="100"

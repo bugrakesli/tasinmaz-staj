@@ -166,6 +166,7 @@
           <tr>
             <th *ngIf="!isAdmin()" style="width: 40px;">
               <input
+                aria-label="Tümünü seç"
                 type="checkbox"
                 class="form-check-input"
                 [checked]="isAllSelected()"
@@ -192,6 +193,7 @@
               style="cursor: pointer;">
             <td *ngIf="!isAdmin()">
               <input
+                aria-label="Seç"
                 type="checkbox"
                 class="form-check-input"
                 [checked]="selectedForDelete().has(p.id)"
