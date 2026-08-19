@@ -185,18 +185,25 @@ export class LogList implements OnInit {
       pageSize: this.pageSize()
     };
 
-    const id = Number(raw.id);
-    if (raw.id?.trim() && Number.isInteger(id) && id > 0) {
-      filter.id = id;
+    if (raw.id !== null && raw.id !== undefined && raw.id !== '') {
+      const idStr = String(raw.id).trim();
+      const id = Number(idStr);
+      if (idStr && Number.isInteger(id) && id > 0) {
+        filter.id = id;
+      }
     }
-    const userId = Number(raw.userId);
-    if (raw.userId?.trim() && Number.isInteger(userId) && userId > 0) {
-      filter.userId = userId;
+    if (raw.userId !== null && raw.userId !== undefined && raw.userId !== '') {
+      const userIdStr = String(raw.userId).trim();
+      const userId = Number(userIdStr);
+      if (userIdStr && Number.isInteger(userId) && userId > 0) {
+        filter.userId = userId;
+      }
     }
-    if (raw.status?.trim()) filter.status = raw.status.trim();
-    if (raw.operationType?.trim()) filter.operationType = raw.operationType.trim();
-    if (raw.description?.trim()) filter.description = raw.description.trim();
-    if (raw.userIp?.trim()) filter.userIp = raw.userIp.trim();
+    
+    if (typeof raw.status === 'string' && raw.status.trim()) filter.status = raw.status.trim();
+    if (typeof raw.operationType === 'string' && raw.operationType.trim()) filter.operationType = raw.operationType.trim();
+    if (typeof raw.description === 'string' && raw.description.trim()) filter.description = raw.description.trim();
+    if (typeof raw.userIp === 'string' && raw.userIp.trim()) filter.userIp = raw.userIp.trim();
     if (raw.startDate) filter.startDate = raw.startDate;
     if (raw.endDate) filter.endDate = raw.endDate;
 
