@@ -60,6 +60,7 @@
                 id="neighborhood"
                 class="form-select"
                 formControlName="neighborhood"
+                (change)="onNeighborhoodChange($event)"
               >
                 <option value="">{{ loadingMahalleler() ? 'Yükleniyor...' : 'Seçiniz...' }}</option>
                 <option *ngFor="let mahalle of mahalleler()" [value]="mahalle.ad">{{ mahalle.ad }}</option>

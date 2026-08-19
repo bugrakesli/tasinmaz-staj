@@ -248,4 +248,17 @@ export class MapDraw implements OnChanges, OnDestroy {
     this.initialWkt = wkt;
     this.renderInitialGeometry();
   }
+
+  // İl/İlçe/Mahalle seçildiğinde haritayı ilgili konuma yumuşak geçişle
+  // (pan/zoom) taşımak için kullanılır. Harita henüz başlatılmadıysa
+  // (initMap çağrılmadan önce) sessizce yok sayılır.
+  panTo(longitude: number, latitude: number, zoom = 13): void {
+    if (!this.map) return;
+
+    this.map.getView().animate({
+      center: fromLonLat([longitude, latitude]),
+      zoom,
+      duration: 600
+    });
+  }
 }

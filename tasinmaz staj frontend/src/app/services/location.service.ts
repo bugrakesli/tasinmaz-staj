@@ -5,13 +5,39 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Il, Ilce, Mahalle } from '../models/location.model';
 
+// Nominatim (OpenStreetMap) sonuç kaydı; yalnızca ihtiyacımız olan alanlar.
+export interface GeocodeResult {
+  lat: string;
+  lon: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class LocationService {
   private readonly apiUrl = `${environment.apiUrl}/Location`;
 
+  // Not: Ücretsiz/anahtar gerektirmeyen genel Nominatim uç noktasıdır
+  // (bkz. property-map'teki Google tile notu ile aynı yaklaşım). Üretim
+  // ortamında kullanım politikası (1 istek/sn, aşırı kullanım yasağı)
+  // gözetilmeli; yoğun kullanımda kendi coğrafi kodlama servisimiz ya da
+  // il/ilçe/mahalle için önceden hesaplanmış merkez koordinatları tercih
+  // edilmelidir.
+  private readonly geocodeUrl = 'https://nominatim.openstreetmap.org/search';
+
   constructor(private http: HttpClient) {}
+
+  // Seçilen İl/İlçe/Mahalle adına göre yaklaşık merkez koordinatını
+  // bulur; haritayı bu konuma pan/zoom yapmak için kullanılır.
+  geocode(query: string): Observable<GeocodeResult[]> {
+    const params = new HttpParams()
+      .set('format', 'json')
+      .set('limit', '1')
+      .set('countrycodes', 'tr')
+      .set('q', query);
+
+    return this.http.get<GeocodeResult[]>(this.geocodeUrl, { params });
+  }
 
   getIller(): Observable<Il[]> {
     return this.http.get<Il[]>(`${this.apiUrl}/iller`);

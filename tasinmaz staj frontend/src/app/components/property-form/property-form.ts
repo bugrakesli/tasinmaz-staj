@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -47,6 +47,14 @@ export class PropertyForm implements OnInit {
   // (zone dışı) event'leriyle çalıştığından, güncellemeler signal üzerinden
   // yapılıyor ki zoneless change detection değişikliği yakalasın.
   mapWkt = signal<string | null>(null);
+
+  // İl/İlçe/Mahalle seçildiğinde haritayı ilgili konuma pan/zoom yapmak
+  // için MapDraw bileşenine erişim.
+  @ViewChild(MapDraw) mapDraw?: MapDraw;
+
+  // Art arda hızlı seçim değişikliklerinde önceki geocode isteğinin
+  // sonucunun haritayı geç güncellemesini (race condition) engellemek için.
+  private geocodeRequestId = 0;
 
   // Görsel yükleme (SRS 4.3 / PropertyImageController): yalnızca düzenleme
   // modunda gösterilir çünkü upload/delete endpoint'leri var olan bir
@@ -178,6 +186,7 @@ export class PropertyForm implements OnInit {
 
     if (cityName) {
       this.loadIlceler(cityName);
+      this.geocodeAndPan(`${cityName}, Türkiye`, 8);
     }
   }
 
@@ -206,7 +215,52 @@ export class PropertyForm implements OnInit {
 
     if (districtName) {
       this.loadMahalleler(districtName);
+
+      const cityName = this.propertyForm.value.city;
+      this.geocodeAndPan(`${districtName}, ${cityName}, Türkiye`, 11);
     }
+  }
+
+  // Mahalle combobox'i değiştiğinde harita en yakın zoom seviyesiyle
+  // seçilen mahalleye pan yapar.
+  onNeighborhoodChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const neighborhoodName = select.value;
+
+    this.propertyForm.patchValue({ neighborhood: neighborhoodName });
+
+    if (!neighborhoodName) return;
+
+    const cityName = this.propertyForm.value.city;
+    const districtName = this.propertyForm.value.district;
+
+    this.geocodeAndPan(
+      `${neighborhoodName}, ${districtName}, ${cityName}, Türkiye`,
+      15
+    );
+  }
+
+  // Verilen adres metnini Nominatim üzerinden coğrafi kodlar ve sonucu
+  // haritada gösterir. Sonuç bulunamazsa ya da istek başarısız olursa
+  // (örn. rate limit, ağ hatası) haritayı olduğu yerde bırakır; kullanıcı
+  // yine de polygon çizmeye devam edebilir.
+  private geocodeAndPan(query: string, zoom: number): void {
+    const requestId = ++this.geocodeRequestId;
+
+    this.locationService.geocode(query).subscribe({
+      next: (results) => {
+        // Kullanıcı beklemeden başka bir seçim yaptıysa bu eski sonucu yok say.
+        if (requestId !== this.geocodeRequestId) return;
+
+        const result = results?.[0];
+        if (!result) return;
+
+        this.mapDraw?.panTo(parseFloat(result.lon), parseFloat(result.lat), zoom);
+      },
+      error: () => {
+        // Coğrafi kodlama başarısız olsa da formu bloklamıyoruz.
+      }
+    });
   }
 
   // Görselin tam URL'sini oluşturur (relative path DB'de "/uploads/..." olarak tutuluyor).
