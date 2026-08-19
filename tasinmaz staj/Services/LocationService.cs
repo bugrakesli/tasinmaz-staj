@@ -24,11 +24,20 @@ public class LocationService : ILocationService
 
     public async Task<List<IlDto>> GetIllerAsync()
     {
+        // Id sütunu plaka numarasıyla örtüşmediği için ayrı bir PlakaKodu
+        // kolonu eklendi (bkz. AddIlPlakaKodu migration). Dropdown, plaka
+        // numarasına göre sıralanır; eşleşmeyen (PlakaKodu null olan) il
+        // varsa listenin sonuna, kendi arasında alfabetik sıralanarak eklenir.
         var iller = await _context.Iller
-            .Select(i => new IlDto { Id = i.Id, Ad = i.Ad })
+            .Select(i => new { i.Id, i.Ad, i.PlakaKodu })
             .ToListAsync();
 
-        return iller.OrderBy(i => i.Ad, TurkishComparer).ToList();
+        return iller
+            .OrderBy(i => i.PlakaKodu.HasValue ? 0 : 1)
+            .ThenBy(i => i.PlakaKodu)
+            .ThenBy(i => i.Ad, TurkishComparer)
+            .Select(i => new IlDto { Id = i.Id, Ad = i.Ad })
+            .ToList();
     }
 
     public async Task<List<IlceDto>> GetIlcelerAsync(int? ilId)

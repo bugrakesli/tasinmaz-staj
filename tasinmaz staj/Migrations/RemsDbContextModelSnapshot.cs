@@ -65,6 +65,9 @@ namespace tasinmaz_staj.Migrations
                     b.Property<string>("Ad")
                         .HasColumnType("text");
 
+                    b.Property<int?>("PlakaKodu")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Ad")
