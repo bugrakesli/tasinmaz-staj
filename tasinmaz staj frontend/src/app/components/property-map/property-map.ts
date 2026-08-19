@@ -35,6 +35,14 @@ const DATA_PROJECTION = 'EPSG:4326';
 
 export type BasemapType = 'osm' | 'google';
 
+// Basemap seçimi sayfa yenilendiğinde sıfırlanmasın diye localStorage'da tutulur.
+const BASEMAP_STORAGE_KEY = 'tys-basemap';
+
+function getStoredBasemap(): BasemapType {
+  const stored = localStorage.getItem(BASEMAP_STORAGE_KEY);
+  return stored === 'google' ? 'google' : 'osm';
+}
+
 const HIGHLIGHT_STYLE = new Style({
   fill: new Fill({ color: 'rgba(11, 94, 215, 0.4)' }),
   stroke: new Stroke({ color: '#0a58ca', width: 3 }),
@@ -85,7 +93,7 @@ export class PropertyMap implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('mapContainer', { static: true }) mapContainerRef!: ElementRef<HTMLDivElement>;
   @ViewChild('popup', { static: true }) popupRef!: ElementRef<HTMLDivElement>;
 
-  basemap = signal<BasemapType>('osm');
+  basemap = signal<BasemapType>(getStoredBasemap());
   opacityPercent = signal(100);
   visibleCount = signal(0);
 
@@ -104,7 +112,10 @@ export class PropertyMap implements AfterViewInit, OnChanges, OnDestroy {
     crossOrigin: 'anonymous'
   });
 
-  private readonly baseLayer = new TileLayer({ source: this.osmSource, opacity: 1 });
+  private readonly baseLayer = new TileLayer({
+    source: this.basemap() === 'google' ? this.googleSource : this.osmSource,
+    opacity: 1
+  });
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -167,6 +178,7 @@ export class PropertyMap implements AfterViewInit, OnChanges, OnDestroy {
   setBasemap(type: BasemapType): void {
     this.basemap.set(type);
     this.baseLayer.setSource(type === 'google' ? this.googleSource : this.osmSource);
+    localStorage.setItem(BASEMAP_STORAGE_KEY, type);
   }
 
   setOpacity(percent: number): void {

@@ -35,6 +35,14 @@ const DATA_PROJECTION = 'EPSG:4326';
 
 export type BasemapType = 'osm' | 'google';
 
+// Basemap seçimi sayfa yenilendiğinde sıfırlanmasın diye localStorage'da tutulur.
+const BASEMAP_STORAGE_KEY = 'tys-basemap';
+
+function getStoredBasemap(): BasemapType {
+  const stored = localStorage.getItem(BASEMAP_STORAGE_KEY);
+  return stored === 'google' ? 'google' : 'osm';
+}
+
 // SRS 3.2.7/4.3: kesişim (intersection) analizinin sonucunu haritada
 // ayırt edici biçimde vurgulamak için kullanılan stil.
 const INTERSECTION_STYLE = new Style({
@@ -66,7 +74,7 @@ export class MapDraw implements OnChanges, OnDestroy {
   drawHint = signal('Poligon çizmek için haritaya tıklayın, bitirmek için çift tıklayın.');
 
   // 4.3: Altlık harita seçimi (OSM / Google Maps) ve katman şeffaflığı (opacity).
-  basemap = signal<BasemapType>('osm');
+  basemap = signal<BasemapType>(getStoredBasemap());
   opacityPercent = signal(100);
 
   private map: Map | null = null;
@@ -91,7 +99,10 @@ export class MapDraw implements OnChanges, OnDestroy {
     crossOrigin: 'anonymous'
   });
 
-  private readonly baseLayer = new TileLayer({ source: this.osmSource, opacity: 1 });
+  private readonly baseLayer = new TileLayer({
+    source: this.basemap() === 'google' ? this.googleSource : this.osmSource,
+    opacity: 1
+  });
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.initialized) {
@@ -142,6 +153,7 @@ export class MapDraw implements OnChanges, OnDestroy {
   setBasemap(type: BasemapType): void {
     this.basemap.set(type);
     this.baseLayer.setSource(type === 'google' ? this.googleSource : this.osmSource);
+    localStorage.setItem(BASEMAP_STORAGE_KEY, type);
   }
 
   // 4.3: taşınmaz/çizim katmanının şeffaflık (opacity) ayarı.
