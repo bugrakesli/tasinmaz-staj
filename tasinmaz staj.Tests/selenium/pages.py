@@ -24,7 +24,16 @@ class BasePage:
 
     def click(self, by, value, timeout=DEFAULT_TIMEOUT):
         el = self.wait(timeout).until(EC.element_to_be_clickable((by, value)))
-        el.click()
+        # Sabit navbar / toast container gibi elemanlar butonu kapatabildiği
+        # icin once elementi gorunur alanin ortasina kaydiriyoruz; normal
+        # click yine de intercept edilirse JS click'e dusuyoruz.
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", el
+        )
+        try:
+            el.click()
+        except Exception:
+            self.driver.execute_script("arguments[0].click();", el)
         return el
 
 
