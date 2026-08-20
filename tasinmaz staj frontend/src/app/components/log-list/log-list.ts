@@ -6,6 +6,8 @@ import { Log } from '../../models/log.model';
 import { LogFilter } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
 import { ToastService } from '../../services/toast.service';
+import { FileService } from '../../services/file.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-log-list',
@@ -14,7 +16,8 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './log-list.html',
   styleUrl: './log-list.scss'
 })
-export class LogList implements OnInit {
+export class LogList implements OnInit, import('@angular/core').OnDestroy {
+  private filterSub!: Subscription;
   // Zoneless Angular'da subscribe() callback'i icinde yapilan duz alan
   // atamalari (this.x = ...) change detection'i tetiklemiyor; bu yuzden
   // "sayfalama calismiyor / yavas yukleniyor" gibi gorunen sorunlarin
@@ -31,7 +34,8 @@ export class LogList implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private logService: LogService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private fileService: FileService
   ) {
     this.filterForm = this.formBuilder.group({
       id: '',
@@ -168,7 +172,7 @@ export class LogList implements OnInit {
     request$.subscribe({
       next: blob => {
         const extension = type === 'excel' ? 'xlsx' : 'pdf';
-        this.downloadBlob(blob, `logs_${this.getFileTimestamp()}.${extension}`);
+        this.fileService.downloadBlob(blob, `logs_${this.fileService.getTimestampForFileName()}.${extension}`);
         this.exporting.set(false);
       },
       error: () => {
@@ -210,19 +214,6 @@ export class LogList implements OnInit {
     return filter;
   }
 
-  private downloadBlob(blob: Blob, fileName: string): void {
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  }
+  
 
-  private getFileTimestamp(): string {
-    return new Date().toISOString()
-      .replace(/[-:]/g, '')
-      .replace(/\.\d{3}Z$/, '');
   }
-}

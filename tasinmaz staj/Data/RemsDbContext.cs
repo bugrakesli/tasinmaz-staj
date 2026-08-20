@@ -21,6 +21,8 @@ public class RemsDbContext : DbContext
         // Property geometrisi
         modelBuilder.Entity<Property>(entity =>
         {
+            entity.HasIndex(x => x.ParselNo);
+            entity.HasIndex(x => x.AdaNo);
             entity.Property(x => x.Geometry)
                 .HasColumnType("geometry(Polygon,4326)")
                 .IsRequired(false);

@@ -16,17 +16,20 @@ public class PropertyController : ControllerBase
     private readonly IPropertyExportService _propertyExportService;
     private readonly IPropertyImportService _propertyImportService;
     private readonly IPropertyGeometryService _propertyGeometryService;
+    private readonly Microsoft.Extensions.Logging.ILogger<PropertyController> _logger;
 
     public PropertyController(
         IPropertyService propertyService,
         IPropertyExportService propertyExportService,
         IPropertyImportService propertyImportService,
-        IPropertyGeometryService propertyGeometryService)
+        IPropertyGeometryService propertyGeometryService,
+        Microsoft.Extensions.Logging.ILogger<PropertyController> logger)
     {
         _propertyService = propertyService;
         _propertyExportService = propertyExportService;
         _propertyImportService = propertyImportService;
         _propertyGeometryService = propertyGeometryService;
+        _logger = logger;
     }
 
     // Token içindeki claim'lerden userId ve role'ü okuyan yardımcı metotlar
@@ -44,8 +47,9 @@ public class PropertyController : ControllerBase
             var result = await _propertyService.GetFilteredAsync(filter, GetUserId(), GetRole());
             return Ok(result);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "PropertyController error");
             return StatusCode(500, new { message = "Bir hata oluştu." });
         }
     }

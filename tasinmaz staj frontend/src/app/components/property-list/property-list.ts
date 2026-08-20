@@ -6,7 +6,9 @@ import { debounceTime, distinctUntilChanged, forkJoin, map } from 'rxjs';
 
 import { PropertyService } from '../../services/property.service';
 import { LocationService } from '../../services/location.service';
-import { ToastService } from '../../services/toast.service'; // Eklendi
+import { ToastService } from '../../services/toast.service';
+import { FileService } from '../../services/file.service';
+import { Subscription } from 'rxjs'; // Eklendi
 import { Property } from '../../models/property.model';
 import { Il, Ilce, Mahalle } from '../../models/location.model';
 import { PropertyFilter } from '../../models/property-filter.model';
@@ -21,7 +23,8 @@ import { ConfirmModal } from '../confirm-modal/confirm-modal';
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss'
 })
-export class PropertyList implements OnInit {
+export class PropertyList implements OnInit, import('@angular/core').OnDestroy {
+  private filterSub!: Subscription;
   properties = signal<Property[]>([]);
   loading = signal(true);
   errorMessage = signal('');
@@ -163,7 +166,8 @@ export class PropertyList implements OnInit {
     private authService: AuthService,
     private toastService: ToastService, // Eklendi
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private fileService: FileService
   ) {
     this.filterForm = this.fb.group({
       city: [''],
@@ -177,6 +181,10 @@ export class PropertyList implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.filterSub) this.filterSub.unsubscribe();
+  }
+
   ngOnInit(): void {
     this.isAdmin.set(this.authService.isAdmin());
     this.locationService.getIller().subscribe({
@@ -185,7 +193,7 @@ export class PropertyList implements OnInit {
     });
     this.loadProperties();
 
-    this.filterForm.valueChanges.pipe(
+    this.filterSub = this.filterForm.valueChanges.pipe(
       map(value => JSON.stringify(value)),
       distinctUntilChanged(),
       debounceTime(300)
@@ -341,7 +349,7 @@ export class PropertyList implements OnInit {
     this.exportingExcel.set(true);
     this.propertyService.exportToExcel(this.buildFilter()).subscribe({
       next: (blob) => {
-        this.downloadBlob(blob, `properties_${this.timestampForFileName()}.xlsx`);
+        this.fileService.downloadBlob(blob, `properties_${this.fileService.getTimestampForFileName()}.xlsx`);
         this.exportingExcel.set(false);
       },
       error: () => {
@@ -355,7 +363,7 @@ export class PropertyList implements OnInit {
     this.exportingPdf.set(true);
     this.propertyService.exportToPdf(this.buildFilter()).subscribe({
       next: (blob) => {
-        this.downloadBlob(blob, `properties_${this.timestampForFileName()}.pdf`);
+        this.fileService.downloadBlob(blob, `properties_${this.fileService.getTimestampForFileName()}.pdf`);
         this.exportingPdf.set(false);
       },
       error: () => {
@@ -395,21 +403,7 @@ export class PropertyList implements OnInit {
     });
   }
 
-  private downloadBlob(blob: Blob, fileName: string): void {
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
+  
 
-  private timestampForFileName(): string {
-    const now = new Date();
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return (
-      `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
-      `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
-    );
-  }
+  
 }
