@@ -345,7 +345,8 @@ h1, h2, h3, h4, h5, h6 {
   position: sticky;
   top: 0;
   z-index: 2;
-  background-color: var(--bs-table-bg, var(--surface-muted));
+  /* Use an opaque background instead of --bs-table-bg which is transparent in dark mode */
+  background-color: var(--surface-muted);
   box-shadow: 0 2px 0 0 var(--border-color);
 }
 
