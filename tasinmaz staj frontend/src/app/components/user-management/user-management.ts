@@ -15,10 +15,12 @@ import {
 } from '../../models/user.model';
 import { ToastService } from '../../services/toast.service';
 
+import { ConfirmModal } from '../confirm-modal/confirm-modal';
+
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ConfirmModal],
   templateUrl: './user-management.html',
   styleUrl: './user-management.scss'
 })
@@ -28,6 +30,9 @@ export class UserManagement implements OnInit {
   saving = signal(false);
   deletingId = signal<number | null>(null);
   errorMessage = signal('');
+
+  showDeleteModal = signal(false);
+  userToDelete = signal<User | null>(null);
 
   totalCount = signal(0);
   pageNumber = signal(1);
@@ -167,32 +172,39 @@ export class UserManagement implements OnInit {
   }
 
   remove(user: User): void {
-    const confirmed = window.confirm(
-      `"${user.email}" kullanıcısını silmek istediğinize emin misiniz? ` +
-      'Bu kullanıcıya ait tüm taşınmazlar da silinecektir.'
-    );
+    this.userToDelete.set(user);
+    this.showDeleteModal.set(true);
+  }
 
-    if (!confirmed) {
-      return;
-    }
+  confirmDelete(): void {
+    const user = this.userToDelete();
+    if (!user) return;
 
+    this.showDeleteModal.set(false);
     this.deletingId.set(user.id);
     this.errorMessage.set('');
 
     this.userService.delete(user.id).subscribe({
       next: (result) => {
         this.deletingId.set(null);
+        this.userToDelete.set(null);
         this.toastService.success(result.message);
         this.loadUsers();
       },
       error: (err) => {
         this.deletingId.set(null);
+        this.userToDelete.set(null);
         this.toastService.error(
           err?.error?.message ??
             'Kullanıcı silinirken bir hata oluştu.'
         );
       }
     });
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal.set(false);
+    this.userToDelete.set(null);
   }
 
   previousPage(): void {

@@ -1,3 +1,17 @@
+<app-confirm-modal
+  *ngIf="showDeleteModal()"
+  title="Kullanıcıyı Sil"
+  [message]="
+    '\&quot;' + userToDelete()?.email + '\&quot; kullanıcısını silmek istediğinize emin misiniz? ' +
+    'Bu kullanıcıya ait tüm taşınmazlar da silinecektir.'
+  "
+  confirmText="Sil"
+  cancelText="Vazgeç"
+  [busy]="deletingId() === userToDelete()?.id"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirm-modal>
+
 <div class="page-container">
   <div class="page-header">
     <div>
