@@ -32,3 +32,33 @@ def driver():
     drv.implicitly_wait(2)
     yield drv
     drv.quit()
+
+
+# Bir test basarisiz oldugunda ekran goruntusu ve sayfa kaynagini
+# tasinmaz staj.Tests/selenium/failures/ altina kaydeder; CI/lokal
+# debug icin faydali.
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        drv = item.funcargs.get("driver")
+        if drv is not None:
+            failures_dir = os.path.join(os.path.dirname(__file__), "failures")
+            os.makedirs(failures_dir, exist_ok=True)
+            safe_name = item.name.replace("/", "_")
+
+            screenshot_path = os.path.join(failures_dir, f"{safe_name}.png")
+            html_path = os.path.join(failures_dir, f"{safe_name}.html")
+
+            try:
+                drv.save_screenshot(screenshot_path)
+            except Exception:
+                pass
+
+            try:
+                with open(html_path, "w", encoding="utf-8") as f:
+                    f.write(drv.page_source)
+            except Exception:
+                pass

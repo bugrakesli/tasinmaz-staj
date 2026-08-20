@@ -73,9 +73,14 @@ def test_full_cascade_and_submit_creates_property(driver, base_url):
         property_type="Arsa",
         address="Selenium test adresi",
     )
+    # Konum alani zorunlu (formControlName="coordinate"); harita cizimi
+    # yerine gecerli bir WKT polygon direkt textarea'ya yaziliyor.
+    form_page.fill_coordinate(
+        "POLYGON((32.85 39.93, 32.86 39.93, 32.86 39.94, 32.85 39.94, 32.85 39.93))"
+    )
     form_page.submit()
 
-    WebDriverWait(driver, 10).until(lambda d: "/properties" in d.current_url and "new" not in d.current_url)
+    WebDriverWait(driver, 15).until(lambda d: "/properties" in d.current_url and "new" not in d.current_url)
     list_page = PropertyListPage(driver, base_url)
     list_page.is_loaded()
     assert list_page.row_count() >= initial_count

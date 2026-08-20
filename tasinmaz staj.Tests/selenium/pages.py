@@ -124,11 +124,23 @@ class PropertyFormPage(BasePage):
         select.select_by_visible_text(neighborhood_name)
         return self
 
+
+
     def fill_common_fields(self, lot_no, parcel_no, property_type, address):
         self.driver.find_element(By.ID, "lotNumber").send_keys(lot_no)
         self.driver.find_element(By.ID, "parcelNumber").send_keys(parcel_no)
         self.driver.find_element(By.ID, "propertyType").send_keys(property_type)
         self.driver.find_element(By.ID, "address").send_keys(address)
+        return self
+
+    def fill_coordinate(self, wkt):
+        # Konum, haritadan cizim gerektirmeden dogrudan WKT textarea'sina
+        # yazilabiliyor (formControlName="coordinate"); harita bilesenini
+        # (app-map-draw / OpenLayers) Selenium ile suruklemek yerine bunu
+        # kullaniyoruz.
+        field = self.driver.find_element(By.ID, "coordinate")
+        field.clear()
+        field.send_keys(wkt)
         return self
 
     def submit(self):

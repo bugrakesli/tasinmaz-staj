@@ -16,9 +16,15 @@ def test_login_page_loads(driver, base_url):
 
 
 def test_login_with_empty_fields_shows_validation_errors(driver, base_url):
+    from selenium.webdriver.support.ui import WebDriverWait
+
     page = LoginPage(driver, base_url).open()
     page.driver.find_element("css selector", "button.btn-login").click()
 
+    # Angular reactive form, markAllAsTouched() sonrasi hata mesajlarini
+    # bir sonraki change detection dongusunde render eder; bu yuzden
+    # page_source'u aninda degil, kosul saglanana kadar kontrol ediyoruz.
+    WebDriverWait(driver, 5).until(lambda d: "zorunludur" in d.page_source)
     assert "zorunludur" in driver.page_source
 
 
