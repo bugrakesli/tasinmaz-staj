@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using System;
@@ -51,6 +51,7 @@ public class PropertyService : IPropertyService
     public async Task<List<PropertyDto>> GetAllAsync(int userId, string role)
     {
         IQueryable<Property> query = _context.Properties
+            .AsNoTracking()
             .Include(p => p.Mahalle)
                 .ThenInclude(m => m.Ilce)
                     .ThenInclude(i => i.Il);
@@ -87,6 +88,7 @@ public class PropertyService : IPropertyService
         bool isAdmin = string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase);
 
         IQueryable<Property> query = _context.Properties
+            .AsNoTracking()
             .Include(p => p.Mahalle)
                 .ThenInclude(m => m.Ilce)
                     .ThenInclude(i => i.Il);

@@ -41,6 +41,9 @@ namespace tasinmaz_staj
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IEmailService, EmailService>();
 
+            services.AddExceptionHandler<tasinmaz_staj.Middleware.GlobalExceptionHandler>();
+            services.AddProblemDetails();
+
 
             services.AddSwaggerGen(c =>
             {
@@ -155,6 +158,12 @@ namespace tasinmaz_staj
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "REMS.API v1");
                 });
+            }
+            else
+            {
+                // REQ (Hata Yonetimi): Prod'da tum yakalanmamis hatalar
+                // GlobalExceptionHandler uzerinden standart JSON olarak donuyor.
+                app.UseExceptionHandler();
             }
 
             app.UseHttpsRedirection();
