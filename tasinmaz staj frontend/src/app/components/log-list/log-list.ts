@@ -7,7 +7,6 @@ import { LogFilter } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
 import { ToastService } from '../../services/toast.service';
 import { FileService } from '../../services/file.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-log-list',
@@ -16,8 +15,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './log-list.html',
   styleUrl: './log-list.scss'
 })
-export class LogList implements OnInit, import('@angular/core').OnDestroy {
-  private filterSub!: Subscription;
+export class LogList implements OnInit {
   // Zoneless Angular'da subscribe() callback'i icinde yapilan duz alan
   // atamalari (this.x = ...) change detection'i tetiklemiyor; bu yuzden
   // "sayfalama calismiyor / yavas yukleniyor" gibi gorunen sorunlarin

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -23,7 +23,7 @@ import { ConfirmModal } from '../confirm-modal/confirm-modal';
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss'
 })
-export class PropertyList implements OnInit, import('@angular/core').OnDestroy {
+export class PropertyList implements OnInit, OnDestroy {
   private filterSub!: Subscription;
   properties = signal<Property[]>([]);
   loading = signal(true);
