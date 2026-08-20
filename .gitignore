@@ -403,3 +403,7 @@ Thumbs.db
 
 **/.angular/
 **/node_modules/
+
+#postman test reports
+
+postman/
