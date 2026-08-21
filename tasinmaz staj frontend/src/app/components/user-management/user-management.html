@@ -122,8 +122,8 @@
               class="form-select"
               formControlName="role"
             >
-              <option value="User">User</option>
-              <option value="Admin">Admin</option>
+              <option value="User">Kullanıcı</option>
+              <option value="Admin">Yönetici</option>
             </select>
           </div>
         </div>
@@ -195,7 +195,7 @@
 
               <td>
                 <span class="badge" [ngClass]="user.role === 'Admin' ? 'bg-danger' : 'bg-info'">
-                  {{ user.role }}
+                  {{ user.role === 'Admin' ? 'Yönetici' : 'Kullanıcı' }}
                 </span>
               </td>
 

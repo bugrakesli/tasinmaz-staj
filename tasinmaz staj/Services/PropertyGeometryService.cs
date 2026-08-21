@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -226,7 +226,7 @@ public PropertyGeometryService(RemsDbContext context)
         if (property == null)
         {
             throw new KeyNotFoundException(
-                "Property not found or access denied."
+                "Taşınmaz bulunamadı.or access denied."
             );
         }
 

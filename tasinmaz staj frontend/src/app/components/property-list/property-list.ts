@@ -386,7 +386,7 @@ export class PropertyList implements OnInit, OnDestroy {
     this.propertyService.importFromExcel(file).subscribe({
       next: (result) => {
         this.importing.set(false);
-        this.toastService.success(result.message ?? 'Properties imported successfully.');
+        this.toastService.success(result.message ?? 'Taşınmazlar başarıyla içe aktarıldı.');
         this.loadProperties();
         input.value = '';
       },

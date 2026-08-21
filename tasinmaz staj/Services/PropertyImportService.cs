@@ -1,4 +1,4 @@
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.IO;
 using System;
@@ -40,7 +40,7 @@ public class PropertyImportService : IPropertyImportService
         {
             // REQ-5: bozuk/gecersiz .xlsx dosyasi
             result.Success = false;
-            result.Errors.Add("Import failed. Please check the file format and data.");
+            result.Errors.Add("İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin.");
             return result;
         }
 
@@ -50,7 +50,7 @@ public class PropertyImportService : IPropertyImportService
             if (sheet == null)
             {
                 result.Success = false;
-                result.Errors.Add("Import failed. Please check the file format and data.");
+                result.Errors.Add("İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin.");
                 return result;
             }
 
@@ -74,8 +74,8 @@ public class PropertyImportService : IPropertyImportService
             {
                 result.Success = false;
                 result.Errors.Add(
-                    $"Import failed. Please check the file format and data. " +
-                    $"Eksik sütun(lar): {string.Join(", ", missingHeaders)}");
+                    $"İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin. " +
+                    $"Eksik sÃ¼tun(lar): {string.Join(", ", missingHeaders)}");
                 return result;
             }
 
@@ -187,7 +187,7 @@ public class PropertyImportService : IPropertyImportService
             if (errors.Any())
             {
                 result.Success = false;
-                result.Errors.Add("Import failed. Please check the file format and data.");
+                result.Errors.Add("İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin.");
                 result.Errors.AddRange(errors);
                 return result;
             }
@@ -195,7 +195,7 @@ public class PropertyImportService : IPropertyImportService
             if (!rowsToImport.Any())
             {
                 result.Success = false;
-                result.Errors.Add("Import failed. Please check the file format and data. Dosyada içe aktarılacak satır bulunamadı.");
+                result.Errors.Add("İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin. Dosyada iÃ§e aktarÄ±lacak satÄ±r bulunamadÄ±.");
                 return result;
             }
 
@@ -210,3 +210,4 @@ public class PropertyImportService : IPropertyImportService
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -25,26 +25,26 @@ public class UserController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] UserCreateDto dto)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new { message = "Failed to add user. Please check all required fields." }); // REQ-6[cite: 1]
+            return BadRequest(new { message = "Kullanıcı eklenemedi. Lütfen tüm zorunlu alanları kontrol edin." }); // REQ-6[cite: 1]
 
         var success = await _userService.CreateUserAsync(dto);
         if (success)
-            return Ok(new { message = "User added successfully." }); // REQ-6[cite: 1]
+            return Ok(new { message = "Kullanıcı başarıyla eklendi." }); // REQ-6[cite: 1]
 
-        return BadRequest(new { message = "Failed to add user. Please check all required fields." });
+        return BadRequest(new { message = "Kullanıcı eklenemedi. Lütfen tüm zorunlu alanları kontrol edin." });
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto dto)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new { message = "Failed to update user. Please check all required fields." }); // REQ-6[cite: 1]
+            return BadRequest(new { message = "Kullanıcı güncellenemedi. Lütfen tüm zorunlu alanları kontrol edin." }); // REQ-6[cite: 1]
 
         var success = await _userService.UpdateUserAsync(id, dto);
         if (success)
-            return Ok(new { message = "User updated successfully." }); // REQ-6[cite: 1]
+            return Ok(new { message = "Kullanıcı başarıyla güncellendi." }); // REQ-6[cite: 1]
 
-        return BadRequest(new { message = "Failed to update user. Please check all required fields." });
+        return BadRequest(new { message = "Kullanıcı güncellenemedi. Lütfen tüm zorunlu alanları kontrol edin." });
     }
 
     [HttpDelete("{id}")]
@@ -52,8 +52,8 @@ public class UserController : ControllerBase
     {
         var success = await _userService.DeleteUserAsync(id);
         if (success)
-            return Ok(new { message = "User and associated properties deleted successfully." }); // REQ-6[cite: 1]
+            return Ok(new { message = "Kullanıcı ve ilişkili taşınmazlar başarıyla silindi." }); // REQ-6[cite: 1]
 
-        return NotFound(new { message = "User not found." });
+        return NotFound(new { message = "Kullanıcı bulunamadı." });
     }
 }

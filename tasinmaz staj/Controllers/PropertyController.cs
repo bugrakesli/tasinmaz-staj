@@ -1,4 +1,4 @@
-    using Microsoft.AspNetCore.Authorization;
+﻿    using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -73,7 +73,7 @@ public class PropertyController : ControllerBase
 
             return Ok(new
             {
-                message = "Property added successfully.",
+                message = "Taşınmaz başarıyla eklendi.",
                 data = result
             });
         }
@@ -81,7 +81,7 @@ public class PropertyController : ControllerBase
         {
             return BadRequest(new
             {
-                message = "Please fill in all required fields with valid format."
+                message = "Lütfen tüm zorunlu alanları geçerli formatta doldurun."
             });
         }
     }
@@ -104,7 +104,7 @@ public class PropertyController : ControllerBase
 
             return Ok(new
             {
-                message = "Property updated successfully.",
+                message = "Taşınmaz başarıyla güncellendi.",
                 data = result
             });
         }
@@ -116,7 +116,7 @@ public class PropertyController : ControllerBase
         {
             return BadRequest(new
             {
-                message = "Please fill in all required fields with valid format."
+                message = "Lütfen tüm zorunlu alanları geçerli formatta doldurun."
             });
         }
     }
@@ -132,13 +132,13 @@ public class PropertyController : ControllerBase
         {
             var success = await _propertyService.DeleteAsync(id, GetUserId());
             if (!success)
-                return NotFound(new { message = "Property not found." });
+                return NotFound(new { message = "Taşınmaz bulunamadı." });
 
-            return Ok(new { message = "Property deleted successfully." });
+            return Ok(new { message = "Taşınmaz başarıyla silindi." });
         }
         catch
         {
-            return StatusCode(500, new { message = "Bir hata oluştu." });
+            return StatusCode(500, new { message = "Bir hata oluÅŸtu." });
         }
     }
 
@@ -158,7 +158,7 @@ public class PropertyController : ControllerBase
         }
         catch
         {
-            return StatusCode(500, new { message = "Failed to export." });
+            return StatusCode(500, new { message = "Dışa aktarma başarısız oldu." });
         }
     }
 
@@ -173,7 +173,7 @@ public class PropertyController : ControllerBase
         }
         catch
         {
-            return StatusCode(500, new { message = "Failed to export." });
+            return StatusCode(500, new { message = "Dışa aktarma başarısız oldu." });
         }
     }
 
@@ -187,14 +187,14 @@ public class PropertyController : ControllerBase
 
         if (file == null || file.Length == 0)
         {
-            return BadRequest(new { message = "Import failed. Please check the file format and data." });
+            return BadRequest(new { message = "İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin." });
         }
 
         // REQ-1: yalnizca .xlsx kabul edilir
         var extension = Path.GetExtension(file.FileName);
         if (!string.Equals(extension, ".xlsx", StringComparison.OrdinalIgnoreCase))
         {
-            return BadRequest(new { message = "Import failed. Please check the file format and data." });
+            return BadRequest(new { message = "İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin." });
         }
 
         try
@@ -215,14 +215,14 @@ public class PropertyController : ControllerBase
 
             return Ok(new
             {
-                message = "Properties imported successfully.",
+                message = "Taşınmazlar başarıyla içe aktarıldı.",
                 importedCount = result.ImportedCount,
                 data = refreshedList
             });
         }
         catch
         {
-            return StatusCode(500, new { message = "Import failed. Please check the file format and data." });
+            return StatusCode(500, new { message = "İçe aktarma başarısız oldu. Lütfen dosya formatını ve verileri kontrol edin." });
         }
     }
 
@@ -247,7 +247,7 @@ public class PropertyController : ControllerBase
                 return NotFound(
                     new
                     {
-                        message = "Property not found."
+                        message = "Taşınmaz bulunamadı."
                     }
                 );
             }
