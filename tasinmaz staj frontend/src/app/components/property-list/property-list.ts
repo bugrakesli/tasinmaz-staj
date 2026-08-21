@@ -349,7 +349,7 @@ export class PropertyList implements OnInit, OnDestroy {
     this.exportingExcel.set(true);
     this.propertyService.exportToExcel(this.buildFilter()).subscribe({
       next: (blob) => {
-        this.fileService.downloadBlob(blob, `properties_${this.fileService.getTimestampForFileName()}.xlsx`);
+        this.fileService.downloadBlob(blob, `Taşınmaz_Listesi_${this.fileService.getShortTimestampForFileName()}.xlsx`);
         this.exportingExcel.set(false);
       },
       error: () => {
@@ -363,7 +363,7 @@ export class PropertyList implements OnInit, OnDestroy {
     this.exportingPdf.set(true);
     this.propertyService.exportToPdf(this.buildFilter()).subscribe({
       next: (blob) => {
-        this.fileService.downloadBlob(blob, `properties_${this.fileService.getTimestampForFileName()}.pdf`);
+        this.fileService.downloadBlob(blob, `Tasinmaz_Listesi_${this.fileService.getShortTimestampForFileName()}.pdf`);
         this.exportingPdf.set(false);
       },
       error: () => {
