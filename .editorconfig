@@ -1,0 +1,24 @@
+root = true
+
+# .cs dosyalari icin: Visual Studio, BOM'suz dosyalarda Windows varsayilan
+# kod sayfasini (Windows-1254) kullanabiliyor; bu da Turkce karakterleri
+# (c, s, g, o, u, i) kaydederken bozuyor (bkz. Data/RemsDbContext.cs
+# duzeltmesi). utf-8-bom, VS'in her zaman dogru kodlamayi kullanmasini
+# garanti eder.
+[*.cs]
+charset = utf-8-bom
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Frontend tarafinda BOM genelde istenmez (bazi build/lint araclariyla
+# sorun cikarabilir); duz utf-8 yeterli.
+[*.{ts,html,scss,css,json}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+
+[*.md]
+trim_trailing_whitespace = false

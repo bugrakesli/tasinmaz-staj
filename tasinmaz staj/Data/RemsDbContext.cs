@@ -28,7 +28,7 @@ public class RemsDbContext : DbContext
                 .IsRequired(false);
         });
 
-        // Union sonu�lar�: D ve E
+        // Union sonuclari: D ve E
         modelBuilder.Entity<GeometryResult>(entity =>
         {
             entity.Property(x => x.Label)
