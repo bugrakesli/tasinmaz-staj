@@ -13,7 +13,7 @@ public class PropertyExportService : IPropertyExportService
     private static readonly string[] Headers =
     {
         "Şehir", "İlçe", "Mahalle", "Ada No", "Parsel No",
-        "Adres", "Tanınmaz Tipi", "Koordinat (WKT)"
+        "Adres", "Taşınmaz Tipi", "Koordinat (WKT)"
     };
 
     public PropertyExportService(IPropertyService propertyService)
