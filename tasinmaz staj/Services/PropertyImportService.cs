@@ -177,7 +177,6 @@ public class PropertyImportService : IPropertyImportService
                     ParselNo = parcelNumber,
                     Adres = address,
                     PropertyType = propertyType,
-                    Coordinate = coordinate,
                     Geometry = parsedGeometry,
                     ImagePath = null
                 });

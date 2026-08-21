@@ -9,5 +9,4 @@ public interface IPropertyService
     Task<PropertyDto> CreateAsync(CreatePropertyDto dto, int userId);
     Task<PropertyDto> UpdateAsync(int propertyId, CreatePropertyDto dto, int userId);
     Task<bool> DeleteAsync(int propertyId, int userId);
-    Task<int> BackfillGeometryAsync();
 }

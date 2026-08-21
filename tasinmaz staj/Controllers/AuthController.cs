@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -14,17 +15,20 @@ public class AuthController : ControllerBase
     private readonly TokenService _tokenService;
     private readonly IEmailService _emailService;
     private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
+    private readonly IMemoryCache _cache;
 
     public AuthController(
         RemsDbContext context,
         TokenService tokenService,
         IEmailService emailService,
-        Microsoft.Extensions.Configuration.IConfiguration configuration)
+        Microsoft.Extensions.Configuration.IConfiguration configuration,
+        IMemoryCache cache)
     {
         _context = context;
         _tokenService = tokenService;
         _emailService = emailService;
         _configuration = configuration;
+        _cache = cache;
     }
 
     [HttpPost("login")]
@@ -100,6 +104,11 @@ public class AuthController : ControllerBase
             });
 
             await _context.SaveChangesAsync();
+        }
+
+        if (expiresAt > DateTime.UtcNow)
+        {
+            _cache.Set($"revoked_{jti}", true, expiresAt - DateTime.UtcNow);
         }
 
         return Ok(new { message = "Başarıyla çıkış yapıldı." });

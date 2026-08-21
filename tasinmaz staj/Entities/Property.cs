@@ -15,8 +15,6 @@ public class Property
     public string Adres { get; set; }
     public string PropertyType { get; set; }
 
-
-    public string Coordinate { get; set; }   // WKT formatında polygon
     
     public Polygon Geometry { get; set; } // NetTopologySuite.Geometries.Polygon
 

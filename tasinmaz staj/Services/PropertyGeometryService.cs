@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -182,7 +182,7 @@ public PropertyGeometryService(RemsDbContext context)
                 ParselNo = x.ParselNo,
                 Adres = x.Adres,
                 PropertyType = x.PropertyType,
-                Coordinate = x.Coordinate
+                Coordinate = x.Geometry != null ? x.Geometry.AsText() : null
             })
             .ToListAsync();
 

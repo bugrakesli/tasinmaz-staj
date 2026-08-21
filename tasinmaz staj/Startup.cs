@@ -12,6 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Caching.Memory;
+using System.Threading.RateLimiting;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -98,6 +101,16 @@ namespace tasinmaz_staj
             });
 
             services.AddSingleton<TokenService>();
+            services.AddMemoryCache();
+            services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("geometry", opt =>
+                {
+                    opt.AutoReplenishment = true;
+                    opt.PermitLimit = 10;
+                    opt.Window = TimeSpan.FromMinutes(1);
+                });
+            });
 
             services.AddAuthentication(options =>
             {
@@ -132,13 +145,10 @@ namespace tasinmaz_staj
                         if (string.IsNullOrEmpty(jti))
                             return;
 
-                        var dbContext = context.HttpContext.RequestServices
-                            .GetRequiredService<RemsDbContext>();
+                        var cache = context.HttpContext.RequestServices
+                            .GetRequiredService<IMemoryCache>();
 
-                        bool isRevoked = await dbContext.RevokedTokens
-                            .AnyAsync(x => x.Jti == jti);
-
-                        if (isRevoked)
+                        if (cache.TryGetValue($"revoked_{jti}", out _))
                         {
                             context.Fail("Token has been revoked.");
                         }
@@ -171,6 +181,7 @@ namespace tasinmaz_staj
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseRateLimiter();
             app.UseCors("AllowAngular");
             app.UseAuthentication();
             app.UseAuthorization();

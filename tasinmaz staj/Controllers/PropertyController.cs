@@ -7,6 +7,7 @@ using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.RateLimiting;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -56,6 +57,7 @@ public class PropertyController : ControllerBase
     }
 
     [HttpPost]
+    [EnableRateLimiting("geometry")]
     public async Task<IActionResult> Create([FromBody] CreatePropertyDto dto)
     {
         // REQ-10: Admin property ekleyemez
@@ -85,6 +87,7 @@ public class PropertyController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [EnableRateLimiting("geometry")]
     public async Task<IActionResult> Update(int id, [FromBody] CreatePropertyDto dto)
     {
         // REQ-10: Admin property güncelleyemez (Create ile aynı kural)
@@ -118,29 +121,6 @@ public class PropertyController : ControllerBase
         }
     }
 
-    // Tek seferlik bakim islemi: Geometry alani NULL olan (ornegin bu alan
-    // eklenmeden once olusturulmus veya import edilmis) taşınmazlarin
-    // Geometry sutununu Coordinate (WKT) alanindan yeniden turetir.
-    // Bu calistirilmadan bazi taşınmazlarda spatial/intersection/union
-    // analizleri "Property not found or access denied" hatasi verebilir.
-    [HttpPost("backfill-geometry")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> BackfillGeometry()
-    {
-        try
-        {
-            var updatedCount = await _propertyService.BackfillGeometryAsync();
-            return Ok(new
-            {
-                message = "Geometry backfill completed.",
-                updatedCount
-            });
-        }
-        catch
-        {
-            return StatusCode(500, new { message = "Geometry backfill failed." });
-        }
-    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
@@ -247,6 +227,7 @@ public class PropertyController : ControllerBase
     }
 
     [HttpPut("{id}/geometry")]
+    [EnableRateLimiting("geometry")]
     public async Task<IActionResult> UpdateGeometry(
         int id,
         [FromBody] UpdatePropertyGeometryDto dto)
@@ -306,6 +287,7 @@ public class PropertyController : ControllerBase
     }
 
     [HttpPost("spatial/select")]
+    [EnableRateLimiting("geometry")]
     public async Task<IActionResult> SelectProperties(
     [FromBody] UpdatePropertyGeometryDto dto)
     {
@@ -342,6 +324,7 @@ public class PropertyController : ControllerBase
         }
     }
     [HttpPost("spatial/intersection")]
+    [EnableRateLimiting("geometry")]
     public async Task<IActionResult> AnalyzeIntersection(
     [FromBody] IntersectionAnalysisDto dto)
     {
@@ -382,6 +365,7 @@ public class PropertyController : ControllerBase
     }
 
     [HttpPost("spatial/union")]
+    [EnableRateLimiting("geometry")]
     public async Task<IActionResult> AnalyzeUnion(
     [FromBody] UnionAnalysisDto dto)
     {

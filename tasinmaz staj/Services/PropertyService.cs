@@ -35,7 +35,7 @@ public class PropertyService : IPropertyService
             AdaNo = p.AdaNo,
             Adres = p.Adres,
             PropertyType = p.PropertyType,
-            Coordinate = p.Coordinate,
+            Coordinate = p.Geometry != null ? p.Geometry.AsText() : null,
             ImagePath = p.ImagePath
         };
 
@@ -202,7 +202,6 @@ public class PropertyService : IPropertyService
             ParselNo = dto.ParcelNumber,
             Adres = dto.Address,
             PropertyType = dto.PropertyType,
-            Coordinate = dto.Coordinate,
             Geometry = TryParseGeometry(dto.Coordinate),
             ImagePath = null
         };
@@ -221,7 +220,7 @@ public class PropertyService : IPropertyService
             ParselNo = property.ParselNo,
             Adres = property.Adres,
             PropertyType = property.PropertyType,
-            Coordinate = property.Coordinate,
+            Coordinate = property.Geometry != null ? property.Geometry.AsText() : null,
             ImagePath = property.ImagePath
         };
     }
@@ -258,7 +257,6 @@ public class PropertyService : IPropertyService
         property.ParselNo = dto.ParcelNumber;
         property.Adres = dto.Address;
         property.PropertyType = dto.PropertyType;
-        property.Coordinate = dto.Coordinate;
         property.Geometry = TryParseGeometry(dto.Coordinate);
 
         await _context.SaveChangesAsync();
@@ -273,41 +271,12 @@ public class PropertyService : IPropertyService
             ParselNo = property.ParselNo,
             Adres = property.Adres,
             PropertyType = property.PropertyType,
-            Coordinate = property.Coordinate,
+            Coordinate = property.Geometry != null ? property.Geometry.AsText() : null,
             ImagePath = property.ImagePath
         };
     }
 
-    // Bu fix'ten once eklenmis/guncellenmis kayitlarin Geometry kolonu
-    // hala null olabilir (Coordinate WKT'si var ama Geometry hic
-    // yazilmamis). Bu metot Coordinate'i dolu, Geometry'si null olan tum
-    // kayitlari tarar ve gecerli WKT'leri Geometry'ye parse eder. Tek
-    // seferlik backfill icin kullanilir.
-    public async Task<int> BackfillGeometryAsync()
-    {
-        var candidates = await _context.Properties
-            .Where(p => p.Geometry == null && p.Coordinate != null && p.Coordinate != "")
-            .ToListAsync();
 
-        int updatedCount = 0;
-
-        foreach (var property in candidates)
-        {
-            var geometry = TryParseGeometry(property.Coordinate);
-            if (geometry != null)
-            {
-                property.Geometry = geometry;
-                updatedCount++;
-            }
-        }
-
-        if (updatedCount > 0)
-        {
-            await _context.SaveChangesAsync();
-        }
-
-        return updatedCount;
-    }
 
     public async Task<bool> DeleteAsync(
         int propertyId,
