@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using System;
@@ -111,25 +111,25 @@ public class PropertyService : IPropertyService
         }
 
         if (!string.IsNullOrWhiteSpace(filter.City))
-            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ilce.Il.Ad, filter.City));
+            query = query.Where(p => p.Mahalle.Ilce.Il.Ad.ToLower() == filter.City.ToLower());
 
         if (!string.IsNullOrWhiteSpace(filter.District))
-            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ilce.Ad, filter.District));
+            query = query.Where(p => p.Mahalle.Ilce.Ad.ToLower() == filter.District.ToLower());
 
         if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-            query = query.Where(p => EF.Functions.ILike(p.Mahalle.Ad, $"%{filter.Neighborhood}%"));
+            query = query.Where(p => p.Mahalle.Ad.ToLower().Contains(filter.Neighborhood.ToLower()));
 
         if (!string.IsNullOrWhiteSpace(filter.ParcelNumber))
-            query = query.Where(p => EF.Functions.ILike(p.ParselNo, filter.ParcelNumber));
+            query = query.Where(p => p.ParselNo.ToLower() == filter.ParcelNumber.ToLower());
 
         if (!string.IsNullOrWhiteSpace(filter.LotNumber))
-            query = query.Where(p => EF.Functions.ILike(p.AdaNo, filter.LotNumber));
+            query = query.Where(p => p.AdaNo.ToLower() == filter.LotNumber.ToLower());
 
         if (!string.IsNullOrWhiteSpace(filter.Address))
-            query = query.Where(p => EF.Functions.ILike(p.Adres, $"%{filter.Address}%"));
+            query = query.Where(p => p.Adres.ToLower().Contains(filter.Address.ToLower()));
 
         if (!string.IsNullOrWhiteSpace(filter.PropertyType))
-            query = query.Where(p => EF.Functions.ILike(p.PropertyType, $"%{filter.PropertyType}%"));
+            query = query.Where(p => p.PropertyType.ToLower().Contains(filter.PropertyType.ToLower()));
 
         return query;
     }

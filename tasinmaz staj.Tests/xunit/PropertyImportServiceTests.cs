@@ -19,6 +19,7 @@ public class PropertyImportServiceTests
     {
         var options = new DbContextOptionsBuilder<RemsDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .ConfigureWarnings(x => x.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
         var context = new RemsDbContext(options);

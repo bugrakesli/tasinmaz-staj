@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\tasinmaz staj\tasinmaz staj.csproj" />
+    <ProjectReference Include="..\..\tasinmaz staj\tasinmaz staj.csproj" />
   </ItemGroup>
 
 </Project>
