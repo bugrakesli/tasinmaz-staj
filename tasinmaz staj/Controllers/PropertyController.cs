@@ -170,7 +170,7 @@ public class PropertyController : ControllerBase
         try
         {
             var fileBytes = await _propertyExportService.ExportToExcelAsync(filter, GetUserId(), GetRole());
-            var fileName = $"properties_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+            var fileName = $"Taşınmaz_Listesi_{DateTime.UtcNow:MMdd_HHmm}.xlsx";
             return File(
                 fileBytes,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -188,7 +188,7 @@ public class PropertyController : ControllerBase
         try
         {
             var fileBytes = await _propertyExportService.ExportToPdfAsync(filter, GetUserId(), GetRole());
-            var fileName = $"properties_{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
+            var fileName = $"Tasinmaz_Listesi_{DateTime.UtcNow:MMdd_HHmm}.pdf";
             return File(fileBytes, "application/pdf", fileName);
         }
         catch
