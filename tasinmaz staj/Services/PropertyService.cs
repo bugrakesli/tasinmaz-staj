@@ -20,6 +20,25 @@ public class PropertyService : IPropertyService
         _context = context;
     }
 
+    // GetAllAsync / GetFilteredAsync / GetForExportAsync ayni PropertyDto
+    // mapping'ini kullaniyordu (DRY ihlali). Expression olarak tanimlanip
+    // EF Core'un SQL'e cevirebilmesi icin static tutuluyor; boylece
+    // performans kaybi olmadan tek yerden yonetiliyor.
+    private static readonly System.Linq.Expressions.Expression<Func<Property, PropertyDto>> ToPropertyDto =
+        p => new PropertyDto
+        {
+            Id = p.Id,
+            City = p.Mahalle.Ilce.Il.Ad,
+            District = p.Mahalle.Ilce.Ad,
+            Neighborhood = p.Mahalle.Ad,
+            ParselNo = p.ParselNo,
+            AdaNo = p.AdaNo,
+            Adres = p.Adres,
+            PropertyType = p.PropertyType,
+            Coordinate = p.Coordinate,
+            ImagePath = p.ImagePath
+        };
+
     // dto.Coordinate gecerli bir WKT polygon ise Geometry (SRID 4326)
     // olarak dondurur; degilse null doner (Coordinate yine de kaydedilir,
     // boylece REQ'lerdeki serbest metin davranisi bozulmaz).
@@ -64,19 +83,7 @@ public class PropertyService : IPropertyService
         }
 
         return await query
-            .Select(p => new PropertyDto
-            {
-                Id = p.Id,
-                City = p.Mahalle.Ilce.Il.Ad,
-                District = p.Mahalle.Ilce.Ad,
-                Neighborhood = p.Mahalle.Ad,
-                ParselNo = p.ParselNo,
-                AdaNo = p.AdaNo,
-                Adres = p.Adres,
-                PropertyType = p.PropertyType,
-                Coordinate = p.Coordinate,
-                ImagePath = p.ImagePath
-            })
+            .Select(ToPropertyDto)
             .ToListAsync();
     }
 
@@ -143,19 +150,7 @@ public class PropertyService : IPropertyService
             .OrderBy(p => p.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(p => new PropertyDto
-            {
-                Id = p.Id,
-                City = p.Mahalle.Ilce.Il.Ad,
-                District = p.Mahalle.Ilce.Ad,
-                Neighborhood = p.Mahalle.Ad,
-                ParselNo = p.ParselNo,
-                AdaNo = p.AdaNo,
-                Adres = p.Adres,
-                PropertyType = p.PropertyType,
-                Coordinate = p.Coordinate,
-                ImagePath = p.ImagePath
-            })
+            .Select(ToPropertyDto)
             .ToListAsync();
 
         // REQ-6: Sonuc bulunamazsa bile 200 donuyoruz; controller/frontend
@@ -180,19 +175,7 @@ public class PropertyService : IPropertyService
 
         return await query
             .OrderBy(p => p.Id)
-            .Select(p => new PropertyDto
-            {
-                Id = p.Id,
-                City = p.Mahalle.Ilce.Il.Ad,
-                District = p.Mahalle.Ilce.Ad,
-                Neighborhood = p.Mahalle.Ad,
-                ParselNo = p.ParselNo,
-                AdaNo = p.AdaNo,
-                Adres = p.Adres,
-                PropertyType = p.PropertyType,
-                Coordinate = p.Coordinate,
-                ImagePath = p.ImagePath
-            })
+            .Select(ToPropertyDto)
             .ToListAsync();
     }
 
