@@ -219,4 +219,31 @@ public class PropertyServiceTests
 
         Assert.Equal(1, (int)result.TotalCount);
     }
+
+    [Fact]
+    public async Task GetForExportAsync_NoPagination_ReturnsAllMatchingRecords()
+    {
+        using var context = CreateContext();
+        var service = new PropertyService(context);
+
+        var filter = new PropertyFilterDto { City = "Ankara" };
+
+        var result = await service.GetForExportAsync(filter, userId: 1, role: "Admin");
+
+        Assert.Equal(2, result.Count);
+    }
+
+    [Fact]
+    public async Task GetForExportAsync_NonAdmin_OnlyReturnsOwnRecords()
+    {
+        using var context = CreateContext();
+        var service = new PropertyService(context);
+
+        var filter = new PropertyFilterDto();
+
+        var result = await service.GetForExportAsync(filter, userId: 1, role: "User");
+
+        Assert.Single(result);
+        Assert.Equal(1, result[0].Id);
+    }
 }
